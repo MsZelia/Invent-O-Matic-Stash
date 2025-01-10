@@ -437,6 +437,8 @@ package
          this.m_CurrencyType = 4294967295;
          this.m_MenuMode = 4294967295;
          this.m_CurrencyType = 4294967295;
+         this.m_MenuMode = 4294967295;
+         this.m_CurrencyType = 4294967295;
          this.__SFCodeObj = new Object();
          this.ButtonPlayerInventory = new BSButtonHintData("$TransferPlayerLabel","LT","PSN_L2_Alt","Xenon_L2_Alt",1,this.onSwapInventoryPlayer);
          this.ButtonContainerInventory = new BSButtonHintData("$TransferContainerLabel","RT","PSN_R2_Alt","Xenon_R2_Alt",1,this.onSwapInventoryContainer);
@@ -2973,7 +2975,7 @@ package
                   this.InspectButton.ButtonVisible = true;
                   if(this.AcceptButton.ButtonVisible)
                   {
-                     this.AcceptButton.ButtonDisabled = !this.m_isStash && this.isItemProtected(this.selectedListEntry,true);
+                     this.AcceptButton.ButtonDisabled = !this.m_isStash && !this.isAmmoStash && this.isItemProtected(this.selectedListEntry,true);
                      if(_loc4_)
                      {
                         this.AcceptButton.ButtonText = this.m_AcceptBtnText_Container;
