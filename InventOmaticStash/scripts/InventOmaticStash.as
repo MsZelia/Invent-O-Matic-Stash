@@ -384,6 +384,7 @@ package
          this.initButtonHints();
          this.initDurabilityValue();
          this.initScrollPosition();
+         this.initHideTakeAll();
          this.initItemProtection();
          CategoryWeight.init(this._parent);
          LegendaryMods.init();
@@ -566,6 +567,19 @@ package
          {
             Logger.get().error("Error initScrollPosition: " + e);
             ShowHUDMessage("Error initScrollPosition: " + e,true);
+         }
+      }
+      
+      private function initHideTakeAll() : void
+      {
+         try
+         {
+            this._parent.HideTakeAllConfirm = Parser.parseBoolean(config.hideTakeAllConfirm,false);
+         }
+         catch(e:Error)
+         {
+            Logger.get().error("Error initHideTakeAll: " + e);
+            ShowHUDMessage("Error initHideTakeAll: " + e,true);
          }
       }
       

@@ -291,6 +291,8 @@ package
       
       private var checkItemProtectionOnSelectionChange:Boolean = false;
       
+      private var hideTakeAllConfirm:Boolean = false;
+      
       private var m_IsOpen:Boolean = false;
       
       private var m_PreviousFocus:InteractiveObject;
@@ -439,6 +441,10 @@ package
          this.m_CurrencyType = 4294967295;
          this.m_MenuMode = 4294967295;
          this.m_CurrencyType = 4294967295;
+         this.m_MenuMode = 4294967295;
+         this.m_CurrencyType = 4294967295;
+         this.m_MenuMode = 4294967295;
+         this.m_CurrencyType = 4294967295;
          this.__SFCodeObj = new Object();
          this.ButtonPlayerInventory = new BSButtonHintData("$TransferPlayerLabel","LT","PSN_L2_Alt","Xenon_L2_Alt",1,this.onSwapInventoryPlayer);
          this.ButtonContainerInventory = new BSButtonHintData("$TransferContainerLabel","RT","PSN_R2_Alt","Xenon_R2_Alt",1,this.onSwapInventoryContainer);
@@ -568,6 +574,11 @@ package
       public function set CheckItemProtectionOnSelectionChange(value:Boolean) : void
       {
          this.checkItemProtectionOnSelectionChange = value;
+      }
+      
+      public function set HideTakeAllConfirm(value:Boolean) : void
+      {
+         this.hideTakeAllConfirm = value;
       }
       
       public function set MaintainScrollPosition(value:uint) : void
@@ -2197,7 +2208,7 @@ package
       private function onTakeAll() : void
       {
          var _loc1_:uint = 0;
-         if(this.OfferInventory_mc.ItemList_mc.List_mc.itemsShown > 11)
+         if(!this.hideTakeAllConfirm && this.OfferInventory_mc.ItemList_mc.List_mc.itemsShown > 11)
          {
             this.openConfirmTakeAllModal();
          }
