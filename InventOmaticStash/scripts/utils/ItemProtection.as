@@ -93,7 +93,6 @@ package utils
             _protectionReason = MAX_CURRENCY;
             return true;
          }
-         itemProtection[item.serverHandleId] = false;
          return false;
       }
    }
