@@ -681,6 +681,15 @@ package
          ItemCard_Entry.ShowDurability = value;
       }
       
+      private function log(message:String) : void
+      {
+         if(!this.modLoader || !this.modLoader.content)
+         {
+            return;
+         }
+         this.modLoader.content.log(message);
+      }
+      
       public function set currencyType(param1:uint) : void
       {
          this.m_CurrencyType = param1;

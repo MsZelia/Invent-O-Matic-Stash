@@ -22,6 +22,8 @@ package
       
       private const DEFAULT_SHOW_BUTTON_STATE:Boolean = InventOmaticConfig.DEFAULT_SHOW_BUTTON_STATE;
       
+      private const CRAFTING_ITEM_UNLOCKED_REGEX:* = /(Crafting item unlocked|Objet de fabrication débloqué |Objeto de creación desbloqueado|Objeto de creación desbloqueado|Herstellungsgegenstand freigeschaltet|Oggetto creabile sbloccato|Odblokowujesz nową rzecz do tworzenia|Item de criação desbloqueado|Открыт предмет для изготовления|クラフトアイテムを解除|제작 아이템 잠금 해제|已解锁的物品制作|道具製作已解鎖)/;
+      
       public var debugLogger:TextField;
       
       private var _itemExtractor:ItemExtractor;
@@ -74,6 +76,7 @@ package
             Logger.init(this.debugLogger);
             addEventListener(Event.ADDED_TO_STAGE,this.addedToStageHandler);
             BSUIDataManager.Subscribe("CharacterInfoData",this.onCharacterInfoDataUpdate);
+            BSUIDataManager.Subscribe("HUDMessageProvider",this.onHUDMessageProviderUpdate);
          }
          catch(e:Error)
          {
@@ -155,6 +158,23 @@ package
       {
          setTimeout(updateVendorCurrencyTextField,10);
          setTimeout(CategoryWeight.updateWeightLabels,20);
+      }
+      
+      private function onHUDMessageProviderUpdate(param1:Event) : void
+      {
+         if(config != null && Boolean(config.notifyLegendaryModLearnedOnScrap))
+         {
+            var i:int = 0;
+            while(i < param1.data.messages.length)
+            {
+               if(param1.data.messages[i].messageText.indexOf("¬") != -1 && CRAFTING_ITEM_UNLOCKED_REGEX.test(param1.data.messages[i].messageText))
+               {
+                  Logger.get().debugMode = true;
+                  Logger.get().info(param1.data.messages[i].messageText);
+               }
+               i++;
+            }
+         }
       }
       
       public function get isMaxCurrencyProtection() : Boolean
