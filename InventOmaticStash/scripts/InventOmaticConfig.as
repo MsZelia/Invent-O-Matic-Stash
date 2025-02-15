@@ -45,6 +45,10 @@ package
       
       private static var calculateCatWeightKeyCode:uint = 116;
       
+      private static var swapToPlayerInventoryHotkey:uint = 0;
+      
+      private static var swapToContainerInventoryHotkey:uint = 0;
+      
       private static var _config:Object;
        
       
@@ -101,6 +105,16 @@ package
       public static function get CalculateCatWeightKeyCode() : uint
       {
          return calculateCatWeightKeyCode;
+      }
+      
+      public static function get SwapToPlayerInventoryHotkey() : uint
+      {
+         return swapToPlayerInventoryHotkey;
+      }
+      
+      public static function get SwapToContainerInventoryHotkey() : uint
+      {
+         return swapToContainerInventoryHotkey;
       }
       
       public static function init(jsonObject:*) : Object
@@ -189,6 +203,8 @@ package
             {
                config.transferConfig[c].hotkey = Parser.parseHotkey(config.transferConfig[c],transferKeyCode);
             }
+            swapToPlayerInventoryHotkey = Parser.parsePositiveNumber(config.swapToPlayerInventoryHotkey,0);
+            swapToContainerInventoryHotkey = Parser.parsePositiveNumber(config.swapToContainerInventoryHotkey,0);
          }
       }
       

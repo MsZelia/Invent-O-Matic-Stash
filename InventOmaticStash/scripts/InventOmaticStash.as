@@ -918,9 +918,34 @@ package
          {
             _shift = true;
          }
-         else if(this.config && this.config.debugKeys)
+         if(this.config)
          {
-            Logger.get().info("KeyDown: " + param1.keyCode + "(" + Buttons.getButtonKey(param1.keyCode) + "), shift: " + _shift);
+            if(this.config.debugKeys)
+            {
+               Logger.get().info("KeyDown: " + param1.keyCode + "(" + Buttons.getButtonKey(param1.keyCode) + "), shift: " + _shift);
+            }
+            if(InventOmaticConfig.SwapToPlayerInventoryHotkey != InventOmaticConfig.SwapToContainerInventoryHotkey)
+            {
+               if(InventOmaticConfig.SwapToPlayerInventoryHotkey != 0 && param1.keyCode == InventOmaticConfig.SwapToPlayerInventoryHotkey)
+               {
+                  this.parentClip.onSwapInventoryPlayer();
+               }
+               else if(InventOmaticConfig.SwapToContainerInventoryHotkey != 0 && param1.keyCode == InventOmaticConfig.SwapToContainerInventoryHotkey)
+               {
+                  this.parentClip.onSwapInventoryContainer();
+               }
+            }
+            else if(InventOmaticConfig.SwapToPlayerInventoryHotkey != 0 && param1.keyCode == InventOmaticConfig.SwapToPlayerInventoryHotkey)
+            {
+               if(this.parentClip.selectedList == this.parentClip.OfferInventory_mc)
+               {
+                  this.parentClip.onSwapInventoryPlayer();
+               }
+               else
+               {
+                  this.parentClip.onSwapInventoryContainer();
+               }
+            }
          }
       }
       
