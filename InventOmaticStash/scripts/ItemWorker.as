@@ -1211,12 +1211,12 @@ package
          return false;
       }
       
-      private function isValidLootConfig() : Boolean
+      private function isValidLootConfig(subConfig:Object = null) : Boolean
       {
          var lootConfig:Object = null;
          if(_config)
          {
-            lootConfig = _config.lootConfig;
+            lootConfig = subConfig != null ? subConfig : _config.lootConfig;
             if(lootConfig && lootConfig.enabled && lootConfig.itemNames && lootConfig.itemNames.length > 0)
             {
                return isTheSameCharacterName(lootConfig,lootConfig.debug);
@@ -1289,6 +1289,21 @@ package
          {
             Logger.get().info("Valid loot config");
             var config:Object = _config.lootConfig;
+            if(config.configs)
+            {
+               var indexConfig:int = 0;
+               var subConfig:Object = null;
+               while(indexConfig < config.configs.length)
+               {
+                  subConfig = config.configs[indexConfig];
+                  if(isValidLootConfig(subConfig))
+                  {
+                     Logger.get().info("Valid loot subconfig at index " + indexConfig);
+                     config.itemNames = config.itemNames.concat(subConfig.itemNames);
+                  }
+                  indexConfig++;
+               }
+            }
             this.transfer(this._stashInventory,true,config);
          }
          else

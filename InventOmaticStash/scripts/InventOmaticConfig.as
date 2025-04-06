@@ -153,6 +153,7 @@ package
          {
             setName(config.lootConfig,TITLE_LOOT);
             setMaxItems(config.lootConfig);
+            config.lootConfig = loadLootConfig(config.lootConfig);
          }
          if(config.npcSellConfig)
          {
@@ -290,6 +291,15 @@ package
          else if(config.configs.length == 0)
          {
             config.enabled = false;
+         }
+         return config;
+      }
+      
+      private static function loadLootConfig(config:*) : *
+      {
+         if(!config.configs)
+         {
+            config.configs = [];
          }
          return config;
       }

@@ -2,6 +2,8 @@ package utils
 {
    public class Buttons
    {
+      
+      public static var HideUnknownGamepadButtonIcons:Boolean = false;
        
       
       public function Buttons()
@@ -127,7 +129,7 @@ package utils
             case 40:
                return "_DPad_Down";
             default:
-               return "_Question";
+               return HideUnknownGamepadButtonIcons ? "" : "_Question";
          }
       }
    }

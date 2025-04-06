@@ -488,6 +488,10 @@ package
          }
          try
          {
+            if(config.hideUnknownGamepadButtonIcons)
+            {
+               Buttons.HideUnknownGamepadButtonIcons = true;
+            }
             if(config.extractConfig && config.extractConfig.enabled)
             {
                this.extractButton = new BSButtonHintData(config.extractConfig.name,Buttons.getButtonKey(InventOmaticConfig.ExtractKeyCode),Buttons.getButtonGamepad(InventOmaticConfig.ExtractKeyCode),Buttons.getButtonGamepad(InventOmaticConfig.ExtractKeyCode),1,this.extractDataCallback);
