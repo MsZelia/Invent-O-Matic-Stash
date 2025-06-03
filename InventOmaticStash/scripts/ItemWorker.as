@@ -371,7 +371,7 @@ package
          while(i < destination.length)
          {
             map[destination[i].text] = {
-               "serverHandleId":destination[i].serverHandleId,
+               "serverHandleID":destination[i].serverHandleID,
                "count":destination[i].count,
                "containerID":destination[i].containerID
             };
@@ -393,7 +393,7 @@ package
             if(text == destination[i].text)
             {
                return {
-                  "serverHandleId":destination[i].serverHandleId,
+                  "serverHandleID":destination[i].serverHandleID,
                   "count":destination[i].count,
                   "containerID":destination[i].containerID
                };
@@ -455,7 +455,7 @@ package
                      }
                      _queue.push({
                         "text":selectedItem.text,
-                        "serverHandleId":selectedItem.serverHandleId,
+                        "serverHandleID":selectedItem.serverHandleID,
                         "containerID":selectedItem.containerID,
                         "count":amount,
                         "fromContainer":fromContainer
@@ -652,7 +652,7 @@ package
                            }
                            _queue.push({
                               "text":item.text,
-                              "serverHandleId":(invertDestination ? itemInDestination.serverHandleId : item.serverHandleId),
+                              "serverHandleID":(invertDestination ? itemInDestination.serverHandleID : item.serverHandleID),
                               "containerID":(invertDestination ? itemInDestination.containerID : item.containerID),
                               "count":amount,
                               "fromContainer":(invertDestination ? !fromContainer : fromContainer)
@@ -700,7 +700,7 @@ package
                            }
                            _queue.push({
                               "text":item.text,
-                              "serverHandleId":item.serverHandleId,
+                              "serverHandleID":item.serverHandleID,
                               "containerID":item.containerID,
                               "count":amount,
                               "fromContainer":fromContainer
@@ -839,7 +839,7 @@ package
                               }
                               _queue.push({
                                  "text":inventory[i].text,
-                                 "serverHandleId":inventory[i].serverHandleId,
+                                 "serverHandleID":inventory[i].serverHandleID,
                                  "count":inventory[i].count
                               });
                               if(countItemsToScrap && ++scrappedCount >= maxItems)
@@ -1009,7 +1009,7 @@ package
                            }
                            _queue.push({
                               "text":inventory[i].text,
-                              "serverHandleId":inventory[i].serverHandleId,
+                              "serverHandleID":inventory[i].serverHandleID,
                               "count":amountToSell
                            });
                            if(countItemsToSell && ++itemsSold >= config.maxItems)
@@ -1484,7 +1484,7 @@ package
                                     Logger.get().info("Item queued: " + inventory[i].text + " (" + amount + "/" + inventory[i].count + ") for " + price + " per, total: " + amount * price);
                                  }
                                  _queue.push({
-                                    "serverHandleId":inventory[i].serverHandleId,
+                                    "serverHandleID":inventory[i].serverHandleID,
                                     "text":inventory[i].text,
                                     "count":amount,
                                     "price":price,
@@ -1498,7 +1498,7 @@ package
                                     Logger.get().info("Item queued: " + inventory[i].text + " (" + amount + ") at " + price + ", total: " + amount * price);
                                  }
                                  _queue.push({
-                                    "serverHandleId":inventory[i].serverHandleId,
+                                    "serverHandleID":inventory[i].serverHandleID,
                                     "text":inventory[i].text,
                                     "count":amount,
                                     "price":price,
@@ -1604,11 +1604,11 @@ package
          }
          if(Boolean(_queue[_queueIndex].isNpcVendor))
          {
-            GameApiDataExtractor.npcBuyItem(_queue[_queueIndex].serverHandleId,_queue[_queueIndex].count);
+            GameApiDataExtractor.npcBuyItem(_queue[_queueIndex].serverHandleID,_queue[_queueIndex].count);
          }
          else
          {
-            GameApiDataExtractor.campBuyItem(_queue[_queueIndex].serverHandleId,_queue[_queueIndex].count,_queue[_queueIndex].price);
+            GameApiDataExtractor.campBuyItem(_queue[_queueIndex].serverHandleID,_queue[_queueIndex].count,_queue[_queueIndex].price);
          }
          _queueIndex++;
       }

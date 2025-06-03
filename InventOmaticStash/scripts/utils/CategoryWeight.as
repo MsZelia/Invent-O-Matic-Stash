@@ -266,9 +266,9 @@ package utils
          var inventory:Array = param1;
          inventory.forEach(function(param1:Object):void
          {
-            if(itemCardEntries[param1.serverHandleId])
+            if(itemCardEntries[param1.serverHandleID])
             {
-               param1.ItemCardEntries = itemCardEntries[param1.serverHandleId].itemCardEntries;
+               param1.ItemCardEntries = itemCardEntries[param1.serverHandleID].itemCardEntries;
             }
          });
       }
@@ -389,9 +389,9 @@ package utils
                {
                   secureTrade.selectedList = fromContainer ? secureTrade.OfferInventory_mc : secureTrade.PlayerInventory_mc;
                   secureTrade.selectedList.Active = true;
-                  GameApiDataExtractor.selectItem(item.serverHandleId,fromContainer);
+                  GameApiDataExtractor.selectItem(item.serverHandleID,fromContainer);
                   itemCardData = clone(GameApiDataExtractor.getInventoryItemCardData());
-                  itemCardEntries[itemCardData.serverHandleId] = itemCardData;
+                  itemCardEntries[itemCardData.serverHandleID] = itemCardData;
                }
                catch(e:Error)
                {
@@ -430,9 +430,9 @@ package utils
                      {
                         parent.selectedList = inventory;
                         inventory.Active = true;
-                        GameApiDataExtractor.selectItem(item.serverHandleId,fromContainer);
+                        GameApiDataExtractor.selectItem(item.serverHandleID,fromContainer);
                         itemCardData = clone(GameApiDataExtractor.getInventoryItemCardData());
-                        itemCardEntries[itemCardData.serverHandleId] = itemCardData;
+                        itemCardEntries[itemCardData.serverHandleID] = itemCardData;
                         output.push(item);
                      }
                      catch(e:Error)
@@ -470,7 +470,7 @@ package utils
       private static function onInventoryItemCardDataUpdate(param1:FromClientDataEvent) : void
       {
          var _loc2_:Object = param1.data;
-         itemCardEntries[_loc2_.serverHandleId] = clone(_loc2_);
+         itemCardEntries[_loc2_.serverHandleID] = clone(_loc2_);
       }
    }
 }

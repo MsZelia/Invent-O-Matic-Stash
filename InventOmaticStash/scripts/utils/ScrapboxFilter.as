@@ -19,18 +19,18 @@ package utils
       {
       }
       
-      public static function scrapTransfer(serverHandleId:Number, quantity:uint) : void
+      public static function scrapTransfer(serverHandleID:Number, quantity:uint) : void
       {
          BSUIDataManager.dispatchEvent(new CustomEvent(EVENT_SCRAPBOX_SCRAP_TRANSFER_CONFIRM,{
-            "serverHandleId":serverHandleId,
+            "serverHandleID":serverHandleID,
             "quantity":quantity
          }));
       }
       
-      public static function transfer(serverHandleId:Number, quantity:uint, containerID:Number) : void
+      public static function transfer(serverHandleID:Number, quantity:uint, containerID:Number) : void
       {
          BSUIDataManager.dispatchEvent(new CustomEvent(EVENT_TRANSFER_ITEM,{
-            "serverHandleId":serverHandleId,
+            "serverHandleID":serverHandleID,
             "quantity":quantity,
             "fromContainer":false,
             "containerID":containerID

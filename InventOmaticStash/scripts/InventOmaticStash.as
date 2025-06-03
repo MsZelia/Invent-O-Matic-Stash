@@ -1012,12 +1012,12 @@ package
             {
                _offset--;
                BSUIDataManager.dispatchEvent(new CustomEvent("SecureTrade::OnItemSelected",{
-                  "serverHandleId":this.parentClip.selectedListEntry.serverHandleId + _offset,
+                  "serverHandleID":this.parentClip.selectedListEntry.serverHandleID + _offset,
                   "isSelectionValid":true,
                   "fromContainer":this.parentClip.selectedList == this.parentClip.OfferInventory_mc,
                   "containerID":this.parentClip.selectedListEntry.containerID
                }));
-               Logger.get().info("serverHandleId: " + this.parentClip.selectedListEntry.serverHandleId + " + offset: " + _offset + " = " + (this.parentClip.selectedListEntry.serverHandleId + _offset));
+               Logger.get().info("serverHandleID: " + this.parentClip.selectedListEntry.serverHandleID + " + offset: " + _offset + " = " + (this.parentClip.selectedListEntry.serverHandleID + _offset));
             }
          }
          else if(param1.keyCode == Keyboard.F7)
@@ -1026,12 +1026,12 @@ package
             {
                _offset++;
                BSUIDataManager.dispatchEvent(new CustomEvent("SecureTrade::OnItemSelected",{
-                  "serverHandleId":this.parentClip.selectedListEntry.serverHandleId + _offset,
+                  "serverHandleID":this.parentClip.selectedListEntry.serverHandleID + _offset,
                   "isSelectionValid":true,
                   "fromContainer":this.parentClip.selectedList == this.parentClip.OfferInventory_mc,
                   "containerID":this.parentClip.selectedListEntry.containerID
                }));
-               Logger.get().info("serverHandleId: " + this.parentClip.selectedListEntry.serverHandleId + " + offset: " + _offset + " = " + (this.parentClip.selectedListEntry.serverHandleId + _offset));
+               Logger.get().info("serverHandleID: " + this.parentClip.selectedListEntry.serverHandleID + " + offset: " + _offset + " = " + (this.parentClip.selectedListEntry.serverHandleID + _offset));
             }
          }
          else if(param1.keyCode == Keyboard.F8)
@@ -1077,9 +1077,9 @@ package
                {
                   if(this.config.testEventData[i] == "{selectedId}")
                   {
-                     this.config.testEventData[i] = this.parentClip.selectedListEntry.serverHandleId;
+                     this.config.testEventData[i] = this.parentClip.selectedListEntry.serverHandleID;
                   }
-                  else if(i == "serverHandleId")
+                  else if(i == "serverHandleID")
                   {
                      this.config.testEventData[i] = uint(this.config.testEventData[i]);
                   }

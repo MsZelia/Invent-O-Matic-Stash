@@ -86,7 +86,7 @@ package extractors
       public static function inspectItem(param1:Number, param2:Boolean) : void
       {
          BSUIDataManager.dispatchEvent(new CustomEvent(EVENT_INSPECT_ITEM,{
-            "serverHandleId":param1,
+            "serverHandleID":param1,
             "fromContainer":param2
          }));
       }
@@ -94,7 +94,7 @@ package extractors
       public static function selectItem(param1:Number, param2:Boolean) : void
       {
          BSUIDataManager.dispatchEvent(new CustomEvent(EVENT_ITEM_SELECTED,{
-            "serverHandleId":param1,
+            "serverHandleID":param1,
             "isSelectionValid":true,
             "fromContainer":param2
          }));
@@ -109,7 +109,7 @@ package extractors
       {
          var _loc4_:uint = param3 === -1 ? uint(param1.count) : uint(param3);
          BSUIDataManager.dispatchEvent(new CustomEvent(EVENT_TRANSFER_ITEM,{
-            "serverHandleId":param1.serverHandleId,
+            "serverHandleID":param1.serverHandleID,
             "quantity":_loc4_,
             "fromContainer":param2,
             "containerID":param1.containerID
@@ -120,7 +120,7 @@ package extractors
       {
          var _loc3_:int = param2 === -1 ? int(param1.count) : param2;
          BSUIDataManager.dispatchEvent(new CustomEvent(EVENT_SCRAP_ITEM,{
-            "serverHandleId":param1.serverHandleId,
+            "serverHandleID":param1.serverHandleID,
             "quantity":_loc3_
          }));
       }
@@ -129,7 +129,7 @@ package extractors
       {
          var _loc3_:uint = param2 === -1 ? uint(param1.count) : uint(param2);
          BSUIDataManager.dispatchEvent(new CustomEvent(EVENT_NPC_SELL_ITEM,{
-            "serverHandleId":param1.serverHandleId,
+            "serverHandleID":param1.serverHandleID,
             "quantity":_loc3_
          }));
       }
@@ -137,7 +137,7 @@ package extractors
       public static function campAssignItem(param1:Object, param2:Boolean) : void
       {
          BSUIDataManager.dispatchEvent(new CustomEvent(EVENT_CAMP_DISPLAY_ITEM,{
-            "serverHandleId":param1.serverHandleId,
+            "serverHandleID":param1.serverHandleID,
             "fromContainer":param2
          }));
       }
@@ -145,7 +145,7 @@ package extractors
       public static function displayAssignItem(param1:Object, param2:Boolean) : void
       {
          BSUIDataManager.dispatchEvent(new CustomEvent(EVENT_CAMP_DISPLAY_DECORATE_ITEM_IN_SLOT,{
-            "serverHandleId":param1.serverHandleId,
+            "serverHandleID":param1.serverHandleID,
             "fromContainer":param2
          }));
       }
@@ -153,7 +153,7 @@ package extractors
       public static function npcBuyItem(param1:uint, param2:int) : void
       {
          BSUIDataManager.dispatchEvent(new CustomEvent(EVENT_NPC_BUY_ITEM,{
-            "serverHandleId":param1,
+            "serverHandleID":param1,
             "quantity":param2
          }));
       }
@@ -161,7 +161,7 @@ package extractors
       public static function campBuyItem(param1:uint, param2:int, param3:int) : void
       {
          BSUIDataManager.dispatchEvent(new CustomEvent(EVENT_CAMP_BUY_ITEM,{
-            "serverHandleId":param1,
+            "serverHandleID":param1,
             "count":param2,
             "price":param3
          }));

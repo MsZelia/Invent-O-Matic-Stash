@@ -49,10 +49,10 @@ package utils
                return false;
             }
          }
-         if(itemProtection[item.serverHandleId] != null)
+         if(itemProtection[item.serverHandleID] != null)
          {
-            _protectionReason = itemProtection[item.serverHandleId];
-            return itemProtection[item.serverHandleId];
+            _protectionReason = itemProtection[item.serverHandleID];
+            return itemProtection[item.serverHandleID];
          }
          if(config.equipped && item.equipState == 1)
          {
@@ -83,7 +83,7 @@ package utils
                if(ItemWorker.isMatchingString(item.text,itemNames[i],config.matchMode))
                {
                   _protectionReason = NAMED;
-                  itemProtection[item.serverHandleId] = NAMED;
+                  itemProtection[item.serverHandleID] = NAMED;
                   return true;
                }
                i++;
@@ -97,7 +97,7 @@ package utils
          if(config.knownLegendaryMods && LegendaryMods.isKnownModName(item.text))
          {
             _protectionReason = KNOWN_LEGENDARY_MOD;
-            itemProtection[item.serverHandleId] = KNOWN_LEGENDARY_MOD;
+            itemProtection[item.serverHandleID] = KNOWN_LEGENDARY_MOD;
             return true;
          }
          return false;

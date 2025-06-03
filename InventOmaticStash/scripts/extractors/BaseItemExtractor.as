@@ -122,9 +122,9 @@ package extractors
          var inventory:Array = param1;
          inventory.forEach(function(param1:Object):void
          {
-            if(itemCardEntries[param1.serverHandleId])
+            if(itemCardEntries[param1.serverHandleID])
             {
-               param1.ItemCardEntries = itemCardEntries[param1.serverHandleId].itemCardEntries;
+               param1.ItemCardEntries = itemCardEntries[param1.serverHandleID].itemCardEntries;
             }
          });
       }
@@ -153,9 +153,9 @@ package extractors
                      {
                         parent.selectedList = inventory;
                         inventory.Active = true;
-                        GameApiDataExtractor.selectItem(item.serverHandleId,fromContainer);
+                        GameApiDataExtractor.selectItem(item.serverHandleID,fromContainer);
                         itemCardData = clone(GameApiDataExtractor.getInventoryItemCardData());
-                        itemCardEntries[itemCardData.serverHandleId] = itemCardData;
+                        itemCardEntries[itemCardData.serverHandleID] = itemCardData;
                         output.push(item);
                      }
                      catch(e:Error)
@@ -316,7 +316,7 @@ package extractors
       private function onInventoryItemCardDataUpdate(param1:FromClientDataEvent) : void
       {
          var _loc2_:Object = param1.data;
-         itemCardEntries[_loc2_.serverHandleId] = this.clone(_loc2_);
+         itemCardEntries[_loc2_.serverHandleID] = this.clone(_loc2_);
       }
    }
 }
