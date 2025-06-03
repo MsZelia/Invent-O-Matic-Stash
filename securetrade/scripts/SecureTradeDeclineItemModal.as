@@ -26,7 +26,7 @@ package
       
       public var Tooltip_mc:MovieClip;
       
-      public var ItemServerHandleId:Number = 0;
+      public var ItemServerHandleID:Number = 0;
       
       public function SecureTradeDeclineItemModal()
       {

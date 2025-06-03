@@ -433,7 +433,7 @@ package
       
       private var m_SelectedItemCount:Number = 0;
       
-      private var m_SelectedItemServerHandleId:Number = 0;
+      private var m_SelectedItemServerHandleID:Number = 0;
       
       private var m_SelectedItemIsPartialOffer:Boolean = false;
       
@@ -445,8 +445,6 @@ package
       
       public function SecureTrade()
       {
-         this.m_MenuMode = 4294967295;
-         this.m_CurrencyType = 4294967295;
          this.m_MenuMode = 4294967295;
          this.m_CurrencyType = 4294967295;
          this.__SFCodeObj = new Object();
@@ -1284,14 +1282,14 @@ package
             if(this.m_MenuMode == MODE_NPCVENDING)
             {
                BSUIDataManager.dispatchEvent(new CustomEvent(this.selectedList == this.PlayerInventory_mc ? EVENT_NPC_SELL_ITEM : EVENT_NPC_BUY_ITEM,{
-                  "serverHandleId":this.selectedListEntry.serverHandleId,
+                  "serverHandleID":this.selectedListEntry.serverHandleID,
                   "quantity":_loc2_
                }));
             }
             else if(this.m_MenuMode == MODE_VENDING_MACHINE)
             {
                BSUIDataManager.dispatchEvent(new CustomEvent(EVENT_CAMP_BUY_ITEM,{
-                  "serverHandleId":this.selectedListEntry.serverHandleId,
+                  "serverHandleID":this.selectedListEntry.serverHandleID,
                   "count":_loc2_,
                   "price":_loc3_
                }));
@@ -1299,7 +1297,7 @@ package
             else
             {
                BSUIDataManager.dispatchEvent(new CustomEvent(EVENT_REQUEST_PURCHASE,{
-                  "serverHandleId":this.selectedListEntry.serverHandleId,
+                  "serverHandleID":this.selectedListEntry.serverHandleID,
                   "count":_loc2_,
                   "price":_loc3_
                }));
@@ -1321,7 +1319,7 @@ package
          this.closeDeclineItemModal();
          this.ClearSelectedItemValues();
          BSUIDataManager.dispatchEvent(new CustomEvent(EVENT_DECLINE_ITEM,{
-            "serverHandleId":this.ModalDeclineItem_mc.ItemServerHandleId,
+            "serverHandleID":this.ModalDeclineItem_mc.ItemServerHandleID,
             "declineReason":this.ModalDeclineItem_mc.selectedIndex
          }));
       }
@@ -1358,7 +1356,7 @@ package
          if(_loc1_ || this.performContainerWeightCheck(this.selectedListEntry,this.ModalSetQuantity_mc.quantity))
          {
             BSUIDataManager.dispatchEvent(new CustomEvent(EVENT_TRANSFER_ITEM,{
-               "serverHandleId":this.selectedListEntry.serverHandleId,
+               "serverHandleID":this.selectedListEntry.serverHandleID,
                "quantity":this.ModalSetQuantity_mc.quantity,
                "fromContainer":_loc1_,
                "containerID":this.selectedListEntry.containerID
@@ -1369,7 +1367,7 @@ package
       private function qConfirm_TakePartialFromVendingOffer() : *
       {
          BSUIDataManager.dispatchEvent(new CustomEvent(EVENT_TRANSFER_ITEM,{
-            "serverHandleId":this.selectedListEntry.serverHandleId,
+            "serverHandleID":this.selectedListEntry.serverHandleID,
             "quantity":this.ModalSetQuantity_mc.quantity,
             "fromContainer":true,
             "containerID":this.selectedListEntry.containerID
@@ -1380,7 +1378,7 @@ package
       {
          var _loc1_:* = this.ModalSetQuantity_mc.quantity != this.selectedListEntry.count;
          BSUIDataManager.dispatchEvent(new CustomEvent(EVENT_CREATE_OFFER,{
-            "serverHandleId":this.selectedListEntry.serverHandleId,
+            "serverHandleID":this.selectedListEntry.serverHandleID,
             "price":this.ModalSetPrice_mc.quantity,
             "quantity":this.ModalSetQuantity_mc.quantity,
             "partialOffer":_loc1_
@@ -1392,7 +1390,7 @@ package
          var _loc1_:* = this.ModalSetQuantity_mc.quantity != this.selectedListEntry.count;
          var _loc2_:* = this.m_SelectedList == this.OfferInventory_mc;
          BSUIDataManager.dispatchEvent(new CustomEvent(EVENT_CAMP_SELL_ITEM,{
-            "serverHandleId":this.selectedListEntry.serverHandleId,
+            "serverHandleID":this.selectedListEntry.serverHandleID,
             "price":this.ModalSetPrice_mc.quantity,
             "quantity":this.ModalSetQuantity_mc.quantity,
             "partialOffer":_loc1_,
@@ -1532,7 +1530,7 @@ package
                   this.closeQuantityModal();
                }
                BSUIDataManager.dispatchEvent(new CustomEvent(EVENT_ITEM_SELECTED,{
-                  "serverHandleId":this.selectedListEntry.serverHandleId,
+                  "serverHandleID":this.selectedListEntry.serverHandleID,
                   "isSelectionValid":true,
                   "fromContainer":this.selectedList == this.OfferInventory_mc,
                   "containerID":this.selectedListEntry.containerID
@@ -1541,7 +1539,7 @@ package
             else
             {
                BSUIDataManager.dispatchEvent(new CustomEvent(EVENT_ITEM_SELECTED,{
-                  "serverHandleId":0,
+                  "serverHandleID":0,
                   "isSelectionValid":false,
                   "fromContainer":false,
                   "containerID":uint.MAX_VALUE
@@ -1642,7 +1640,7 @@ package
       private function onInventoryItemCardDataUpdate(param1:FromClientDataEvent) : void
       {
          var _loc2_:Object = param1.data;
-         if(_loc2_.serverHandleId != 0)
+         if(_loc2_.serverHandleID != 0)
          {
             this.UpdateItemCard(_loc2_.itemCardEntries,_loc2_.hasPlayerSellValue);
          }
@@ -1834,7 +1832,7 @@ package
             if(_loc1_.isCurrency)
             {
                BSUIDataManager.dispatchEvent(new CustomEvent(EVENT_TRANSFER_ITEM,{
-                  "serverHandleId":_loc1_.serverHandleId,
+                  "serverHandleID":_loc1_.serverHandleID,
                   "quantity":_loc1_.count,
                   "fromContainer":_loc2_,
                   "containerID":_loc1_.containerID
@@ -1846,7 +1844,7 @@ package
                if(this.m_CorpseLootMode)
                {
                   BSUIDataManager.dispatchEvent(new CustomEvent(EVENT_TRANSFER_ITEM,{
-                     "serverHandleId":_loc1_.serverHandleId,
+                     "serverHandleID":_loc1_.serverHandleID,
                      "quantity":_loc1_.count,
                      "fromContainer":_loc2_,
                      "containerID":_loc1_.containerID
@@ -1860,7 +1858,7 @@ package
             else if(_loc2_ || this.performContainerWeightCheck(_loc1_,1))
             {
                BSUIDataManager.dispatchEvent(new CustomEvent(EVENT_TRANSFER_ITEM,{
-                  "serverHandleId":_loc1_.serverHandleId,
+                  "serverHandleID":_loc1_.serverHandleID,
                   "quantity":1,
                   "fromContainer":_loc2_,
                   "containerID":_loc1_.containerID
@@ -1963,7 +1961,7 @@ package
                         if(_selectedEntry.isOffered == true)
                         {
                            BSUIDataManager.dispatchEvent(new CustomEvent(EVENT_TRANSFER_ITEM,{
-                              "serverHandleId":this.selectedListEntry.serverHandleId,
+                              "serverHandleID":this.selectedListEntry.serverHandleID,
                               "quantity":1,
                               "fromContainer":true,
                               "containerID":_selectedEntry.containerID
@@ -1985,7 +1983,7 @@ package
                         else
                         {
                            BSUIDataManager.dispatchEvent(new CustomEvent(EVENT_CAMP_DISPLAY_DECORATE_ITEM_IN_SLOT,{
-                              "serverHandleId":this.selectedListEntry.serverHandleId,
+                              "serverHandleID":this.selectedListEntry.serverHandleID,
                               "fromContainer":false
                            }));
                            GlobalFunc.PlayMenuSound(GlobalFunc.MENU_SOUND_OK);
@@ -2006,7 +2004,7 @@ package
                         if(_selectedEntry.isOffered == true)
                         {
                            BSUIDataManager.dispatchEvent(new CustomEvent(EVENT_TRANSFER_ITEM,{
-                              "serverHandleId":this.selectedListEntry.serverHandleId,
+                              "serverHandleID":this.selectedListEntry.serverHandleID,
                               "quantity":1,
                               "fromContainer":true,
                               "containerID":_selectedEntry.containerID
@@ -2028,7 +2026,7 @@ package
                         else
                         {
                            BSUIDataManager.dispatchEvent(new CustomEvent(EVENT_CAMP_DISPLAY_ITEM,{
-                              "serverHandleId":this.selectedListEntry.serverHandleId,
+                              "serverHandleID":this.selectedListEntry.serverHandleID,
                               "fromContainer":false
                            }));
                            this.DelayForItemProcessing();
@@ -2124,7 +2122,7 @@ package
                case SecureTradeShared.MACHINE_TYPE_FREEZER:
                case SecureTradeShared.MACHINE_TYPE_RECHARGER:
                   BSUIDataManager.dispatchEvent(new CustomEvent(EVENT_CAMP_REMOVE_ITEM,{
-                     "serverHandleId":_loc1_.serverHandleId,
+                     "serverHandleID":_loc1_.serverHandleID,
                      "quantity":_loc1_.count
                   }));
                   GlobalFunc.PlayMenuSound(GlobalFunc.MENU_SOUND_OK);
@@ -2133,7 +2131,7 @@ package
                case SecureTradeShared.MACHINE_TYPE_DISPLAY:
                case SecureTradeShared.MACHINE_TYPE_ALLY:
                case SecureTradeShared.MACHINE_TYPE_PET:
-                  BSUIDataManager.dispatchEvent(new CustomEvent(EVENT_CAMP_REMOVE_DECORATE_ITEM_IN_SLOT,{"serverHandleId":_loc1_.serverHandleId}));
+                  BSUIDataManager.dispatchEvent(new CustomEvent(EVENT_CAMP_REMOVE_DECORATE_ITEM_IN_SLOT,{"serverHandleID":_loc1_.serverHandleID}));
                   GlobalFunc.PlayMenuSound(GlobalFunc.MENU_SOUND_OK);
                   this.DelayForItemProcessing();
             }
@@ -2159,7 +2157,7 @@ package
                case MODE_PET:
                   _loc2_ = this.m_SelectedList == this.OfferInventory_mc;
                   BSUIDataManager.dispatchEvent(new CustomEvent(EVENT_CAMP_DISPLAY_DECORATE_ITEM_IN_SLOT,{
-                     "serverHandleId":_loc1_.serverHandleId,
+                     "serverHandleID":_loc1_.serverHandleID,
                      "fromContainer":_loc2_
                   }));
                   GlobalFunc.PlayMenuSound(GlobalFunc.MENU_SOUND_OK);
@@ -2176,7 +2174,7 @@ package
                case MODE_FREEZER:
                case MODE_RECHARGER:
                   BSUIDataManager.dispatchEvent(new CustomEvent(EVENT_CAMP_DISPLAY_ITEM,{
-                     "serverHandleId":_loc1_.serverHandleId,
+                     "serverHandleID":_loc1_.serverHandleID,
                      "fromContainer":true
                   }));
                   this.DelayForItemProcessing();
@@ -2206,20 +2204,20 @@ package
       
       private function onRequestItem() : void
       {
-         BSUIDataManager.dispatchEvent(new CustomEvent(EVENT_REQUEST_ITEM,{"serverHandleId":this.selectedListEntry.serverHandleId}));
+         BSUIDataManager.dispatchEvent(new CustomEvent(EVENT_REQUEST_ITEM,{"serverHandleID":this.selectedListEntry.serverHandleID}));
          GlobalFunc.PlayMenuSound(GlobalFunc.MENU_SOUND_OK);
       }
       
       private function onCancelRequestItem() : void
       {
-         BSUIDataManager.dispatchEvent(new CustomEvent(EVENT_CANCEL_REQUEST_ITEM,{"serverHandleId":this.selectedListEntry.serverHandleId}));
+         BSUIDataManager.dispatchEvent(new CustomEvent(EVENT_CANCEL_REQUEST_ITEM,{"serverHandleID":this.selectedListEntry.serverHandleID}));
          GlobalFunc.PlayMenuSound(GlobalFunc.MENU_SOUND_OK);
       }
       
       private function onInspectItem() : void
       {
          BSUIDataManager.dispatchEvent(new CustomEvent(EVENT_INSPECT_ITEM,{
-            "serverHandleId":this.selectedListEntry.serverHandleId,
+            "serverHandleID":this.selectedListEntry.serverHandleID,
             "fromContainer":this.selectedList == this.OfferInventory_mc,
             "containerID":this.selectedListEntry.containerID
          }));
@@ -2271,7 +2269,7 @@ package
          else
          {
             BSUIDataManager.dispatchEvent(new CustomEvent("Workbench::PrepScrapPrompt",{
-               "serverHandleId":this.selectedListEntry.serverHandleId,
+               "serverHandleID":this.selectedListEntry.serverHandleID,
                "quantity":param2
             }));
          }
@@ -2341,7 +2339,7 @@ package
          this.ModalDeclineItem_mc.Active = true;
          this.m_PreviousFocus = stage.focus;
          stage.focus = this.ModalDeclineItem_mc;
-         this.ModalDeclineItem_mc.ItemServerHandleId = this.selectedListEntry.serverHandleId;
+         this.ModalDeclineItem_mc.ItemServerHandleID = this.selectedListEntry.serverHandleID;
          this.updateModalActive();
          this.updateButtonHints();
          BSUIDataManager.dispatchEvent(new CustomEvent(EVENT_DECLINE_ITEM_OPEN,{}));
@@ -2961,7 +2959,7 @@ package
             this.SortButton.ButtonVisible = true;
             this.SortButton.ButtonText = this.m_SortFieldText[!!_loc3_ ? this.m_PlayerInventorySortField : this.m_OfferInventorySortField];
             this.ExitButton.ButtonVisible = true;
-            this.ShowHistoryButton.ButtonVisible = this.m_OwnsVendor && this.m_MenuMode !== MODE_PET;
+            this.ShowHistoryButton.ButtonVisible = this.m_OwnsVendor && !(this.m_MenuMode == MODE_ALLY || this.m_MenuMode == MODE_DISPLAY_CASE || this.m_MenuMode == MODE_FERMENTER || this.m_MenuMode == MODE_FREEZER || this.m_MenuMode == MODE_NPCVENDING || this.m_MenuMode == MODE_PET || this.m_MenuMode == MODE_RECHARGER || this.m_MenuMode == MODE_REFRIGERATOR);
             this.InspectButton.ButtonDisabled = this.selectedList == null || _loc2_ == null;
             this.ScrapButton.ButtonVisible = !_loc5_ && (this.m_isWorkbench || this.m_isWorkshop) && this.m_scrapAllowedFlag != 0;
             if(this.ScrapButton.ButtonVisible)
@@ -3312,13 +3310,13 @@ package
          var _loc2_:Array = null;
          var _loc3_:uint = 0;
          var _loc4_:Boolean = false;
-         if(!this.selectedListEntry || this.selectedListEntry.serverHandleId != this.m_SelectedItemServerHandleId)
+         if(!this.selectedListEntry || this.selectedListEntry.serverHandleID != this.m_SelectedItemServerHandleID)
          {
             _loc2_ = param1.List_mc.MenuListData;
             _loc3_ = 0;
             while(_loc3_ < _loc2_.length)
             {
-               if(_loc2_[_loc3_].serverHandleId == this.m_SelectedItemServerHandleId)
+               if(_loc2_[_loc3_].serverHandleID == this.m_SelectedItemServerHandleID)
                {
                   _loc4_ = param1.disableSelection_Inspectable;
                   param1.disableSelection_Inspectable = false;
@@ -3361,7 +3359,7 @@ package
          this.OfferInventory_mc.ItemList_mc.List_mc.MenuListData = param1;
          if(this.selectedList == this.OfferInventory_mc)
          {
-            if(this.m_RefreshSelectionOption == REFRESH_SELECTION_SERVER_ID && this.m_SelectedItemServerHandleId > 0)
+            if(this.m_RefreshSelectionOption == REFRESH_SELECTION_SERVER_ID && this.m_SelectedItemServerHandleID > 0)
             {
                this.selectItemViaHandleID(this.OfferInventory_mc.ItemList_mc);
             }
@@ -3412,7 +3410,7 @@ package
          this.PlayerInventory_mc.ItemList_mc.List_mc.MenuListData = this.m_OnNewTab ? this.m_NewItems : param1;
          if(this.selectedList == this.PlayerInventory_mc)
          {
-            if(this.m_RefreshSelectionOption == REFRESH_SELECTION_SERVER_ID && this.m_SelectedItemServerHandleId > 0)
+            if(this.m_RefreshSelectionOption == REFRESH_SELECTION_SERVER_ID && this.m_SelectedItemServerHandleID > 0)
             {
                this.selectItemViaHandleID(this.PlayerInventory_mc.ItemList_mc);
             }
@@ -3488,7 +3486,7 @@ package
          this.OfferInventory_mc.ItemList_mc.List_mc.MenuListData = listData;
          if(this.selectedList == this.OfferInventory_mc)
          {
-            if(this.m_RefreshSelectionOption == REFRESH_SELECTION_SERVER_ID && this.m_SelectedItemServerHandleId > 0)
+            if(this.m_RefreshSelectionOption == REFRESH_SELECTION_SERVER_ID && this.m_SelectedItemServerHandleID > 0)
             {
                this.selectItemViaHandleID(this.OfferInventory_mc.ItemList_mc);
             }
@@ -3639,7 +3637,7 @@ package
                   }
                   break;
                case "Select":
-                  if(!this.modalActive && this.m_OwnsVendor)
+                  if(!this.modalActive && this.m_OwnsVendor && !(this.m_MenuMode == MODE_ALLY || this.m_MenuMode == MODE_DISPLAY_CASE || this.m_MenuMode == MODE_FERMENTER || this.m_MenuMode == MODE_FREEZER || this.m_MenuMode == MODE_NPCVENDING || this.m_MenuMode == MODE_PET || this.m_MenuMode == MODE_RECHARGER || this.m_MenuMode == MODE_REFRIGERATOR))
                   {
                      this.onShowHistory();
                   }
@@ -3809,11 +3807,11 @@ package
                }
                if(_loc3_ == 0)
                {
-                  if(param1.serverHandleId < param2.serverHandleId)
+                  if(param1.serverHandleID < param2.serverHandleID)
                   {
                      _loc3_ = 1;
                   }
-                  else if(param1.serverHandleId > param2.serverHandleId)
+                  else if(param1.serverHandleID > param2.serverHandleID)
                   {
                      _loc3_ = -1;
                   }
@@ -3887,7 +3885,7 @@ package
             this.m_SelectedItemOffered = param1.isOffered;
             this.m_SelectedItemValue = param1.itemValue;
             this.m_SelectedItemCount = param1.count;
-            this.m_SelectedItemServerHandleId = param1.serverHandleId;
+            this.m_SelectedItemServerHandleID = param1.serverHandleID;
             this.m_SelectedItemIsPartialOffer = param1.partialOffer;
             this.m_RefreshSelectionOption = REFRESH_SELECTION_SERVER_ID;
          }
@@ -3899,7 +3897,7 @@ package
          this.m_SelectedItemOffered = false;
          this.m_SelectedItemValue = 0;
          this.m_SelectedItemCount = 0;
-         this.m_SelectedItemServerHandleId = 0;
+         this.m_SelectedItemServerHandleID = 0;
          this.m_SelectedItemIsPartialOffer = false;
          this.m_RefreshSelectionOption = REFRESH_SELECTION_NONE;
       }
@@ -3911,7 +3909,7 @@ package
          var _loc5_:Number = 0;
          while(_loc5_ < param1.length)
          {
-            if(param1[_loc5_].serverHandleId == this.m_SelectedItemServerHandleId && (param2 && !this.m_SelectedItemOffered || param1[_loc5_].partialOffer == this.m_SelectedItemIsPartialOffer))
+            if(param1[_loc5_].serverHandleID == this.m_SelectedItemServerHandleID && (param2 && !this.m_SelectedItemOffered || param1[_loc5_].partialOffer == this.m_SelectedItemIsPartialOffer))
             {
                _loc4_ = param1[_loc5_];
                break;

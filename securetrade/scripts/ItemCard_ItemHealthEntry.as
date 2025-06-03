@@ -28,7 +28,10 @@ package
       {
          if(ShowDurability)
          {
-            PopulateText(Label_tf.text + " [" + param1.durability + "] " + (param1.maximumHealth > 0 ? int(100 * param1.currentHealth / param1.maximumHealth) : "-"));
+            var hp:int = int(param1.currentHealth);
+            var maxhp:int = int(param1.maximumHealth);
+            var dur:int = int(param1.durability);
+            PopulateText(Label_tf.text + " [" + dur + "] " + (maxhp != 0 ? int(100 * hp / maxhp) : "-"));
          }
          GlobalFunc.updateConditionMeter(this.ConditionMeter_mc,param1.currentHealth,param1.maximumHealth,param1.durability);
       }

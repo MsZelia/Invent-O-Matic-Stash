@@ -74,7 +74,7 @@ package
          this.m_ScrapQuantity = param2;
          this.m_ItemData = {
             "text":param1.text,
-            "serverHandleId":param1.serverHandleId,
+            "serverHandleID":param1.serverHandleID,
             "favorite":param1.favorite,
             "isLegendary":param1.isLegendary,
             "isPremium":param1.isPremium
@@ -85,7 +85,7 @@ package
          m_CancelButton.ButtonText = "$CANCEL";
          Background_mc.width = this.m_BackgroundDefaultWidth;
          BSUIDataManager.dispatchEvent(new CustomEvent(EVENT_PREP_SCRAP_PROMPT,{
-            "serverHandleId":this.m_ItemData.serverHandleId,
+            "serverHandleID":this.m_ItemData.serverHandleID,
             "quantity":param2
          }));
          stage.focus = ComponentList_mc;
@@ -127,8 +127,8 @@ package
          this.m_ScrapQuantity = param2;
          this.m_ItemData = {
             "text":param1.text,
-            "clientHandleId":param1.clientHandleId,
-            "serverHandleId":param1.serverHandleId,
+            "clientHandleID":param1.clientHandleID,
+            "serverHandleID":param1.serverHandleID,
             "favorite":param1.favorite,
             "isLegendary":param1.isLegendary,
             "isPremium":param1.isPremium
@@ -139,7 +139,7 @@ package
          m_CancelButton.ButtonText = "$CANCEL";
          Background_mc.width = this.m_BackgroundDefaultWidth;
          BSUIDataManager.dispatchEvent(new CustomEvent(EVENT_SCRAPBOX_SCRAP_TRANSFER_PREP,{
-            "serverHandleId":this.m_ItemData.serverHandleId,
+            "serverHandleID":this.m_ItemData.serverHandleID,
             "quantity":param2
          }));
          stage.focus = ComponentList_mc;
@@ -154,7 +154,7 @@ package
          {
             case STATE_SCRAP:
                BSUIDataManager.dispatchEvent(new CustomEvent(EVENT_SCRAP_ITEM,{
-                  "serverHandleId":this.m_ItemData.serverHandleId,
+                  "serverHandleID":this.m_ItemData.serverHandleID,
                   "quantity":this.m_ScrapQuantity
                }));
                GlobalFunc.PlayMenuSound(GlobalFunc.MENU_SOUND_OK);
@@ -177,7 +177,7 @@ package
                break;
             case STATE_SCRAPBOX_SCRAP_TRANSFER_SELECTION:
                BSUIDataManager.dispatchEvent(new CustomEvent(EVENT_SCRAPBOX_SCRAP_TRANSFER_CONFIRM,{
-                  "serverHandleId":this.m_ItemData.serverHandleId,
+                  "serverHandleID":this.m_ItemData.serverHandleID,
                   "quantity":this.m_ScrapQuantity
                }));
                GlobalFunc.PlayMenuSound(GlobalFunc.MENU_SOUND_OK);
