@@ -34,7 +34,7 @@ package extractors
          var parent:MovieClip = param1;
          if(!isSfeDefined())
          {
-            ShowHUDMessage("SFE cannot be found. Items extraction cancelled.");
+            ShowHUDMessage("SFE cannot be found. Items extraction cancelled.",true);
             Logger.get().error("SFE cannot be found. Items extraction cancelled.");
             return;
          }

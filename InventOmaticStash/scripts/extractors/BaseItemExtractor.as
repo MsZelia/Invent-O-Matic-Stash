@@ -87,7 +87,7 @@ package extractors
          this.stashInventory = [];
          if(!this.isSfeDefined())
          {
-            this.ShowHUDMessage("SFE cannot be found. Items extraction cancelled.");
+            this.ShowHUDMessage("SFE cannot be found. Items extraction cancelled.",true);
             Logger.get().error("SFE cannot be found. Items extraction cancelled.");
             return;
          }
@@ -110,7 +110,7 @@ package extractors
                }
                catch(e:Error)
                {
-                  ShowHUDMessage("Error building output object " + e);
+                  ShowHUDMessage("Error building output object " + e,true);
                   Logger.get().error("Error building output object " + e);
                }
             },delay2);
@@ -185,7 +185,7 @@ package extractors
          }
          catch(e:Error)
          {
-            ShowHUDMessage("Error cloning object: " + e);
+            ShowHUDMessage("Error cloning object: " + e,true);
             Logger.get().error("Error cloning object: " + e);
          }
          return {};
@@ -198,18 +198,18 @@ package extractors
          {
             if(!this.isSfeDefined())
             {
-               this.ShowHUDMessage("SFE cannot be found. Items extraction cancelled.");
+               this.ShowHUDMessage("SFE cannot be found. Items extraction cancelled.",true);
                Logger.get().error("SFE cannot be found. Items extraction cancelled.");
                return;
             }
-            this.ShowHUDMessage("Starting extracting items!");
-            Logger.get().info("Starting extracting items!");
+            this.ShowHUDMessage("Starting item extraction!",true);
+            Logger.get().info("Starting item extraction!");
             itemsModIni = this.buildOutputObject();
             this.writeData(itemsModIni is String ? itemsModIni : toString(itemsModIni));
          }
          catch(e:Error)
          {
-            ShowHUDMessage("Error extracting items(core): " + e);
+            ShowHUDMessage("Error extracting items(core): " + e,true);
             Logger.get().error("Error extracting items(core): " + e);
          }
       }
@@ -255,13 +255,13 @@ package extractors
             }
             else
             {
-               this.ShowHUDMessage("Cannot find SFE, writing to file cancelled!");
+               this.ShowHUDMessage("Cannot find SFE, writing to file cancelled!",true);
                Logger.get().error("Cannot find SFE, writing to file cancelled!");
             }
          }
          catch(e:Error)
          {
-            ShowHUDMessage("Error saving items! " + e);
+            ShowHUDMessage("Error saving items! " + e,true);
             Logger.get().error("Error saving items! " + e);
          }
       }
