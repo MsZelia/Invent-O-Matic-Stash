@@ -1036,12 +1036,7 @@ package
          }
          else if(param1.keyCode == Keyboard.F8)
          {
-            if(this.config.regex != null)
-            {
-               var matches:Array = this.parentClip.selectedListEntry.text.match(this.config.regex);
-               Logger.get().info(this.parentClip.selectedListEntry.text + " matches for regex (" + this.config.regex + "):");
-               matches.forEach(Logger.get().info);
-            }
+            Logger.get().info("F8");
          }
          else if(param1.keyCode == Keyboard.F9)
          {
