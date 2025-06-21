@@ -441,7 +441,6 @@ package
          var fromContainer:Boolean = this.isSelectedContainer;
          var amount:int = 0;
          var isMatching:Boolean = false;
-         var transferLegendary:int = 0;
          var delay:uint = 0;
          var repeat:uint = 1;
          _queue = new Vector.<Object>();
@@ -449,7 +448,7 @@ package
          {
             if(selectedItem && config)
             {
-               transferLegendary = int(config.transferLegendaries);
+               config.transferLegendaries = prepTransferLegendaries(config);
                if(!Boolean(config.transferFavorite) && selectedItem.favorite)
                {
                   if(config.debug)
@@ -475,7 +474,7 @@ package
                   return 0;
                }
                isMatching = isItemMatchingConfig(selectedItem,config);
-               if(Boolean(transferLegendary) && selectedItem.numLegendaryStars >= transferLegendary || isMatching)
+               if(selectedItem.isLegendary && config.transferLegendaries.indexOf(selectedItem.numLegendaryStars) != -1 || isMatching)
                {
                   amount = getAmount(int(config.amount),selectedItem.count);
                   if(amount != 0)
@@ -560,18 +559,12 @@ package
          return prepItemNames;
       }
       
-      private function findMatches(inventory:Array, sectionConfig:Object) : Array
+      private function prepTransferLegendaries(sectionConfig:Object) : Array
       {
-         var index:int = 0;
-         var indexNames:int = 0;
-         var indexNamesAlts:int = 0;
-         var item:Object = null;
-         var isMatching:Boolean = false;
-         errorCode = "newMatches";
-         var newMatches:Array = new Array(sectionConfig.itemNames.length);
-         errorCode = "transferTaggedForSearch";
-         var transferTaggedForSearch:Boolean = Boolean(sectionConfig.transferTaggedForSearch);
-         errorCode = "transferLegendaries";
+         if(!sectionConfig)
+         {
+            return [];
+         }
          if(sectionConfig.transferLegendaries is Array)
          {
             errorCode = "transferLegendaries array";
@@ -598,7 +591,22 @@ package
             errorCode = "transferLegendaries false";
             transferLegendaries = [];
          }
-         sectionConfig.transferLegendaries = transferLegendaries;
+         return transferLegendaries;
+      }
+      
+      private function findMatches(inventory:Array, sectionConfig:Object) : Array
+      {
+         var index:int = 0;
+         var indexNames:int = 0;
+         var indexNamesAlts:int = 0;
+         var item:Object = null;
+         var isMatching:Boolean = false;
+         errorCode = "newMatches";
+         var newMatches:Array = new Array(sectionConfig.itemNames.length);
+         errorCode = "transferTaggedForSearch";
+         var transferTaggedForSearch:Boolean = Boolean(sectionConfig.transferTaggedForSearch);
+         errorCode = "transferLegendaries";
+         sectionConfig.transferLegendaries = prepTransferLegendaries(sectionConfig);
          errorCode = "loop itemNames";
          while(indexNames < sectionConfig.itemNames.length)
          {
@@ -645,7 +653,7 @@ package
                   {
                      errorCode = "loopInv " + index + " check2 " + indexNames + " " + indexNamesAlts;
                      isMatching = isMatchingType(item,sectionConfig) && isMatchingString(item.text,sectionConfig.itemNames[indexNames][indexNamesAlts],sectionConfig.matchMode);
-                     if(isMatching || transferLegendaries.indexOf(item.numLegendaryStars) != -1 || transferTaggedForSearch && item.taggedForSearch)
+                     if(isMatching || item.isLegendary && sectionConfig.transferLegendaries.indexOf(item.numLegendaryStars) != -1 || transferTaggedForSearch && item.taggedForSearch)
                      {
                         newMatches[indexNames][indexNamesAlts].push(item);
                      }
