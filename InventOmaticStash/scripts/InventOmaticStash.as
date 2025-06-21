@@ -409,7 +409,7 @@ package
       
       private function init() : void
       {
-         this.ItemCardData.init();
+         ItemCardData.init();
          this._itemExtractor.init(config.extractConfig);
          this._customFormatExtractor.init(config.extractConfig);
          this.initTabs();
