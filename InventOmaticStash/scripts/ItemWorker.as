@@ -672,6 +672,7 @@ package
          var fromContainer:Boolean = param2;
          var config:Object = param3;
          var countItemsToTransfer:Boolean = false;
+         var end:Boolean = false;
          var i:int = 0;
          var delay:uint = 0;
          var repeat:uint = 1;
@@ -707,7 +708,7 @@ package
                {
                   amountItemsTransferred = 0;
                   j = 0;
-                  while(j < filtered[i].length)
+                  while(!end && j < filtered[i].length)
                   {
                      k = 0;
                      while(k < filtered[i][j].length)
@@ -748,8 +749,8 @@ package
                            amountStacksTransferred++;
                            if(countItemsToTransfer && amountStacksTransferred > maxItems)
                            {
-                              j = int.MAX_VALUE;
-                              i = int.MAX_VALUE;
+                              i = int.MAX_VALUE - 1;
+                              end = true;
                               break;
                            }
                            if(config.debug)
@@ -782,7 +783,7 @@ package
                            {
                               if(singleItemPerName)
                               {
-                                 j = int.MAX_VALUE;
+                                 j = int.MAX_VALUE - 1;
                                  break;
                               }
                            }
@@ -1636,7 +1637,14 @@ package
          var DELAY:uint = 0;
          if(debug)
          {
-            Logger.get().info(actionName + " " + _queue.length + " queued item(s) with delay: " + delay + "ms, repeat: " + repeat + " time(s)");
+            if(repeat > 1)
+            {
+               Logger.get().info(actionName + " " + _queue.length + " item(s) with delay: " + delay + "ms, repeat: " + repeat + " times");
+            }
+            else
+            {
+               Logger.get().info(actionName + " " + _queue.length + " item(s) with delay: " + delay + "ms");
+            }
          }
          if(showMessage)
          {
