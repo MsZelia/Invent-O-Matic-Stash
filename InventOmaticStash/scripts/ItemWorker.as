@@ -5,6 +5,7 @@ package
    import com.adobe.serialization.json.JSONEncoder;
    import extractors.GameApiDataExtractor;
    import flash.utils.setTimeout;
+   import utils.ItemCardData;
    import utils.Logger;
    import utils.Parser;
    
@@ -343,16 +344,12 @@ package
          return false;
       }
       
-      private static function isItemMatchingConfig(param1:Object, param2:Object, isAlt:Boolean = false) : Boolean
+      private static function isItemMatchingConfig(param1:Object, param2:Object) : Boolean
       {
          param3 = String(param1.text);
          if(param3 == null || param3.length < 1 || param3 == "")
          {
             return false;
-         }
-         if(isAlt)
-         {
-            return isMatchingItemName(param3,param2,isAlt);
          }
          return isMatchingType(param1,param2) && isMatchingItemName(param3,param2);
       }
@@ -1455,6 +1452,51 @@ package
          return false;
       }
       
+      private function selectItemCardEntries(inventory:Array, config:Object, fromContainer:Boolean, initDelay:uint) : uint
+      {
+         var delay:uint;
+         var delayStep:uint;
+         try
+         {
+            Logger.get().info("inv " + inventory.length);
+            delay = initDelay;
+            Logger.get().info("delay " + delay);
+            delayStep = Parser.parsePositiveNumber(config.itemCardEntryDelayStep,150);
+            Logger.get().info("delayStep " + delayStep);
+            i = 0;
+            while(i < inventory.length)
+            {
+               if(inventory[i].isLegendary)
+               {
+                  if(isItemMatchingConfig(inventory[i],config))
+                  {
+                     if(ItemCardData.get(inventory[i].serverHandleID) == null)
+                     {
+                        delay += delayStep;
+                        Logger.get().info("itemCardData not found for: " + inventory[i].text);
+                        setTimeout(function(id:uint, text:String, delay:uint):*
+                        {
+                           GameApiDataExtractor.selectItem(id,fromContainer);
+                           Logger.get().info("Get itemCardData for: " + text + ", d:" + delay + "ms");
+                        },delay,inventory[i].serverHandleID,inventory[i].text,delay);
+                     }
+                     else
+                     {
+                        Logger.get().info(ItemCardData.get(inventory[i].serverHandleID).itemCardEntries.length + " itemCardData exists for: " + inventory[i].text);
+                     }
+                  }
+               }
+               i++;
+            }
+            return delay + delayStep;
+         }
+         catch(e:Error)
+         {
+            Logger.get().errorHandler("Error selecting item card entries",e);
+         }
+         return 0;
+      }
+      
       public function lootItems() : void
       {
          if(this.isValidLootConfig())
@@ -1494,8 +1536,11 @@ package
          var config:Object;
          var hotkeyMatch:Boolean;
          var execNext:*;
+         var direction:String;
          var indexConfig:int = 0;
          var validConfigs:Array = [];
+         var fetchItemCardEntriesDelay:uint = 0;
+         var checkLegendaryEffects:Boolean = false;
          while(indexConfig < _config.transferConfig.length)
          {
             config = _config.transferConfig[indexConfig];
@@ -1503,9 +1548,27 @@ package
             if(hotkeyMatch && this.isValidTransferConfig(config,true))
             {
                Logger.get().info("Valid transfer config: " + config.name);
+               if(config.checkLegendaryEffects)
+               {
+                  checkLegendaryEffects = true;
+                  Logger.get().info("Checking legendary effects for: " + config.name);
+                  direction = String(config.direction);
+                  if(DIRECTION_TO_CONTAINER === direction ^ shift)
+                  {
+                     fetchItemCardEntriesDelay += selectItemCardEntries(_playerInventory,config,false,fetchItemCardEntriesDelay);
+                  }
+                  else
+                  {
+                     fetchItemCardEntriesDelay += selectItemCardEntries(_stashInventory,config,true,fetchItemCardEntriesDelay);
+                  }
+               }
                validConfigs.push(config);
             }
             indexConfig++;
+         }
+         if(checkLegendaryEffects)
+         {
+            return;
          }
          indexConfig = 0;
          execNext = function():void
@@ -1536,7 +1599,14 @@ package
                setTimeout(execNext,delay);
             }
          };
-         execNext();
+         if(fetchItemCardEntriesDelay > 0)
+         {
+            setTimeout(execNext,fetchItemCardEntriesDelay);
+         }
+         else
+         {
+            execNext();
+         }
       }
       
       public function scrapItems() : void
