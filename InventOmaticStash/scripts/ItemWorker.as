@@ -4,7 +4,7 @@ package
    import Shared.GlobalFunc;
    import com.adobe.serialization.json.JSONEncoder;
    import extractors.GameApiDataExtractor;
-   import flash.utils.setTimeout;
+   import flash.utils.*;
    import utils.*;
    
    public class ItemWorker
@@ -1700,11 +1700,11 @@ package
                   direction = String(config.direction);
                   if(DIRECTION_TO_CONTAINER === direction ^ shift)
                   {
-                     fetchItemCardEntriesDelay += selectItemCardEntries(_playerInventory,config,false,fetchItemCardEntriesDelay);
+                     fetchItemCardEntriesDelay = selectItemCardEntries(_playerInventory,config,false,fetchItemCardEntriesDelay);
                   }
                   else
                   {
-                     fetchItemCardEntriesDelay += selectItemCardEntries(_stashInventory,config,true,fetchItemCardEntriesDelay);
+                     fetchItemCardEntriesDelay = selectItemCardEntries(_stashInventory,config,true,fetchItemCardEntriesDelay);
                   }
                }
                validConfigs.push(config);

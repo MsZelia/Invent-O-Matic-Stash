@@ -858,6 +858,10 @@ package utils
       
       public static function getArmorTypeFromName(itemText:String, isLocalized:Boolean = false) : String
       {
+         if(itemText.indexOf(ARMOR_TYPES["RAIDER_POWER"]) != -1)
+         {
+            return isLocalized ? ARMOR_TYPES["RAIDER_POWER"] : "RAIDER_POWER";
+         }
          for(type in ARMOR_TYPES)
          {
             if(itemText.indexOf(ARMOR_TYPES[type]) != -1)
