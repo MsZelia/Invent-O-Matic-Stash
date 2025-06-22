@@ -878,6 +878,7 @@ package utils
          var piece:String;
          var sResistances:*;
          var grade:String;
+         var sResistancesHazmat:String;
          var errorCode:String = 0;
          try
          {
@@ -969,13 +970,14 @@ package utils
                {
                   errorCode = "res 25r";
                   resistances[2] -= 25;
-                  sResistances = resistances.join("/");
+                  sResistancesHazmat = resistances.join("/");
                   errorCode = "grade 25r";
-                  grade = GRADED_ARMOR[armorType][piece]["DEFAULT"][armorLevel][sResistances];
+                  grade = GRADED_ARMOR[armorType][piece]["DEFAULT"][armorLevel][sResistancesHazmat];
                   if(!grade)
                   {
                      return sResistances;
                   }
+                  return grade;
                }
                return sResistances;
             }
