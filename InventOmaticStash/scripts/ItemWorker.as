@@ -771,7 +771,12 @@ package
             }
             errorCode = "armorGrade";
             armorGrade = ArmorGrade.lookupArmorGrade(item);
-            Logger.get().info(item.text + " grade: " + armorGrade);
+            if(armorGrade != "" && config.armorGrades.indexOf(armorGrade))
+            {
+               Logger.get().info(item.text + " MATCHES, grade: " + armorGrade);
+               return true;
+            }
+            Logger.get().info(item.text + " DOES NOT MATCH, grade: " + armorGrade);
          }
          catch(e:*)
          {

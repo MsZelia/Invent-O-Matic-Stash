@@ -739,7 +739,19 @@ package utils
          "THORN":"LIGHT",
          "BROTHERHOOD":"HEAVY",
          "SECRET_SERVICE":"HEAVY",
-         "CIVIL_ENGINEER":"STURDY"
+         "CIVIL_ENGINEER":"STURDY",
+         "RAIDER_POWER":"POWER",
+         "EXCAVATOR":"POWER",
+         "HELLCAT":"POWER",
+         "STRANGLER_HEART":"POWER",
+         "T_45":"POWER",
+         "T_51B":"POWER",
+         "T_60":"POWER",
+         "T_65":"POWER",
+         "ULTRACITE":"POWER",
+         "UNION":"POWER",
+         "VULCAN":"POWER",
+         "X_01":"POWER"
       };
       
       private static var ARMOR_TYPES:Object = {
@@ -771,13 +783,15 @@ package utils
          "T_65":"T-65",
          "ULTRACITE":"Ultracite",
          "UNION":"Union",
+         "VULCAN":"VULCAN",
          "X_01":"X-01"
       };
       
       private static var ARMOR_GRADES:Object = {
          "LIGHT":"Light",
          "STURDY":"Sturdy",
-         "HEAVY":"Heavy"
+         "HEAVY":"Heavy",
+         "POWER":"Power"
       };
       
       private static var ARMOR_PIECES:Object = {
