@@ -727,22 +727,22 @@ package utils
       };
       
       private static const UNGRADED_ARMOR:Object = {
-         "WOOD":"LIGHT",
-         "BOTSMITH":"HEAVY",
-         "MARINE":"STURDY",
          "ARCTIC_MARINE":"STURDY",
-         "TRAPPER":"STURDY",
-         "FOREST_SCOUT":"LIGHT",
-         "URBAN_SCOUT":"LIGHT",
+         "BOTSMITH":"HEAVY",
+         "BROTHERHOOD":"HEAVY",
+         "CIVIL_ENGINEER":"STURDY",
          "COVERT_SCOUT":"LIGHT",
+         "FOREST_SCOUT":"LIGHT",
+         "MARINE":"STURDY",
+         "SECRET_SERVICE":"HEAVY",
          "SOLAR":"LIGHT",
          "THORN":"LIGHT",
-         "BROTHERHOOD":"HEAVY",
-         "SECRET_SERVICE":"HEAVY",
-         "CIVIL_ENGINEER":"STURDY",
-         "RAIDER_POWER":"POWER",
+         "TRAPPER":"STURDY",
+         "URBAN_SCOUT":"LIGHT",
+         "WOOD":"LIGHT",
          "EXCAVATOR":"POWER",
          "HELLCAT":"POWER",
+         "RAIDER_POWER":"POWER",
          "STRANGLER_HEART":"POWER",
          "T_45":"POWER",
          "T_51B":"POWER",
@@ -755,15 +755,13 @@ package utils
       };
       
       private static var ARMOR_TYPES:Object = {
-         "RAIDER_POWER":"Raider Power",
          "ARCTIC_MARINE":"Arctic Marine",
-         "BROTHERHOOD":"Brotherhood",
          "BOTSMITH":"Botsmith",
+         "BROTHERHOOD":"Brotherhood",
          "CIVIL_ENGINEER":"Civil Engineer",
          "COMBAT":"Combat",
          "COVERT_SCOUT":"Covert Scout",
          "FOREST_SCOUT":"Forest Scout",
-         "URBAN_SCOUT":"Urban Scout",
          "LEATHER":"Leather",
          "MARINE":"Marine",
          "METAL":"Metal",
@@ -773,9 +771,11 @@ package utils
          "SOLAR":"Solar",
          "THORN":"Thorn",
          "TRAPPER":"Trapper",
+         "URBAN_SCOUT":"Urban Scout",
          "WOOD":"Wood",
          "EXCAVATOR":"Excavator",
          "HELLCAT":"Hellcat",
+         "RAIDER_POWER":"Raider Power",
          "STRANGLER_HEART":"Strangler Heart",
          "T_45":"T-45",
          "T_51B":"T-51b",
@@ -783,7 +783,7 @@ package utils
          "T_65":"T-65",
          "ULTRACITE":"Ultracite",
          "UNION":"Union",
-         "VULCAN":"VULCAN",
+         "VULCAN":"Vulcan",
          "X_01":"X-01"
       };
       
@@ -825,15 +825,34 @@ package utils
       };
       
       private static var ARMOR_MOD_LEADED:String = "Leaded";
-      
-      private static const ARMOR_GRADE_HEAVY:String = "HEAVY";
-      
-      private static const ARMOR_GRADE_STURDY:String = "STURDY";
        
       
       public function ArmorGrade()
       {
          super();
+      }
+      
+      public static function initLocalization(config:Object) : void
+      {
+         var property:* = null;
+         for(property in config)
+         {
+            switch(property)
+            {
+               case "ARMOR_MOD_LEADED":
+                  ARMOR_MOD_LEADED = config[property];
+                  break;
+               case "ARMOR_PREFIXES":
+               case "ARMOR_GRADES":
+               case "ARMOR_PIECES":
+               case "ARMOR_TYPES":
+                  for(entry in config[property])
+                  {
+                     ArmorGrade[property][entry] = config[property][entry];
+                  }
+                  break;
+            }
+         }
       }
       
       private static function reduceResistances(initResistances:Array, resistances:Array) : Array
@@ -843,9 +862,10 @@ package utils
       
       public static function getArmorPieceFromName(itemText:String, isLocalized:Boolean = false) : String
       {
+         itemText = itemText.toLowerCase();
          for(piece in ARMOR_PIECES)
          {
-            if(ARMOR_PIECES[piece].split("||").some(function(element:*, index:int, arr:Array):Boolean
+            if(ARMOR_PIECES[piece].toLowerCase().split("||").some(function(element:*, index:int, arr:Array):Boolean
             {
                return itemText.indexOf(element) != -1;
             }))
@@ -858,13 +878,14 @@ package utils
       
       public static function getArmorTypeFromName(itemText:String, isLocalized:Boolean = false) : String
       {
-         if(itemText.indexOf(ARMOR_TYPES["RAIDER_POWER"]) != -1)
+         itemText = itemText.toLowerCase();
+         if(itemText.indexOf(ARMOR_TYPES["RAIDER_POWER"].toLowerCase()) != -1)
          {
             return isLocalized ? ARMOR_TYPES["RAIDER_POWER"] : "RAIDER_POWER";
          }
          for(type in ARMOR_TYPES)
          {
-            if(itemText.indexOf(ARMOR_TYPES[type]) != -1)
+            if(itemText.indexOf(ARMOR_TYPES[type].toLowerCase()) != -1)
             {
                return isLocalized ? ARMOR_TYPES[type] : type;
             }
@@ -874,13 +895,14 @@ package utils
       
       private static function getArmorGradeFromName(itemText:String) : String
       {
-         if(itemText.indexOf(ARMOR_GRADES[ARMOR_GRADE_HEAVY]) != -1)
+         itemText = itemText.toLowerCase();
+         if(itemText.indexOf(ARMOR_GRADES["HEAVY"].toLowerCase()) != -1)
          {
-            return ARMOR_GRADE_HEAVY;
+            return "HEAVY";
          }
-         if(itemText.indexOf(ARMOR_GRADES[ARMOR_GRADE_STURDY]) != -1)
+         if(itemText.indexOf(ARMOR_GRADES["STURDY"].toLowerCase()) != -1)
          {
-            return ARMOR_GRADE_STURDY;
+            return "STURDY";
          }
          return "";
       }
@@ -905,7 +927,7 @@ package utils
             {
                return "";
             }
-            armorFullName = item.text;
+            armorFullName = item.text.toLowerCase();
             grade = getArmorGradeFromName(armorFullName);
             if(grade != "")
             {
@@ -971,13 +993,13 @@ package utils
             for(material in GRADED_ARMOR[armorType][piece])
             {
                errorCode = "material " + material;
-               if(material != "DEFAULT" && armorFullName.indexOf(ARMOR_PREFIXES[material]) != -1)
+               if(material != "DEFAULT" && armorFullName.indexOf(ARMOR_PREFIXES[material].toLowerCase()) != -1)
                {
                   resistances = reduceResistances(resistances,GRADED_ARMOR[armorType][piece][material][armorLevel] || [0,0,0]);
                }
             }
             errorCode = "leaded";
-            if(resistances[2] >= 10 && armorFullName.indexOf(ARMOR_MOD_LEADED) != -1)
+            if(resistances[2] >= 10 && armorFullName.indexOf(ARMOR_MOD_LEADED.toLowerCase()) != -1)
             {
                resistances[2] -= 10;
             }

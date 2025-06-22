@@ -410,6 +410,7 @@ package
       private function init() : void
       {
          ItemCardData.init();
+         ArmorGrade.initLocalization(config.localizationConfig);
          this._itemExtractor.init(config.extractConfig);
          this._customFormatExtractor.init(config.extractConfig);
          this.initTabs();

@@ -181,6 +181,10 @@ package
                }
             }
          }
+         if(!config.localizationConfig)
+         {
+            config.localizationConfig = {};
+         }
          config.categoryWeightConfig = loadCategoryWeightConfig(config.categoryWeightConfig);
          config.itemNamesGroupConfig = loadItemNamesGroupConfig(config.itemNamesGroupConfig);
          initHotkeys(config);
@@ -311,7 +315,7 @@ package
             if(config.enabled)
             {
                config.weightLabelWidth = Parser.parsePositiveNumber(config.weightLabelWidth,200);
-               config.itemCardDelay = Parser.parsePositiveNumber(config.itemCardDelay,75);
+               config.itemCardDelay = Parser.parsePositiveNumber(config.itemCardDelay,100);
                config.itemCardFilters = config.itemCardFilters && config.itemCardFilters.length > 0 ? config.itemCardFilters : new Array();
             }
             return config;

@@ -773,10 +773,16 @@ package
             armorGrade = ArmorGrade.lookupArmorGrade(item);
             if(armorGrade != "" && config.armorGrades.indexOf(armorGrade) != -1)
             {
-               Logger.get().info(item.text + " MATCHES, grade: " + armorGrade);
+               if(config.debug)
+               {
+                  Logger.get().info(item.text + " MATCHES, grade: " + armorGrade);
+               }
                return true;
             }
-            Logger.get().info(item.text + " DOES NOT MATCH, grade: " + armorGrade);
+            if(config.debug)
+            {
+               Logger.get().info(item.text + " DOES NOT MATCH, grade: " + armorGrade);
+            }
          }
          catch(e:*)
          {
@@ -821,7 +827,10 @@ package
                      legMods.push(legMod);
                      if(legMod == null)
                      {
-                        Logger.get().info(item.text + " DOES NOT MATCH, effect not found on slot: " + i);
+                        if(config.debug)
+                        {
+                           Logger.get().info(item.text + " DOES NOT MATCH, effect not found on slot: " + i);
+                        }
                         return false;
                      }
                      if(!config.legendaryEffects.some(function(element:*, index:int, arr:Array):Boolean
@@ -829,12 +838,18 @@ package
                         return legMod.indexOf(element) != -1;
                      }))
                      {
-                        Logger.get().info(item.text + " DOES NOT MATCH, contains: " + legMod);
+                        if(config.debug)
+                        {
+                           Logger.get().info(item.text + " DOES NOT MATCH, contains: " + legMod);
+                        }
                         return false;
                      }
                      i++;
                   }
-                  Logger.get().info(item.text + " MATCHES, effects: " + legMods.join("/"));
+                  if(config.debug)
+                  {
+                     Logger.get().info(item.text + " MATCHES, effects: " + legMods.join("/"));
+                  }
                   return true;
                case MatchMode.CONTAINS:
                   i = 1;
@@ -847,12 +862,18 @@ package
                         return legMod.indexOf(element) != -1;
                      }))
                      {
-                        Logger.get().info(item.text + " MATCHES, contains: " + legMod);
+                        if(config.debug)
+                        {
+                           Logger.get().info(item.text + " MATCHES, contains: " + legMod);
+                        }
                         return true;
                      }
                      i++;
                   }
-                  Logger.get().info(item.text + " DOES NOT MATCH, effects: " + legMods.join("/"));
+                  if(config.debug)
+                  {
+                     Logger.get().info(item.text + " DOES NOT MATCH, effects: " + legMods.join("/"));
+                  }
                   return false;
                case MatchMode.NOT_CONTAINS:
                   i = 1;
@@ -865,12 +886,18 @@ package
                         return legMod.indexOf(element) != -1;
                      }))
                      {
-                        Logger.get().info(item.text + " DOES NOT MATCH, contains: " + legMod);
+                        if(config.debug)
+                        {
+                           Logger.get().info(item.text + " DOES NOT MATCH, contains: " + legMod);
+                        }
                         return false;
                      }
                      i++;
                   }
-                  Logger.get().info(item.text + " MATCHES, effects: " + legMods.join("/"));
+                  if(config.debug)
+                  {
+                     Logger.get().info(item.text + " MATCHES, effects: " + legMods.join("/"));
+                  }
                   return true;
                default:
                   Logger.get().error("Invalid legendary match mode: " + config.legendaryEffectsMatchMode);
@@ -1160,7 +1187,10 @@ package
                               if(countItemsToScrap && ++scrappedCount >= maxItems)
                               {
                                  end = true;
-                                 Logger.get().info("Scrap maxItems limit reached: " + maxItems);
+                                 if(config.debug)
+                                 {
+                                    Logger.get().info("Scrap maxItems limit reached: " + maxItems);
+                                 }
                               }
                               break;
                            }
@@ -1246,12 +1276,18 @@ package
             {
                if(vendorCurrency == 0)
                {
-                  Logger.get().info("Vendor has no currency left!");
+                  if(config.debug)
+                  {
+                     Logger.get().info("Vendor has no currency left!");
+                  }
                   return;
                }
                if(playerCurrency == playerCurrencyMax)
                {
-                  Logger.get().info("Player already at max currency!");
+                  if(config.debug)
+                  {
+                     Logger.get().info("Player already at max currency!");
+                  }
                   return;
                }
                if(config.maxItems > 0)
@@ -1287,13 +1323,19 @@ package
                         if(vendorCurrency == 0)
                         {
                            end = true;
-                           Logger.get().info("Vendor has no currency left!");
+                           if(config.debug)
+                           {
+                              Logger.get().info("Vendor has no currency left!");
+                           }
                            break;
                         }
                         if(playerCurrency == playerCurrencyMax)
                         {
                            end = true;
-                           Logger.get().info("Player reached max currency (" + playerCurrencyMax + ")!");
+                           if(config.debug)
+                           {
+                              Logger.get().info("Player reached max currency (" + playerCurrencyMax + ")!");
+                           }
                            break;
                         }
                         configAmount = int(Parser.parseNumber(validConfigs[subConfigIndex].amount));
@@ -1330,7 +1372,10 @@ package
                            if(countItemsToSell && ++itemsSold >= config.maxItems)
                            {
                               end = true;
-                              Logger.get().info("NPC sell maxItems limit reached: " + config.maxItems);
+                              if(config.debug)
+                              {
+                                 Logger.get().info("NPC sell maxItems limit reached: " + config.maxItems);
+                              }
                               break;
                            }
                         }
@@ -1605,29 +1650,28 @@ package
          var delayStep:uint;
          try
          {
-            Logger.get().info("inv " + inventory.length);
             delay = initDelay;
-            Logger.get().info("delay " + delay);
-            delayStep = Parser.parsePositiveNumber(config.delayItemCardStep,150);
-            Logger.get().info("delayStep " + delayStep);
+            delayStep = Parser.parsePositiveNumber(config.delayItemCardStep,100);
             i = 0;
             while(i < inventory.length)
             {
-               if(inventory[i].isLegendary)
+               if(inventory[i].isLegendary || inventory[i].filterFlag & 8)
                {
                   if(isItemMatchingConfig(inventory[i],config))
                   {
                      if(ItemCardData.get(inventory[i].serverHandleID) == null)
                      {
                         delay += delayStep;
-                        Logger.get().info("itemCardData not found for: " + inventory[i].text);
                         setTimeout(function(id:uint, text:String, delay:uint):*
                         {
                            GameApiDataExtractor.selectItem(id,fromContainer);
-                           Logger.get().info("Get itemCardData for: " + text + ", d:" + delay + "ms");
+                           if(config.debug)
+                           {
+                              Logger.get().info("Get itemCardData for: " + text + ", d:" + delay + "ms");
+                           }
                         },delay,inventory[i].serverHandleID,inventory[i].text,delay);
                      }
-                     else
+                     else if(config.debug)
                      {
                         Logger.get().info(ItemCardData.get(inventory[i].serverHandleID).itemCardEntries.length + " itemCardData exists for: " + inventory[i].text);
                      }
@@ -1696,7 +1740,10 @@ package
                Logger.get().info("Valid transfer config: " + config.name);
                if(config.checkLegendaryEffects || config.checkArmorGrade)
                {
-                  Logger.get().info("Checking item card entries for: " + config.name);
+                  if(config.debug)
+                  {
+                     Logger.get().info("Checking item card entries for: " + config.name);
+                  }
                   direction = String(config.direction);
                   if(DIRECTION_TO_CONTAINER === direction ^ shift)
                   {
