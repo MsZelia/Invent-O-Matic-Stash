@@ -771,7 +771,7 @@ package
             }
             errorCode = "armorGrade";
             armorGrade = ArmorGrade.lookupArmorGrade(item);
-            if(armorGrade != "" && config.armorGrades.indexOf(armorGrade))
+            if(armorGrade != "" && config.armorGrades.indexOf(armorGrade) != -1)
             {
                Logger.get().info(item.text + " MATCHES, grade: " + armorGrade);
                return true;
