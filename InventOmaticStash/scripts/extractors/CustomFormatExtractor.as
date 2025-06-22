@@ -183,6 +183,15 @@ package extractors
                         }
                         line[j] = LegendaryMods.getLegendaryModName(desc,4) || this._extractConfig.customFormat.valueNotFound;
                         break;
+                     case "armorGrade":
+                        line[j] = ArmorGrade.lookupArmorGrade(inventory[i]) || this._extractConfig.customFormat.valueNotFound;
+                        break;
+                     case "armorPiece":
+                        line[j] = ArmorGrade.getArmorPieceFromName(inventory[i].text) || this._extractConfig.customFormat.valueNotFound;
+                        break;
+                     case "armorType":
+                        line[j] = ArmorGrade.getArmorTypeFromName(inventory[i].text) || this._extractConfig.customFormat.valueNotFound;
+                        break;
                   }
                }
                outputObject[outputObjectLine++] = line.join(this._extractConfig.customFormat.delimiter);

@@ -953,13 +953,31 @@ package utils
                   resistances = reduceResistances(resistances,GRADED_ARMOR[armorType][piece][material][armorLevel]);
                }
             }
+            errorCode = "leaded";
+            if(resistances[2] >= 10 && armorFullName.indexOf(ARMOR_MOD_LEADED) != -1)
+            {
+               resistances[2] -= 10;
+            }
             errorCode = "sRes";
             sResistances = resistances.join("/");
             errorCode = "grade";
             grade = GRADED_ARMOR[armorType][piece]["DEFAULT"][armorLevel][sResistances];
             if(!grade)
             {
-               return sResistances + " " + armorType + " " + piece + " " + armorLevel;
+               errorCode = "res check 25r";
+               if(resistances[2] >= 25)
+               {
+                  errorCode = "res 25r";
+                  resistances[2] -= 25;
+                  sResistances = resistances.join("/");
+                  errorCode = "grade 25r";
+                  grade = GRADED_ARMOR[armorType][piece]["DEFAULT"][armorLevel][sResistances];
+                  if(!grade)
+                  {
+                     return sResistances;
+                  }
+               }
+               return sResistances;
             }
             return grade;
          }
