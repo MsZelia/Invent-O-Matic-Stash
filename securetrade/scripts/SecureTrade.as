@@ -543,6 +543,22 @@ package
          }
       }
       
+      public function set ShowAdditionalColumns(param1:Object) : void
+      {
+         if(param1)
+         {
+            PlayerListEntry.ShowAdditionalColumns = param1;
+            OfferListEntry.ShowAdditionalColumns = param1;
+            setTimeout(function():void
+            {
+               PlayerInventory_mc.ShowAdditionalColumns = param1;
+               OfferInventory_mc.ShowAdditionalColumns = param1;
+               PlayerInventory_mc.x -= 110;
+               OfferInventory_mc.x += 110;
+            },1250);
+         }
+      }
+      
       public function get CorpseLootMode() : Boolean
       {
          return this.m_CorpseLootMode;

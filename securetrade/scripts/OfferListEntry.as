@@ -8,6 +8,8 @@ package
    import flash.filters.DropShadowFilter;
    import flash.geom.ColorTransform;
    import flash.text.TextField;
+   import flash.text.TextFormat;
+   import scaleform.gfx.TextFieldEx;
    
    [Embed(source="/_assets/assets.swf", symbol="symbol180")]
    public class OfferListEntry extends ItemListEntry
@@ -24,6 +26,8 @@ package
       public static var currencyType:uint = SecureTradeShared.CURRENCY_CAPS;
       
       private static const CONDITION_SPACING:Number = 6;
+      
+      public static var ShowAdditionalColumns:Object = null;
        
       
       public var Price_tf:TextField;
@@ -48,8 +52,21 @@ package
       
       public var RaritySelector_mc:MovieClip;
       
+      private var zValue_tf:TextField;
+      
+      private var zWeight_tf:TextField;
+      
+      private var zLevel_tf:TextField;
+      
+      private var zStackWeight_tf:TextField;
+      
+      private var zValuePerWeight_tf:TextField;
+      
+      private var isAdditionalColumnsInit:Boolean = false;
+      
       public function OfferListEntry()
       {
+         this.m_LastCurrencyType = 4294967295;
          super();
          if(this.ConditionBar_mc != null)
          {
@@ -62,11 +79,115 @@ package
          }
          this.CurrencyIcon_mc.clipWidth = this.CurrencyIcon_mc.width * (1 / this.CurrencyIcon_mc.scaleX);
          this.CurrencyIcon_mc.clipHeight = this.CurrencyIcon_mc.height * (1 / this.CurrencyIcon_mc.scaleY);
+         this.zValue_tf = newTf();
+         this.zWeight_tf = newTf();
+         this.zLevel_tf = newTf();
+         this.zStackWeight_tf = newTf();
+         this.zValuePerWeight_tf = newTf();
+      }
+      
+      private function newTf() : TextField
+      {
+         var tf:TextField = new TextField();
+         tf.x = 0;
+         tf.y = 0;
+         tf.width = 45;
+         tf.height = 28;
+         TextFieldEx.setTextAutoSize(tf,TextFieldEx.TEXTAUTOSZ_SHRINK);
+         tf.wordWrap = false;
+         tf.multiline = false;
+         var font:TextFormat = new TextFormat("$MAIN_Font",26,uint(ORIG_TEXT_COLOR));
+         tf.defaultTextFormat = font;
+         font.align = "center";
+         tf.setTextFormat(font);
+         tf.selectable = false;
+         tf.mouseWheelEnabled = false;
+         tf.mouseEnabled = false;
+         tf.visible = false;
+         tf.filters = [new DropShadowFilter(2,135,0,1,1,1,1,BitmapFilterQuality.HIGH)];
+         addChild(tf);
+         return tf;
+      }
+      
+      private function initAdditionalColumns() : void
+      {
+         isAdditionalColumnsInit = true;
+         if(ShowAdditionalColumns != null)
+         {
+            var tf:TextField = null;
+            var colCount:int = 0;
+            var column:* = null;
+            for(column in ShowAdditionalColumns)
+            {
+               if(ShowAdditionalColumns[column])
+               {
+                  colCount++;
+               }
+            }
+            var xPos:int = -50 - colCount * 45;
+            for(column in ShowAdditionalColumns)
+            {
+               if(ShowAdditionalColumns[column])
+               {
+                  switch(column)
+                  {
+                     case SecureTradeInventory.COLUMN_LEVEL:
+                        tf = this.zLevel_tf;
+                        break;
+                     case SecureTradeInventory.COLUMN_VALUE:
+                        tf = this.zValue_tf;
+                        break;
+                     case SecureTradeInventory.COLUMN_WEIGHT:
+                        tf = this.zWeight_tf;
+                        break;
+                     case SecureTradeInventory.COLUMN_STACK_WEIGHT:
+                        tf = this.zStackWeight_tf;
+                        break;
+                     case SecureTradeInventory.COLUMN_VALUE_PER_WEIGHT:
+                        tf = this.zValuePerWeight_tf;
+                        break;
+                     default:
+                        tf = null;
+                  }
+                  if(tf != null)
+                  {
+                     tf.x = xPos;
+                     tf.visible = true;
+                     xPos += 45;
+                  }
+               }
+            }
+         }
       }
       
       override public function SetEntryText(param1:Object, param2:String) : *
       {
+         var _loc3_:Object;
+         var _loc4_:*;
+         var _loc5_:*;
+         var _loc6_:String;
+         var _loc7_:*;
+         var isWtInt:Boolean;
          super.SetEntryText(param1,param2);
+         try
+         {
+            if(ShowAdditionalColumns != null)
+            {
+               if(!isAdditionalColumnsInit)
+               {
+                  initAdditionalColumns();
+               }
+               this.zLevel_tf.text = param1.itemLevel > 0 ? param1.itemLevel : "";
+               isWtInt = param1.weight == int(param1.weight);
+               this.zWeight_tf.text = isWtInt ? param1.weight : param1.weight.toFixed(2);
+               this.zStackWeight_tf.text = isWtInt ? param1.count * param1.weight : (param1.count * param1.weight).toFixed(2);
+               this.zValue_tf.text = param1.itemValue;
+               this.zValuePerWeight_tf.text = int(param1.itemValue / param1.weight);
+            }
+         }
+         catch(e:*)
+         {
+         }
          this.RaritySelector_mc.visible = false;
          if(this.m_LastCurrencyType != currencyType)
          {
@@ -77,11 +198,11 @@ package
             }
             this.m_CurrencyIconInstance = SecureTradeShared.setCurrencyIcon(this.CurrencyIcon_mc,currencyType);
          }
-         var _loc3_:Object = param1.vendingData;
-         var _loc4_:* = playerLevel >= param1.itemLevel;
+         _loc3_ = param1.vendingData;
+         _loc4_ = playerLevel >= param1.itemLevel;
          this.UpdateCurrency(param1);
          this.UpdateCampMachineIcon(param1);
-         var _loc5_:* = false;
+         _loc5_ = false;
          switch(menuMode)
          {
             case SecureTradeShared.MODE_CONTAINER:
@@ -133,7 +254,7 @@ package
             textField.filters = [new DropShadowFilter(2,135,0,1,1,1,1,BitmapFilterQuality.HIGH)];
             this.CurrencyIcon_mc.filters = textField.filters;
          }
-         var _loc6_:String = textField.text;
+         _loc6_ = textField.text;
          if(param1.isOffered == true)
          {
             if(param1.declineReason != -1)
@@ -167,7 +288,7 @@ package
                this.UpdateConditionBar(param1);
             }
          }
-         var _loc7_:* = new ColorTransform();
+         _loc7_ = new ColorTransform();
          this.RarityBorder_mc.visible = param1.nwRarity > -1 ? true : false;
          if(param1.nwRarity == 0)
          {

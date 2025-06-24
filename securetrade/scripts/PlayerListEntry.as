@@ -8,6 +8,7 @@ package
    import flash.filters.DropShadowFilter;
    import flash.geom.ColorTransform;
    import flash.text.TextField;
+   import flash.text.TextFormat;
    import scaleform.gfx.TextFieldEx;
    
    [Embed(source="/_assets/assets.swf", symbol="symbol174")]
@@ -23,6 +24,8 @@ package
       public static var currencyType:uint = SecureTradeShared.CURRENCY_CAPS;
       
       private static const CONDITION_SPACING:Number = 6;
+      
+      public static var ShowAdditionalColumns:Object = null;
        
       
       public var Price_tf:TextField;
@@ -45,8 +48,21 @@ package
       
       public var RaritySelector_mc:MovieClip;
       
+      private var zValue_tf:TextField;
+      
+      private var zLevel_tf:TextField;
+      
+      private var zWeight_tf:TextField;
+      
+      private var zStackWeight_tf:TextField;
+      
+      private var zValuePerWeight_tf:TextField;
+      
+      private var isAdditionalColumnsInit:Boolean = false;
+      
       public function PlayerListEntry()
       {
+         this.m_LastCurrencyType = 4294967295;
          super();
          if(this.RequestedTextField)
          {
@@ -61,12 +77,107 @@ package
             this.CurrencyIcon_mc.clipWidth = this.CurrencyIcon_mc.width * (1 / this.CurrencyIcon_mc.scaleX);
             this.CurrencyIcon_mc.clipHeight = this.CurrencyIcon_mc.height * (1 / this.CurrencyIcon_mc.scaleY);
          }
+         this.zLevel_tf = newTf();
+         this.zWeight_tf = newTf();
+         this.zValue_tf = newTf();
+         this.zStackWeight_tf = newTf();
+         this.zValuePerWeight_tf = newTf();
+      }
+      
+      private function newTf() : TextField
+      {
+         var tf:TextField = new TextField();
+         tf.x = 0;
+         tf.y = 0;
+         tf.width = 45;
+         tf.height = 28;
+         TextFieldEx.setTextAutoSize(tf,TextFieldEx.TEXTAUTOSZ_SHRINK);
+         if(false)
+         {
+            tf.autoSize = TextFieldAutoSize.LEFT;
+         }
+         tf.wordWrap = false;
+         tf.multiline = false;
+         var font:TextFormat = new TextFormat("$MAIN_Font",26,uint(ORIG_TEXT_COLOR));
+         tf.defaultTextFormat = font;
+         font.align = "center";
+         tf.setTextFormat(font);
+         tf.selectable = false;
+         tf.mouseWheelEnabled = false;
+         tf.mouseEnabled = false;
+         tf.visible = false;
+         tf.filters = [new DropShadowFilter(2,135,0,1,1,1,1,BitmapFilterQuality.HIGH)];
+         addChild(tf);
+         return tf;
+      }
+      
+      private function initAdditionalColumns() : void
+      {
+         isAdditionalColumnsInit = true;
+         if(ShowAdditionalColumns != null)
+         {
+            var xPos:int = 460;
+            var tf:TextField = null;
+            var column:* = null;
+            for(column in ShowAdditionalColumns)
+            {
+               if(ShowAdditionalColumns[column])
+               {
+                  switch(column)
+                  {
+                     case SecureTradeInventory.COLUMN_LEVEL:
+                        tf = this.zLevel_tf;
+                        break;
+                     case SecureTradeInventory.COLUMN_VALUE:
+                        tf = this.zValue_tf;
+                        break;
+                     case SecureTradeInventory.COLUMN_WEIGHT:
+                        tf = this.zWeight_tf;
+                        break;
+                     case SecureTradeInventory.COLUMN_STACK_WEIGHT:
+                        tf = this.zStackWeight_tf;
+                        break;
+                     case SecureTradeInventory.COLUMN_VALUE_PER_WEIGHT:
+                        tf = this.zValuePerWeight_tf;
+                        break;
+                     default:
+                        tf = null;
+                  }
+                  if(tf != null)
+                  {
+                     tf.x = xPos;
+                     tf.visible = true;
+                     xPos += 45;
+                  }
+               }
+            }
+         }
       }
       
       override public function SetEntryText(param1:Object, param2:String) : *
       {
+         var isWtInt:Boolean;
          var _loc3_:* = undefined;
          super.SetEntryText(param1,param2);
+         try
+         {
+            if(ShowAdditionalColumns != null)
+            {
+               if(!isAdditionalColumnsInit)
+               {
+                  initAdditionalColumns();
+               }
+               this.zLevel_tf.text = param1.itemLevel > 0 ? param1.itemLevel : "";
+               isWtInt = param1.weight == int(param1.weight);
+               this.zWeight_tf.text = isWtInt ? param1.weight : param1.weight.toFixed(2);
+               this.zStackWeight_tf.text = isWtInt ? param1.count * param1.weight : (param1.count * param1.weight).toFixed(2);
+               this.zValue_tf.text = param1.itemValue;
+               this.zValuePerWeight_tf.text = int(param1.itemValue / param1.weight);
+            }
+         }
+         catch(e:*)
+         {
+         }
          if(this.RaritySelector_mc)
          {
             this.RaritySelector_mc.visible = false;

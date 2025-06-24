@@ -50,6 +50,49 @@ package
          }
       }
       
+      public function set ShowAdditionalColumns(param1:Object) : void
+      {
+         var xPos:int = 460;
+         var column:* = null;
+         var tf:TextField = null;
+         for(column in param1)
+         {
+            if(param1[column])
+            {
+               switch(column)
+               {
+                  case COLUMN_LEVEL:
+                     tf = this.zLevel_tf;
+                     break;
+                  case COLUMN_VALUE:
+                     tf = this.zValue_tf;
+                     break;
+                  case COLUMN_WEIGHT:
+                     tf = this.zWeight_tf;
+                     break;
+                  case COLUMN_STACK_WEIGHT:
+                     tf = this.zStackWeight_tf;
+                     break;
+                  case COLUMN_VALUE_PER_WEIGHT:
+                     tf = this.zValuePerWeight_tf;
+                     break;
+                  default:
+                     tf = null;
+               }
+               if(tf != null)
+               {
+                  tf.x = xPos;
+                  tf.visible = true;
+                  if(param1[column] is String)
+                  {
+                     tf.text = param1[column];
+                  }
+                  xPos += 45;
+               }
+            }
+         }
+      }
+      
       public function set currency(param1:Number) : void
       {
          this.m_Currency = param1;

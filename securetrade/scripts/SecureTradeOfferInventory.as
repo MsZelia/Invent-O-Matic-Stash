@@ -55,6 +55,57 @@ package
          TextFieldEx.setTextAutoSize(this.miniTooltip_mc.textField_tf,TextFieldEx.TEXTAUTOSZ_SHRINK);
       }
       
+      public function set ShowAdditionalColumns(param1:Object) : void
+      {
+         var tf:TextField = null;
+         var colCount:int = 0;
+         var column:* = null;
+         for(column in param1)
+         {
+            if(param1[column])
+            {
+               colCount++;
+            }
+         }
+         var xPos:int = -50 - colCount * 45;
+         for(column in param1)
+         {
+            if(param1[column])
+            {
+               switch(column)
+               {
+                  case COLUMN_LEVEL:
+                     tf = this.zLevel_tf;
+                     break;
+                  case COLUMN_VALUE:
+                     tf = this.zValue_tf;
+                     break;
+                  case COLUMN_WEIGHT:
+                     tf = this.zWeight_tf;
+                     break;
+                  case COLUMN_STACK_WEIGHT:
+                     tf = this.zStackWeight_tf;
+                     break;
+                  case COLUMN_VALUE_PER_WEIGHT:
+                     tf = this.zValuePerWeight_tf;
+                     break;
+                  default:
+                     tf = null;
+               }
+               if(tf != null)
+               {
+                  tf.x = xPos;
+                  tf.visible = true;
+                  if(param1[column] is String)
+                  {
+                     tf.text = param1[column];
+                  }
+                  xPos += 45;
+               }
+            }
+         }
+      }
+      
       public function set ownsVendor(param1:Boolean) : *
       {
          this.m_ownsVendor = param1;
