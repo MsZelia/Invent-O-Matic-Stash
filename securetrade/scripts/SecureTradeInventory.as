@@ -64,7 +64,7 @@ package
          this.zWeight_tf = newTf();
          this.zStackWeight_tf = newTf();
          this.zValuePerWeight_tf = newTf();
-         this.zLevel_tf.text = "Lv";
+         this.zLevel_tf.text = "Lvl";
          this.zValue_tf.text = "±";
          this.zWeight_tf.text = "Wt";
          this.zStackWeight_tf.text = "Wt*";
