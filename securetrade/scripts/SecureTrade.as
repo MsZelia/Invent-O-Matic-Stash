@@ -555,7 +555,7 @@ package
                OfferInventory_mc.ShowAdditionalColumns = param1;
                PlayerInventory_mc.x -= 125;
                OfferInventory_mc.x += 125;
-            },1250);
+            },1500);
          }
       }
       
