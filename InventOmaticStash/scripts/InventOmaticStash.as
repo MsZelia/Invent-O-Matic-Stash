@@ -32,6 +32,8 @@ package
       
       private var _customFormatExtractor:CustomFormatExtractor;
       
+      private var _customFormatConvertExtractor:CustomFormatConvertExtractor;
+      
       private var _itemWorker:ItemWorker;
       
       private var _parent:MovieClip;
@@ -133,6 +135,7 @@ package
                this._parent = movieRoot;
                this._itemExtractor = new ItemExtractor(this._parent);
                this._customFormatExtractor = new CustomFormatExtractor(this._parent);
+               this._customFormatConvertExtractor = new CustomFormatConvertExtractor(this._parent);
                this._itemWorker = new ItemWorker(this._parent);
                this.buttonHintBar = this._parent.ButtonHintBar_mc;
                this.loadConfig();
@@ -272,6 +275,7 @@ package
                   _loc2_ = new JSONDecoder(loader.data,true).getValue();
                   t2 = getTimer();
                   Logger.get().debugMode = _loc2_.debug;
+                  Logger.get().setPosition(Parser.parseNumber(_loc2_.debugX,0),Parser.parseNumber(_loc2_.debugY,0));
                   InventOmaticConfig.init(_loc2_);
                   init();
                   t3 = getTimer();
@@ -413,6 +417,7 @@ package
          ArmorGrade.initLocalization(config.localizationConfig);
          this._itemExtractor.init(config.extractConfig);
          this._customFormatExtractor.init(config.extractConfig);
+         this._customFormatConvertExtractor.init(config.extractConfig);
          this.initTabs();
          this.initCurrencyLimit();
          this.initButtonHints();
@@ -713,7 +718,14 @@ package
             Logger.get().info("Extract Items Callback!");
             if(config.extractConfig.useCustomFormat)
             {
-               extractorToUse = this._customFormatExtractor;
+               if(config.extractConfig.customFormat.format.toLowerCase() == "json_to_csv")
+               {
+                  extractorToUse = this._customFormatConvertExtractor;
+               }
+               else
+               {
+                  extractorToUse = this._customFormatExtractor;
+               }
             }
             else
             {
