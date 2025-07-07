@@ -33,8 +33,11 @@ package
       
       private var _queueDebug:Boolean;
       
+      private var selectItemCardsQueue:Object;
+      
       public function ItemWorker(param1:Object)
       {
+         this.selectItemCardsQueue = {};
          this.secureTrade = param1;
          _queue = new Vector.<Object>();
          super();
@@ -1679,8 +1682,9 @@ package
                {
                   if(isItemMatchingConfig(inventory[i],config))
                   {
-                     if(ItemCardData.get(inventory[i].serverHandleID) == null)
+                     if(ItemCardData.get(inventory[i].serverHandleID) == null && selectItemCardsQueue[inventory[i].serverHandleID] == null)
                      {
+                        selectItemCardsQueue[inventory[i].serverHandleID] = true;
                         delay += delayStep;
                         setTimeout(function(id:uint, text:String, delay:uint):*
                         {
@@ -1752,6 +1756,7 @@ package
          var indexConfig:int = 0;
          var validConfigs:Array = [];
          var fetchItemCardEntriesDelay:uint = 0;
+         selectItemCardsQueue = {};
          while(indexConfig < _config.transferConfig.length)
          {
             config = _config.transferConfig[indexConfig];
