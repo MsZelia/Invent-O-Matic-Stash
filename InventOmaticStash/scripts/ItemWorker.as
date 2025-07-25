@@ -674,6 +674,7 @@ package
          errorCode = "transferTaggedForSearch";
          var transferTaggedForSearch:Boolean = Boolean(sectionConfig.transferTaggedForSearch);
          errorCode = "loop itemNames";
+         var itemFilter:int = int(this.secureTrade.PlayerInventory_mc.ItemList_mc.List_mc.filterer.itemFilter);
          while(indexNames < sectionConfig.itemNames.length)
          {
             indexNamesAlts = 0;
@@ -716,6 +717,10 @@ package
                index++;
             }
             else if(item.filterFlag & 4 && sectionConfig.weaponTypes is Array && sectionConfig.weaponTypes.length > 0 && sectionConfig.weaponTypes.indexOf(WeaponTypes.getWeaponType(item)) == -1)
+            {
+               index++;
+            }
+            else if(Boolean(sectionConfig.onlyCurrentCategory) && !(item.filterFlag & itemFilter))
             {
                index++;
             }
