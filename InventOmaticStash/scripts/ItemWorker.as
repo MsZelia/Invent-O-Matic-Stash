@@ -10,12 +10,6 @@ package
    public class ItemWorker
    {
       
-      public static const DIRECTION_TO_CONTAINER:String = "TO_CONTAINER";
-      
-      public static const DIRECTION_FROM_CONTAINER:String = "FROM_CONTAINER";
-      
-      private static var matchingID:int = -1;
-      
       private static var characterName:String;
       
       private static var accountName:String;
@@ -23,23 +17,26 @@ package
       private static var containerName:String;
       
       private static var errorCode:String;
-       
+      
+      public static const DIRECTION_TO_CONTAINER:String = "TO_CONTAINER";
+      
+      public static const DIRECTION_FROM_CONTAINER:String = "FROM_CONTAINER";
+      
+      private static var matchingID:int = -1;
       
       private var secureTrade:Object;
       
-      private var _queue:Vector.<Object>;
+      private var _queue:Vector.<Object> = new Vector.<Object>();
       
       private var _queueIndex:int;
       
       private var _queueDebug:Boolean;
       
-      private var selectItemCardsQueue:Object;
+      private var selectItemCardsQueue:Object = {};
       
       public function ItemWorker(param1:Object)
       {
-         this.selectItemCardsQueue = {};
          this.secureTrade = param1;
-         _queue = new Vector.<Object>();
          super();
       }
       
@@ -1964,7 +1961,7 @@ package
                      isMatching = isItemMatchingConfig(inventory[i],validConfigs[subConfigIndex]);
                      if(isMatching)
                      {
-                        price = uint(!!inventory[i].isOffered ? inventory[i].offerValue : inventory[i].itemValue);
+                        price = uint(inventory[i].isOffered ? inventory[i].offerValue : inventory[i].itemValue);
                         amount = getAmount(int(validConfigs[subConfigIndex].amount),inventory[i].count);
                         if(price > 0)
                         {
@@ -2168,3 +2165,4 @@ package
       }
    }
 }
+

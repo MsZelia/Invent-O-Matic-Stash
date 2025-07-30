@@ -9,7 +9,6 @@ package extractors
    {
       
       public static const MOD_NAME:String = "Invent-O-Matic-Custom-Format-Extractor";
-       
       
       public function CustomFormatExtractor(param1:Object)
       {
@@ -316,3 +315,4 @@ package extractors
       }
    }
 }
+

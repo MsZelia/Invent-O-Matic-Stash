@@ -9,7 +9,6 @@ package extractors
    {
       
       public static const MOD_NAME:String = "Invent-O-Matic-Vendor-Extractor";
-       
       
       public function VendorPriceCheckExtractor(param1:Object)
       {
@@ -58,3 +57,4 @@ package extractors
       }
    }
 }
+

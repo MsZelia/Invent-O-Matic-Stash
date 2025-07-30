@@ -21,17 +21,16 @@ package
       public static const ON_MENULISTCANCEL:String = "MenuListCancel";
       
       public static const LIST_INITIALIZED:String = "BSScrollingList::ListInitialized";
-       
       
       public var List_mc:MenuListInternal;
       
       private var _bInitialized:Boolean = false;
       
-      private var Rectangle:Sprite;
+      private var Rectangle:Sprite = new Sprite();
       
-      private var m_ListData:Object;
+      private var m_ListData:Object = new Object();
       
-      private var m_ListSubs:Object;
+      private var m_ListSubs:Object = new Object();
       
       private var _dataSubscriptionKeyword:String = "DefaultMenuListData";
       
@@ -57,10 +56,6 @@ package
       
       public function MenuListComponent()
       {
-         this._backgroundAlpha = 0.75;
-         this.Rectangle = new Sprite();
-         this.m_ListData = new Object();
-         this.m_ListSubs = new Object();
          this._defaultAcceptButton = new BSButtonHintData("$ACCEPT","Enter","PSN_A","Xenon_A",1,this.onMenuListAccept);
          this._defaultBackButton = new BSButtonHintData("$BACK","Tab","PSN_B","Xenon_B",1,this.onMenuListBack);
          super();
@@ -409,3 +404,4 @@ package
       }
    }
 }
+

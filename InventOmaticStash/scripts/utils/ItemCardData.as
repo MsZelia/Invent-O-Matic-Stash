@@ -8,7 +8,6 @@ package utils
    {
       
       public static var itemCardEntries:Object = {};
-       
       
       public function ItemCardData()
       {
@@ -66,3 +65,4 @@ package utils
       }
    }
 }
+

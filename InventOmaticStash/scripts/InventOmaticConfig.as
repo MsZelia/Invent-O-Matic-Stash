@@ -5,6 +5,8 @@ package
    public class InventOmaticConfig
    {
       
+      private static var _config:Object;
+      
       public static const DEFAULT_SHOW_BUTTON_STATE:Boolean = true;
       
       private static const _ID:String = "R_ID";
@@ -48,9 +50,6 @@ package
       private static var swapToPlayerInventoryHotkey:uint = 0;
       
       private static var swapToContainerInventoryHotkey:uint = 0;
-      
-      private static var _config:Object;
-       
       
       public function InventOmaticConfig()
       {
@@ -351,3 +350,4 @@ package
       }
    }
 }
+

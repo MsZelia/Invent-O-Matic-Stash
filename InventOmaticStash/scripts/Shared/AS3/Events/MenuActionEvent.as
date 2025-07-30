@@ -70,7 +70,6 @@ package Shared.AS3.Events
       public static const ACTION_OPENEDITATHENAS:String = "OpenEditAthenas";
       
       public static const SHOW_SETTINGS:String = "ShowSettings";
-       
       
       private var _action:String = "";
       
@@ -148,3 +147,4 @@ package Shared.AS3.Events
       }
    }
 }
+

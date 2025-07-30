@@ -12,7 +12,6 @@ package
    {
       
       public static const MOUSE_OVER:String = "SecureTradeInventory::MouseOver";
-       
       
       public var ItemList_mc:MenuListComponent;
       
@@ -75,3 +74,4 @@ package
       }
    }
 }
+

@@ -18,13 +18,12 @@ package extractors
       protected static var DEFAULT_DELAY:Number = 1000;
       
       protected static var ITEM_CARD_ENTRY_DELAY_STEP:Number = 100;
-       
       
       protected var secureTrade:Object;
       
-      protected var playerInventory:Array;
+      protected var playerInventory:Array = [];
       
-      protected var stashInventory:Array;
+      protected var stashInventory:Array = [];
       
       protected var version:Number;
       
@@ -32,11 +31,11 @@ package extractors
       
       protected var _verboseOutput:Boolean = false;
       
-      protected var _apiMethods:Array;
+      protected var _apiMethods:Array = [];
       
       protected var _additionalItemDataForAll:Boolean = false;
       
-      protected var _filterTypes:Array;
+      protected var _filterTypes:Array = [];
       
       protected var _modNameToUse:String;
       
@@ -44,10 +43,6 @@ package extractors
       
       public function BaseItemExtractor(param1:Object, param2:String, param3:Number)
       {
-         this.playerInventory = [];
-         this.stashInventory = [];
-         this._apiMethods = [];
-         this._filterTypes = [];
          super();
          this.secureTrade = param1;
          this.modName = param2;
@@ -320,3 +315,4 @@ package extractors
       }
    }
 }
+

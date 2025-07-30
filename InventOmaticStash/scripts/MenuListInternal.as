@@ -7,17 +7,15 @@ package
    
    public class MenuListInternal extends BSScrollingList
    {
-       
       
       protected var _Collapsed:Boolean;
       
       protected var _Active:Boolean = true;
       
-      private var _menuListData:Array;
+      private var _menuListData:Array = new Array();
       
       public function MenuListInternal()
       {
-         this._menuListData = new Array();
          super();
       }
       
@@ -162,3 +160,4 @@ package
       }
    }
 }
+

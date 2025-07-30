@@ -126,7 +126,6 @@ package Shared.AS3
       public static const LIMITED_TYPE_STORAGE_SCRAP:* = 7;
       
       public static const LIMITED_TYPE_STORAGE_AMMO:* = 8;
-       
       
       public function SecureTradeShared()
       {
@@ -218,3 +217,4 @@ package Shared.AS3
       }
    }
 }
+

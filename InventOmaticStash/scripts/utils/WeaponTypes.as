@@ -8,7 +8,6 @@ package utils
       public static const RANGED:String = "RANGED";
       
       public static const THROWN:String = "THROWN";
-       
       
       public function WeaponTypes()
       {
@@ -33,3 +32,4 @@ package utils
       }
    }
 }
+

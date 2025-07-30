@@ -4,7 +4,6 @@ package utils
    {
       
       public static var HideUnknownGamepadButtonIcons:Boolean = false;
-       
       
       public function Buttons()
       {
@@ -134,3 +133,4 @@ package utils
       }
    }
 }
+

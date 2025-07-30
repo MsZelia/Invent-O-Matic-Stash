@@ -14,7 +14,6 @@ package
       public static const NOT_EXACT:String = "NOT_EXACT";
       
       public static const NOT_CONTAINS:String = "NOT_CONTAINS";
-       
       
       public function MatchMode()
       {
@@ -22,3 +21,4 @@ package
       }
    }
 }
+

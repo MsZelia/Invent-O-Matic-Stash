@@ -12,12 +12,11 @@ package extractors
    public class CustomFormatConvertExtractor extends BaseItemExtractor
    {
       
-      public static const MOD_NAME:String = "Invent-O-Matic-Custom-Format-Convert-Extractor";
-      
       private static var FILE_ACCOUNT_DATA:Object;
       
       private static var FILE_CHARACTER_DATA:Object;
-       
+      
+      public static const MOD_NAME:String = "Invent-O-Matic-Custom-Format-Convert-Extractor";
       
       public function CustomFormatConvertExtractor(param1:Object)
       {
@@ -397,3 +396,4 @@ package extractors
       }
    }
 }
+

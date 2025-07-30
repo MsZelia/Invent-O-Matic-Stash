@@ -4,7 +4,6 @@ package utils
    {
       
       private static const EVENT_SCRAPBOX_SCRAP_TRANSFER_CONFIRM:* = "Container::transferSelectionToScrapConfirm";
-       
       
       public function ScrapboxFilter()
       {
@@ -38,3 +37,4 @@ package utils
       }
    }
 }
+

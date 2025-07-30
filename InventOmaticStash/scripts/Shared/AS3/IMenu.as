@@ -16,7 +16,6 @@ package Shared.AS3
    
    public class IMenu extends BSDisplayObject
    {
-       
       
       private var _uiPlatform:uint;
       
@@ -34,23 +33,20 @@ package Shared.AS3
       
       private var safeY:Number = 0;
       
-      private var textFieldSizeMap:Object;
+      private var textFieldSizeMap:Object = new Object();
       
       private var _ButtonHintBar:BSButtonHintBar;
       
       private var bOverrideColors:* = true;
       
-      internal var colorFilter:AdjustColor;
+      internal var colorFilter:AdjustColor = new AdjustColor();
       
       internal var mColorMatrix:ColorMatrixFilter;
       
-      internal var mMatrix:Array;
+      internal var mMatrix:Array = [];
       
       public function IMenu()
       {
-         this.textFieldSizeMap = new Object();
-         this.colorFilter = new AdjustColor();
-         this.mMatrix = [];
          super();
          this._uiPlatform = PlatformChangeEvent.PLATFORM_INVALID;
          this._bPS3Switch = false;
@@ -240,3 +236,4 @@ package Shared.AS3
       }
    }
 }
+

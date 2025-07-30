@@ -4,7 +4,6 @@ package extractors
    {
       
       public static const MOD_NAME:String = "Invent-O-Matic-Extractor";
-       
       
       public function ItemExtractor(param1:Object)
       {
@@ -44,3 +43,4 @@ package extractors
       }
    }
 }
+

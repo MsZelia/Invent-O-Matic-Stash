@@ -726,6 +726,20 @@ package utils
          }
       };
       
+      private static const LEADED_CURVE:Object = {
+         "1":8,
+         "5":9,
+         "10":10,
+         "15":11,
+         "20":13,
+         "25":14,
+         "30":16,
+         "35":17,
+         "40":19,
+         "45":21,
+         "50":24
+      };
+      
       private static const UNGRADED_ARMOR:Object = {
          "ARCTIC_MARINE":"STURDY",
          "BOTSMITH":"HEAVY",
@@ -825,7 +839,6 @@ package utils
       };
       
       private static var ARMOR_MOD_LEADED:String = "Leaded";
-       
       
       public function ArmorGrade()
       {
@@ -919,6 +932,7 @@ package utils
          var sResistances:*;
          var grade:String;
          var sResistancesHazmat:String;
+         var leadedIncreaseForLevel:int;
          var errorCode:String = 0;
          try
          {
@@ -999,9 +1013,10 @@ package utils
                }
             }
             errorCode = "leaded";
-            if(resistances[2] >= 10 && armorFullName.indexOf(ARMOR_MOD_LEADED.toLowerCase()) != -1)
+            leadedIncreaseForLevel = int(LEADED_CURVE[armorLevel]);
+            if(resistances[2] >= leadedIncreaseForLevel && armorFullName.indexOf(ARMOR_MOD_LEADED.toLowerCase()) != -1)
             {
-               resistances[2] -= 10;
+               resistances[2] -= leadedIncreaseForLevel;
             }
             errorCode = "sRes";
             sResistances = resistances.join("/");
@@ -1041,3 +1056,4 @@ package utils
       }
    }
 }
+

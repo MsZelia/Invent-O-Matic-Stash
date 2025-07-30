@@ -24,7 +24,6 @@ package utils
       private static var lastCurrencyMax:uint = 0;
       
       public static var debug:Boolean = false;
-       
       
       public function CurrencyLimit()
       {
@@ -76,3 +75,4 @@ package utils
       }
    }
 }
+

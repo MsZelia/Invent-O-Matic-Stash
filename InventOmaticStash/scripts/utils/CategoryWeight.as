@@ -10,6 +10,12 @@ package utils
    public class CategoryWeight
    {
       
+      private static var secureTrade:Object;
+      
+      private static var playerInventory:Array;
+      
+      private static var stashInventory:Array;
+      
       private static var itemCardEntries:Object = {};
       
       private static var DEFAULT_DELAY:Number = 1000;
@@ -23,13 +29,6 @@ package utils
       public static var categoryWeights:Object = {};
       
       public static var icategoryWeights:Object = {};
-      
-      private static var secureTrade:Object;
-      
-      private static var playerInventory:Array;
-      
-      private static var stashInventory:Array;
-       
       
       public function CategoryWeight()
       {
@@ -474,3 +473,4 @@ package utils
       }
    }
 }
+

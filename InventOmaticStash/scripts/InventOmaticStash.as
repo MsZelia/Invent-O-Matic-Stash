@@ -21,7 +21,6 @@ package
    {
       
       public static const FULL_MOD_NAME:String = "IOMS " + Version.VERSION;
-       
       
       private const DEFAULT_SHOW_BUTTON_STATE:Boolean = InventOmaticConfig.DEFAULT_SHOW_BUTTON_STATE;
       
@@ -1591,3 +1590,4 @@ package
       }
    }
 }
+

@@ -3,6 +3,8 @@ package utils
    public class ItemProtection
    {
       
+      private static var secureTrade:Object;
+      
       private static const FAVORITE:String = "Favorite";
       
       private static const EQUIPPED:String = "Equipped";
@@ -15,10 +17,7 @@ package utils
       
       private static var _protectionReason:String = "";
       
-      private static var secureTrade:Object;
-      
       private static var itemProtection:* = {};
-       
       
       public function ItemProtection()
       {
@@ -104,3 +103,4 @@ package utils
       }
    }
 }
+

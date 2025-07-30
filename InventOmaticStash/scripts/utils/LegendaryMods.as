@@ -18,6 +18,10 @@ package utils
    public class LegendaryMods
    {
       
+      private static var _characterName:String;
+      
+      private static var _legendaryModsFromIni:Array;
+      
       private static var RED:uint = 16711680;
       
       private static var _legendaryModsByDesc:* = null;
@@ -26,15 +30,11 @@ package utils
       
       private static var _legendaryModNamesByDesc:* = null;
       
-      private static var _characterName:String;
-      
       private static var _shouldIndicateLearnableLegendaryMods:Boolean = false;
       
       private static var _hasInitializedLearnableLegendaryMods:* = false;
       
       private static var _hasInitializedLegendaryModNames:* = false;
-      
-      private static var _legendaryModsFromIni:Array;
       
       private static var IMPROVED_WORKBENCH_MOD_NAME:String = "ImprovedWorkbench";
       
@@ -53,7 +53,6 @@ package utils
       private static var learnableWeaponPrefix:* = "[Learnable from Weapon]";
       
       private static var stats:* = [[0,0],[0,0],[0,0],[0,0]];
-       
       
       public function LegendaryMods()
       {
@@ -599,3 +598,4 @@ package utils
       }
    }
 }
+

@@ -4,7 +4,6 @@ package com.adobe.serialization.json
    
    public class JSONEncoder
    {
-       
       
       private var jsonString:String;
       
@@ -31,7 +30,7 @@ package com.adobe.serialization.json
          }
          if(param1 is Boolean)
          {
-            return !!param1 ? "true" : "false";
+            return param1 ? "true" : "false";
          }
          if(param1 is Array)
          {
@@ -154,3 +153,4 @@ package com.adobe.serialization.json
       }
    }
 }
+

@@ -25,7 +25,6 @@ package Shared.AS3
       private static var ALIGN_LEFT:* = 1;
       
       private static var ALIGN_RIGHT:* = 2;
-       
       
       public var Sizer_mc:MovieClip;
       
@@ -240,7 +239,8 @@ package Shared.AS3
          var _loc6_:Number = 0;
          while(_loc6_ < this.ButtonPoolV.length)
          {
-            if((_loc4_ = this.ButtonPoolV[_loc6_]).ButtonVisible && this.CanBeVisible())
+            _loc4_ = this.ButtonPoolV[_loc6_];
+            if(_loc4_.ButtonVisible && this.CanBeVisible())
             {
                _loc1_ = true;
                _loc4_.useVaultTecColor = this.useVaultTecColor;
@@ -311,3 +311,4 @@ package Shared.AS3
       }
    }
 }
+

@@ -10,24 +10,21 @@ package com.brokenfunction.json
    {
       
       private static const _charConvert:ByteArray = new ByteArray();
-       
       
       private var _input:IDataInput;
       
       private var _result:*;
       
-      private var _buffer:ByteArray;
+      private var _buffer:ByteArray = new ByteArray();
       
       public var parseTopLevelNumbers:Boolean = true;
       
       public var trailingByte:int = -1;
       
-      private var _stack:Array;
+      private var _stack:Array = [-1];
       
       public function JsonDecoderAsync(input:*, autoSubscribe:Boolean = true)
       {
-         this._buffer = new ByteArray();
-         this._stack = [-1];
          super();
          if(input is IDataInput)
          {
@@ -442,3 +439,4 @@ package com.brokenfunction.json
       }
    }
 }
+

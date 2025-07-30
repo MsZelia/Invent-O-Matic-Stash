@@ -5,9 +5,8 @@ package Shared.AS3
    
    public dynamic class MenuComponent extends BSUIComponent
    {
-       
       
-      private var _ButtonData:Vector.<BSButtonHintData>;
+      private var _ButtonData:Vector.<BSButtonHintData> = new Vector.<BSButtonHintData>();
       
       private var _ButtonHintBar:BSButtonHintBar;
       
@@ -17,7 +16,6 @@ package Shared.AS3
       
       public function MenuComponent()
       {
-         this._ButtonData = new Vector.<BSButtonHintData>();
          super();
          this.buttonHintBarTarget_Inspectable = "ButtonHintBar_mc";
       }
@@ -156,3 +154,4 @@ package Shared.AS3
       }
    }
 }
+
