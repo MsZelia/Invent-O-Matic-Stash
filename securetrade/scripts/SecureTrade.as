@@ -264,7 +264,7 @@ package
       
       private var ShowHistoryButton:BSButtonHintData;
       
-      private var ButtonHintDataV:Vector.<BSButtonHintData> = new <BSButtonHintData>[this.AcceptButton,this.DeclineItemAcceptButton,this.DeclineItemCancelButton,this.ButtonDecline,this.ButtonToggleAssign,this.ScrapButton,this.InspectButton,this.ButtonPlayerInventory,this.ButtonContainerInventory,this.StoreUnusedItemsButton,this.TakeAllButton,this.SortButton,this.ButtonOffersOnly,this.ToggleShowMarkedItemsOnlyButton,this.ShowHistoryButton,this.ExitButton];
+      private var ButtonHintDataV:Vector.<BSButtonHintData> = new Vector.<BSButtonHintData>(0);
       
       private const NO_FILTER_ID:int = -1;
       
@@ -460,6 +460,7 @@ package
          this.DeclineItemCancelButton = new BSButtonHintData("$CANCEL","TAB","PSN_B","Xenon_B",1,this.onBackButton);
          this.ToggleShowMarkedItemsOnlyButton = new BSButtonHintData("","T","PSN_Y","Xenon_Y",1,this.onToggleShowMarkedItemsOnlyButton);
          this.ShowHistoryButton = new BSButtonHintData("$CAMP_SLOTS_VENDING_HISTORY","V","PSN_Select","Xenon_Select",1,this.onShowHistory);
+         this.ButtonHintDataV = new <BSButtonHintData>[this.AcceptButton,this.DeclineItemAcceptButton,this.DeclineItemCancelButton,this.ButtonDecline,this.ButtonToggleAssign,this.ScrapButton,this.InspectButton,this.ButtonPlayerInventory,this.ButtonContainerInventory,this.StoreUnusedItemsButton,this.TakeAllButton,this.SortButton,this.ButtonOffersOnly,this.ToggleShowMarkedItemsOnlyButton,this.ShowHistoryButton,this.ExitButton];
          super();
          addFrameScript(0,this.frame1,31,this.frame32,48,this.frame49,58,this.frame59,68,this.frame69);
          this.ButtonHintBar_mc.useVaultTecColor = true;
