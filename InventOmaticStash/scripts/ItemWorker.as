@@ -1285,7 +1285,7 @@ package
          var items:String = "";
          for each(item in _queue)
          {
-            items += item.text + " (" + item.count + (item.price != null ? " x" + item.price + "per" : "") + "), ";
+            items += item.text + (item.count != null ? " (" + item.count + (item.price != null ? " x" + item.price + "per" : "") + "), " : ", ");
          }
          items = items.substring(0,items.length - 2);
          Logger.get().info(items);
@@ -1600,6 +1600,64 @@ package
          {
             Logger.get().errorHandler("Error ItemWorker displayAssign",e);
          }
+      }
+      
+      private function lockItems(config:Object) : void
+      {
+         var inventory:Array;
+         var delay:int = 0;
+         var i:int = 0;
+         var lockConfig:Object = config.itemLocking;
+         _queue = new Vector.<Object>();
+         try
+         {
+            inventory = this._playerInventory.concat(this._stashInventory);
+            if(inventory && inventory.length > 0)
+            {
+               i = 0;
+               while(i < inventory.length)
+               {
+                  if(!inventory[i].isTransferLocked)
+                  {
+                     if((ItemProtection.isProtected(inventory[i],config.saleProtection) && ItemProtection.ProtectionReason != ItemProtection.MAX_CURRENCY || ItemProtection.isProtected(inventory[i],config.scrapProtection) || ItemProtection.isProtected(inventory[i],config.transferProtection)) && ItemProtection.ProtectionReason != KNOWN_LEGENDARY_MOD)
+                     {
+                        _queue.push({
+                           "text":inventory[i].text,
+                           "serverHandleID":inventory[i].serverHandleID,
+                           "fromContainer":i >= this._playerInventory.length,
+                           "containerID":inventory[i].containerID
+                        });
+                     }
+                  }
+                  i++;
+               }
+               if(Parser.parseBoolean(lockConfig.testRun,true))
+               {
+                  showTestRun("LOCK (" + lockConfig.name + ")");
+                  return;
+               }
+               delay = Parser.parsePositiveNumber(lockConfig.delay,50);
+               executeForQueue(lockQueued,delay,1,config.debug,lockConfig.showMessage,"Locking");
+            }
+         }
+         catch(e:Error)
+         {
+            Logger.get().errorHandler("Error ItemWorker lockItems",e);
+         }
+      }
+      
+      private function lockQueued() : void
+      {
+         if(!_queueValid)
+         {
+            return;
+         }
+         if(_queueDebug)
+         {
+            Logger.get().info("Locking: " + _queue[_queueIndex].text);
+         }
+         GameApiDataExtractor.toggleLockItem(_queue[_queueIndex].serverHandleID,_queue[_queueIndex].fromContainer,_queue[_queueIndex].containerID);
+         ++_queueIndex;
       }
       
       private function isValidTransferConfig(config:Object, debug:Boolean = false) : Boolean

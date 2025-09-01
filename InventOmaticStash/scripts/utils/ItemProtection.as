@@ -5,15 +5,15 @@ package utils
       
       private static var secureTrade:Object;
       
-      private static const FAVORITE:String = "Favorite";
+      public static const FAVORITE:String = "Favorite";
       
-      private static const EQUIPPED:String = "Equipped";
+      public static const EQUIPPED:String = "Equipped";
       
-      private static const NAMED:String = "Named";
+      public static const NAMED:String = "Named";
       
-      private static const MAX_CURRENCY:String = "Max Currency";
+      public static const MAX_CURRENCY:String = "Max Currency";
       
-      private static const KNOWN_LEGENDARY_MOD:String = "Known Legendary Mod";
+      public static const KNOWN_LEGENDARY_MOD:String = "Known Legendary Mod";
       
       private static var _protectionReason:String = "";
       

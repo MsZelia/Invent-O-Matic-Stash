@@ -24,6 +24,8 @@ package extractors
       
       public static const EVENT_CAMP_DISPLAY_DECORATE_ITEM_IN_SLOT:String = "CampDecorate::DisplayDecorateItemInSlot";
       
+      public static const EVENT_LOCK_ITEM:String = "Container::TransferLockToggle";
+      
       public static var PlayerInventoryData:String = "PlayerInventoryData";
       
       public static var CharacterInfoData:String = "CharacterInfoData";
@@ -166,6 +168,15 @@ package extractors
             "serverHandleID":param1,
             "count":param2,
             "price":param3
+         }));
+      }
+      
+      public static function toggleLockItem(param1:uint, param2:Boolean, param3:uint) : void
+      {
+         BSUIDataManager.dispatchEvent(new CustomEvent(EVENT_LOCK_ITEM,{
+            "serverHandleID":param1,
+            "fromContainer":param2,
+            "containerID":param3
          }));
       }
    }
