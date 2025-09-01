@@ -1637,7 +1637,7 @@ package
                   return;
                }
                delay = Parser.parsePositiveNumber(lockConfig.delay,50);
-               executeForQueue(lockQueued,delay,1,config.debug,lockConfig.showMessage,"Locking");
+               executeForQueue(lockQueued,delay,1,lockConfig.debug,lockConfig.showMessage,"Locking");
             }
          }
          catch(e:Error)
