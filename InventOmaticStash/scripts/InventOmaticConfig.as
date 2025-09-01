@@ -29,7 +29,7 @@ package
       
       private static const ARRAY_DESC:String = "[object Array]";
       
-      private static var toggleDebugKeyCode:uint = 76;
+      private static var toggleDebugKeyCode:uint = 192;
       
       private static var extractKeyCode:uint = 79;
       
@@ -37,15 +37,15 @@ package
       
       private static var lootKeyCode:uint = 70;
       
-      private static var scrapKeyCode:uint = 73;
+      private static var scrapKeyCode:uint = 71;
       
-      private static var npcSellKeyCode:uint = 66;
+      private static var npcSellKeyCode:uint = 78;
       
-      private static var buyKeyCode:uint = 75;
+      private static var buyKeyCode:uint = 66;
       
       private static var campAssignKeyCode:uint = 85;
       
-      private static var lockAllKeyCode:uint = 78;
+      private static var lockAllKeyCode:uint = 75;
       
       private static var calculateCatWeightKeyCode:uint = 116;
       

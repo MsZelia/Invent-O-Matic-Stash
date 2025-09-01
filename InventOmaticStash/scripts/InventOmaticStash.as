@@ -544,7 +544,7 @@ package
                this.campAssignItemsButton.ButtonDisabled = false;
                buttons.push(this.campAssignItemsButton);
             }
-            if(config.protectionConfig && config.protectionConfig.itemLocking && config.protectionConfig.itemLocking.enabled)
+            if(ItemProtection.isValidLockConfig(config.protectionConfig))
             {
                this.lockItemsButton = new BSButtonHintData(config.protectionConfig.itemLocking.name,Buttons.getButtonKey(InventOmaticConfig.LockAllKeyCode),Buttons.getButtonGamepad(InventOmaticConfig.LockAllKeyCode),Buttons.getButtonGamepad(InventOmaticConfig.LockAllKeyCode),1,this.lockItemsCallback);
                this.lockItemsButton.ButtonVisible = Parser.parseBoolean(config.protectionConfig.itemLocking.showButton,DEFAULT_SHOW_BUTTON_STATE);
