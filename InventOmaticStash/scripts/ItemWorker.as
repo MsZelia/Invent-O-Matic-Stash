@@ -1619,7 +1619,7 @@ package
                {
                   if(!inventory[i].isTransferLocked)
                   {
-                     if((ItemProtection.isProtected(inventory[i],config.saleProtection) && ItemProtection.ProtectionReason != ItemProtection.MAX_CURRENCY || ItemProtection.isProtected(inventory[i],config.scrapProtection) || ItemProtection.isProtected(inventory[i],config.transferProtection)) && ItemProtection.ProtectionReason != KNOWN_LEGENDARY_MOD)
+                     if((ItemProtection.isProtected(inventory[i],config.saleProtection) && ItemProtection.ProtectionReason != ItemProtection.MAX_CURRENCY || ItemProtection.isProtected(inventory[i],config.scrapProtection) || ItemProtection.isProtected(inventory[i],config.transferProtection)) && ItemProtection.ProtectionReason != ItemProtection.KNOWN_LEGENDARY_MOD)
                      {
                         _queue.push({
                            "text":inventory[i].text,
