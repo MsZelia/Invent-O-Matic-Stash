@@ -44,6 +44,8 @@ package Shared.AS3
       
       private var m_UseVaultTecColor:Boolean = true;
       
+      private var _holdButtonsV:Vector.<BSButtonHintData>;
+      
       private var _bRedirectToButtonBarMenu:Boolean = true;
       
       public var SetButtonHintData:Function;
@@ -58,6 +60,7 @@ package Shared.AS3
          addChild(this.ButtonHintBarInternal_mc);
          this._buttonHintDataV = new Vector.<BSButtonHintData>();
          this.ButtonPoolV = new Vector.<BSButtonHint>();
+         this._holdButtonsV = new Vector.<BSButtonHintData>();
          this.m_PaddingRect = new Rectangle();
          this.StartingXPos = this.x;
       }
@@ -146,12 +149,17 @@ package Shared.AS3
                param1.removeEventListener(BSButtonHintData.BUTTON_HINT_DATA_CHANGE,this.onButtonHintDataDirtyEvent);
             }
          },this);
+         this._holdButtonsV.length = 0;
          this._buttonHintDataV = abuttonHintDataV;
          this._buttonHintDataV.forEach(function(param1:BSButtonHintData, param2:int, param3:Vector.<BSButtonHintData>):*
          {
             if(param1)
             {
                param1.addEventListener(BSButtonHintData.BUTTON_HINT_DATA_CHANGE,this.onButtonHintDataDirtyEvent);
+               if(param1.canHold)
+               {
+                  _holdButtonsV.push(param1);
+               }
             }
          },this);
          this.CreateButtonHints();
@@ -171,6 +179,40 @@ package Shared.AS3
             _loc3_++;
          }
          return _loc2_;
+      }
+      
+      public function FindButtonHintDataForUserEvent(param1:String, param2:Boolean) : BSButtonHintData
+      {
+         var _loc4_:* = undefined;
+         var _loc5_:* = undefined;
+         var _loc3_:BSButtonHintData = null;
+         if(!param2)
+         {
+            _loc4_ = 0;
+            while(_loc4_ < this._holdButtonsV.length)
+            {
+               if(this._holdButtonsV[_loc4_].UserEvent == param1)
+               {
+                  _loc3_ = this._holdButtonsV[_loc4_];
+                  break;
+               }
+               _loc4_++;
+            }
+         }
+         if(_loc3_ == null)
+         {
+            _loc5_ = 0;
+            while(_loc5_ < this._buttonHintDataV.length)
+            {
+               if(this._buttonHintDataV[_loc5_].UserEvent == param1 && !this._buttonHintDataV[_loc5_].canHold)
+               {
+                  _loc3_ = this._buttonHintDataV[_loc5_];
+                  break;
+               }
+               _loc5_++;
+            }
+         }
+         return _loc3_;
       }
       
       public function onButtonHintDataDirtyEvent(param1:Event) : void

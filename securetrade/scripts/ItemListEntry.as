@@ -18,6 +18,8 @@ package
       
       public var SetBonusIcon_mc:MovieClip;
       
+      public var ItemLockIcon_mc:MovieClip;
+      
       protected var BaseTextFieldWidth:uint;
       
       protected var BaseTextFieldX:Number;
@@ -61,11 +63,16 @@ package
          if(this.LeftIcon_mc != null)
          {
             SetColorTransform(this.LeftIcon_mc,this.selected);
-            this.LeftIcon_mc.EquipIcon_mc.visible = param1.equipState != 0;
-            this.LeftIcon_mc.BestIcon_mc.visible = param1.inContainer && param1.bestInClass == true;
-            if(this.LeftIcon_mc.BarterIcon_mc != undefined)
+            this.LeftIcon_mc.EquipIcon_mc.visible = param1.equipState != 0 && !(SecureTrade.IsTransferLockingFeatureEnabled && param1.isTransferLocked);
+            this.LeftIcon_mc.BestIcon_mc.visible = param1.inContainer && param1.bestInClass;
+            if(this.LeftIcon_mc.BarterIcon_mc)
             {
                this.LeftIcon_mc.BarterIcon_mc.visible = _loc4_ < 0;
+            }
+            if(this.LeftIcon_mc.ItemLockIcon_mc)
+            {
+               this.LeftIcon_mc.ItemLockIcon_mc.visible = SecureTrade.IsTransferLockingFeatureEnabled && param1.isTransferLocked;
+               this.LeftIcon_mc.ItemLockIcon_mc.gotoAndStop(param1.equipState != 0 ? "isEquipped" : "isUnequipped");
             }
          }
          var _loc6_:Array = [];

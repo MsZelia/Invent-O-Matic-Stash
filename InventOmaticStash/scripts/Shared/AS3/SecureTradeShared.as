@@ -27,6 +27,8 @@ package Shared.AS3
       
       public static const MODE_FREEZER:int = 10;
       
+      public static const MODE_PET:int = 11;
+      
       public static const MODE_INVALID:uint = uint.MAX_VALUE;
       
       public static const SUB_MODE_STANDARD:uint = 0;
@@ -123,9 +125,17 @@ package Shared.AS3
       
       public static const MACHINE_TYPE_FREEZER:* = 8;
       
+      public static const MACHINE_TYPE_PET:* = 9;
+      
+      public static const LOOT:* = 0;
+      
+      public static const POWER_ARMOR:* = 3;
+      
       public static const LIMITED_TYPE_STORAGE_SCRAP:* = 7;
       
       public static const LIMITED_TYPE_STORAGE_AMMO:* = 8;
+      
+      public static const LIMITED_TYPE_STORAGE_AID:* = 9;
       
       public function SecureTradeShared()
       {
@@ -134,18 +144,17 @@ package Shared.AS3
       
       public static function IsCampVendingMenuType(param1:uint) : Boolean
       {
-         return param1 == SecureTradeShared.MODE_VENDING_MACHINE || param1 == SecureTradeShared.MODE_DISPLAY_CASE || param1 == SecureTradeShared.MODE_ALLY || param1 == SecureTradeShared.MODE_CAMP_DISPENSER || param1 == SecureTradeShared.MODE_FERMENTER || param1 == SecureTradeShared.MODE_REFRIGERATOR || param1 == SecureTradeShared.MODE_RECHARGER || param1 == SecureTradeShared.MODE_FREEZER;
+         return param1 == SecureTradeShared.MODE_VENDING_MACHINE || param1 == SecureTradeShared.MODE_DISPLAY_CASE || param1 == SecureTradeShared.MODE_ALLY || param1 == SecureTradeShared.MODE_CAMP_DISPENSER || param1 == SecureTradeShared.MODE_FERMENTER || param1 == SecureTradeShared.MODE_REFRIGERATOR || param1 == SecureTradeShared.MODE_RECHARGER || param1 == SecureTradeShared.MODE_FREEZER || param1 == SecureTradeShared.MODE_PET;
       }
       
       public static function DoesMachineTypeMatchMode(param1:uint, param2:uint) : Boolean
       {
-         return param1 == MACHINE_TYPE_VENDING ? param2 == MODE_VENDING_MACHINE : (param1 == MACHINE_TYPE_DISPLAY ? param2 == MODE_DISPLAY_CASE : (param1 == MACHINE_TYPE_DISPENSER ? param2 == MODE_CAMP_DISPENSER : (param1 == MACHINE_TYPE_FERMENTER ? param2 == MODE_FERMENTER : (param1 == MACHINE_TYPE_REFRIGERATOR ? param2 == MODE_REFRIGERATOR : (param1 == MACHINE_TYPE_ALLY ? param2 == MODE_ALLY : (param1 == MACHINE_TYPE_RECHARGER ? param2 == MODE_RECHARGER : (param1 == MACHINE_TYPE_FREEZER ? param2 == MODE_FREEZER : false)))))));
+         return param1 == MACHINE_TYPE_VENDING ? param2 == MODE_VENDING_MACHINE : (param1 == MACHINE_TYPE_DISPLAY ? param2 == MODE_DISPLAY_CASE : (param1 == MACHINE_TYPE_DISPENSER ? param2 == MODE_CAMP_DISPENSER : (param1 == MACHINE_TYPE_FERMENTER ? param2 == MODE_FERMENTER : (param1 == MACHINE_TYPE_REFRIGERATOR ? param2 == MODE_REFRIGERATOR : (param1 == MACHINE_TYPE_ALLY ? param2 == MODE_ALLY : (param1 == MACHINE_TYPE_RECHARGER ? param2 == MODE_RECHARGER : (param1 == MACHINE_TYPE_FREEZER ? param2 == MODE_FREEZER : (param1 == MACHINE_TYPE_PET ? param2 == MODE_PET : false))))))));
       }
       
       public static function setCurrencyIcon(param1:SWFLoaderClip, param2:uint, param3:Boolean = false) : MovieClip
       {
          var _loc4_:String = null;
-         trace(param2);
          switch(param2)
          {
             case CURRENCY_CAPS:

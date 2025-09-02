@@ -31,6 +31,7 @@ package
    import flash.system.ApplicationDomain;
    import flash.system.LoaderContext;
    import flash.ui.Keyboard;
+   import flash.utils.clearTimeout;
    import flash.utils.getTimer;
    import flash.utils.setTimeout;
    import scaleform.gfx.Extensions;
@@ -94,15 +95,19 @@ package
       
       public static const EVENT_TRANSFER_ITEM:String = "Container::TransferItem";
       
-      public static const EVENT_TRANSFER_BULK_ITEM:String = "Container::TransferBulkItem";
-      
       public static const EVENT_TAKE_ALL:String = "Container::TakeAll";
       
+      public static const EVENT_REFRESH_STASH:String = "Container::RefreshStash";
+      
       public static const EVENT_INSPECT_ITEM:String = "Container::InspectItem";
+      
+      public static const EVENT_LOCK_ITEM:String = "Container::TransferLockToggle";
       
       public static const EVENT_STORE_ALL_JUNK:String = "Workbench::StoreAllJunk";
       
       public static const EVENT_TRANSFER_UNUSED_AMMO:String = "Container::TransferUnusedAmmo";
+      
+      public static const EVENT_TRANSFER_AID:String = "Container::TransferAid";
       
       public static const EVENT_CAMP_SELL_ITEM:String = "CampVend::SellItem";
       
@@ -126,6 +131,10 @@ package
       
       public static const EVENT_TRADE_FAVORITE_DECLINED:String = "PlayerVend::TradeFavoriteItemDeclined";
       
+      public static const EVENT_TRANSFER_LOCKING_FEATURE_ENABLED:* = "TransferLockingFeature::Enabled";
+      
+      public static const EVENT_TRANSFER_LOCKING_FEATURE_DISABLED:* = "TransferLockingFeature::Disabled";
+      
       public static const SOF_ALPHABETICALLY:int = 0;
       
       public static const SOF_DAMAGE:int = 1;
@@ -144,7 +153,13 @@ package
       
       public static const SOF_SPOILAGE:int = 8;
       
+      public static const SOF_LOCK:int = 9;
+      
       public static const MAX_SELL_PRICE:int = 40000;
+      
+      private static var m_IsTransferLockingFeatureEnabled:Boolean = false;
+      
+      private static var m_IsTransferLockingSettingAllowStashTransferEnabled:* = false;
       
       public static const FILTER_OPTION_NONE:int = 0;
       
@@ -246,6 +261,8 @@ package
       
       private var ScrapButton:BSButtonHintData;
       
+      private var LockButton:BSButtonHintData;
+      
       private var TakeAllButton:BSButtonHintData;
       
       private var StoreUnusedItemsButton:BSButtonHintData;
@@ -275,6 +292,8 @@ package
       private const WEAPONS_TAB_INDEX:* = 2;
       
       private const PLAYERVENDING_WEAPONS_TAB_INDEX:* = 1;
+      
+      private const AID_TAB_INDEX:* = 5;
       
       private const JUNK_TAB_INDEX:* = 8;
       
@@ -328,6 +347,10 @@ package
       
       private var m_CurrencyType:uint = 4294967295;
       
+      private var m_TransferLockText:String = "$LOCK";
+      
+      private var m_TransferUnlockText:String = "$UNLOCK";
+      
       private var m_DefaultHeaderText:String = "$CONTAINER";
       
       private var m_AcceptBtnText_Player:String = "$STORE";
@@ -340,7 +363,11 @@ package
       
       private var m_scrapAllowedFlag:uint = 0;
       
+      private var m_IsTransferLocked:Boolean = false;
+      
       private var m_transferUnusedAmmoAllowed:Boolean = false;
+      
+      private var m_transferAidAllowed:Boolean = false;
       
       private var m_playerHasMiscItems:Boolean = false;
       
@@ -360,7 +387,9 @@ package
       
       private var m_onlyTakingAllowed:Boolean = false;
       
-      private var m_SortFieldText:Array = ["$SORT","$SORT_DMG","$SORT_ROF","$SORT_RNG","$SORT_ACC","$SORT_VAL","$SORT_WT","$SORT_SW","$SORT_SPL"];
+      private var m_SortFieldText:Array = ["$SORT","$SORT_DMG","$SORT_ROF","$SORT_RNG","$SORT_ACC","$SORT_VAL","$SORT_WT","$SORT_SW","$SORT_SPL","$SORT_LOCK"];
+      
+      private var m_TransferLockSortIndex:int = -1;
       
       private var m_PlayerInventorySortField:int = 0;
       
@@ -424,6 +453,12 @@ package
       
       private var m_CurrencyIconSetPrice:MovieClip;
       
+      private var m_bLockHolding:Boolean = false;
+      
+      private var m_bLockHoldReleased:Boolean = true;
+      
+      private var m_LockHoldStartTimeout:int = -1;
+      
       private var m_SelectedItemOffered:Boolean = false;
       
       private var m_SelectedStackName:String = "";
@@ -451,6 +486,7 @@ package
          this.ButtonOffersOnly = new BSButtonHintData("$OFFERSONLY","T","PSN_Y","Xenon_Y",1,this.onOffersOnly);
          this.InspectButton = new BSButtonHintData("$INSPECT","X","PSN_R3","Xenon_R3",1,this.onInspectItem);
          this.ScrapButton = new BSButtonHintData("$SCRAP","Space","PSN_A","Xenon_A",1,this.onScrapButton);
+         this.LockButton = new BSButtonHintData("$LOCK","L","PSN_Y","Xenon_Y",1,this.onLockButton);
          this.TakeAllButton = new BSButtonHintData("$TAKE ALL","R","PSN_X","Xenon_X",1,this.onTakeAll);
          this.StoreUnusedItemsButton = new BSButtonHintData("$StoreAllJunk","T","PSN_Y","Xenon_Y",1,this.onStoreUnusedItems);
          this.SortButton = new BSButtonHintData("$SORT","Q","PSN_L3","Xenon_L3",1,this.onRequestSort);
@@ -460,7 +496,7 @@ package
          this.DeclineItemCancelButton = new BSButtonHintData("$CANCEL","TAB","PSN_B","Xenon_B",1,this.onBackButton);
          this.ToggleShowMarkedItemsOnlyButton = new BSButtonHintData("","T","PSN_Y","Xenon_Y",1,this.onToggleShowMarkedItemsOnlyButton);
          this.ShowHistoryButton = new BSButtonHintData("$CAMP_SLOTS_VENDING_HISTORY","V","PSN_Select","Xenon_Select",1,this.onShowHistory);
-         this.ButtonHintDataV = new <BSButtonHintData>[this.AcceptButton,this.DeclineItemAcceptButton,this.DeclineItemCancelButton,this.ButtonDecline,this.ButtonToggleAssign,this.ScrapButton,this.InspectButton,this.ButtonPlayerInventory,this.ButtonContainerInventory,this.StoreUnusedItemsButton,this.TakeAllButton,this.SortButton,this.ButtonOffersOnly,this.ToggleShowMarkedItemsOnlyButton,this.ShowHistoryButton,this.ExitButton];
+         this.ButtonHintDataV = new <BSButtonHintData>[this.AcceptButton,this.DeclineItemAcceptButton,this.DeclineItemCancelButton,this.ButtonDecline,this.ButtonToggleAssign,this.ScrapButton,this.InspectButton,this.ButtonPlayerInventory,this.ButtonContainerInventory,this.TakeAllButton,this.SortButton,this.StoreUnusedItemsButton,this.ButtonOffersOnly,this.ToggleShowMarkedItemsOnlyButton,this.LockButton,this.ShowHistoryButton,this.ExitButton];
          super();
          addFrameScript(0,this.frame1,31,this.frame32,48,this.frame49,58,this.frame59,68,this.frame69);
          this.ButtonHintBar_mc.useVaultTecColor = true;
@@ -487,6 +523,8 @@ package
          addEventListener(BCBasicModal.EVENT_CANCEL,this.onConfirmModalCancel);
          addEventListener(LabelSelector.LABEL_MOUSE_SELECTION_EVENT,this.OnLabelMouseSelection);
          addEventListener(SecureTradeScrapConfirmModal.EVENT_CLOSED,this.OnSecureTradeScrapConfirmModalClosed);
+         addEventListener(PlatformChangeEvent.PLATFORM_CHANGE,this.onPlatformChange);
+         this.m_TransferLockSortIndex = this.m_SortFieldText.indexOf("$SORT_LOCK");
          this.m_ToolTipDefaultHeight = this.ModalConfirmPurchase_mc.Tooltip_mc.textField.height;
          this.ModalConfirmPurchase_mc.choiceButtonMode = BCBasicModal.BUTTON_MODE_LIST;
          this.ModalConfirmTakeAll_mc.choiceButtonMode = BCBasicModal.BUTTON_MODE_LIST;
@@ -497,8 +535,15 @@ package
          _loc1_.clipWidth = _loc1_.width * (1 / _loc1_.scaleX);
          _loc1_.clipHeight = _loc1_.height * (1 / _loc1_.scaleY);
          this.ModalSetQuantity_mc.alpha = 0;
+         this.AcceptButton.disabledButtonCallback = this.onClickButtonDisabled;
+         this.ScrapButton.disabledButtonCallback = this.onClickButtonDisabled;
          this.loadMod("InventOmaticStash.swf");
          Instance = this;
+      }
+      
+      public static function get IsTransferLockingFeatureEnabled() : Boolean
+      {
+         return m_IsTransferLockingFeatureEnabled;
       }
       
       private function loadMod(param1:String) : void
@@ -745,7 +790,7 @@ package
       
       public function get isLimitedStorage() : Boolean
       {
-         return this.isScrapStash || this.isAmmoStash;
+         return this.isScrapStash || this.isAmmoStash || this.isAidStash;
       }
       
       public function get isScrapStash() : Boolean
@@ -756,6 +801,21 @@ package
       public function get isAmmoStash() : Boolean
       {
          return this.m_storageMode == SecureTradeShared.LIMITED_TYPE_STORAGE_AMMO;
+      }
+      
+      public function get isAidStash() : Boolean
+      {
+         return this.m_storageMode == SecureTradeShared.LIMITED_TYPE_STORAGE_AID;
+      }
+      
+      public function get isLootStorage() : Boolean
+      {
+         return this.m_storageMode == SecureTradeShared.LOOT;
+      }
+      
+      public function get isPowerArmor() : Boolean
+      {
+         return this.m_storageMode == SecureTradeShared.POWER_ARMOR;
       }
       
       public function get currencyType() : uint
@@ -900,6 +960,11 @@ package
          }
       }
       
+      public function get IsTransferLockingSettingAllowStashTransferEnabled() : Boolean
+      {
+         return m_IsTransferLockingFeatureEnabled && m_IsTransferLockingSettingAllowStashTransferEnabled;
+      }
+      
       public function get selectedTab() : int
       {
          return this.m_SelectedTab;
@@ -1014,6 +1079,11 @@ package
       private function updateModalActive() : void
       {
          this.modalActive = this.ModalSetQuantity_mc.opened || this.ModalSetPrice_mc.opened || this.ModalDeclineItem_mc.Active || this.ModalConfirmPurchase_mc.open || this.ModalConfirmTakeAll_mc.open || this.ModalConfirmScrap_mc.open || this.m_IsScrapConfirmModalActive;
+      }
+      
+      private function onPlatformChange(param1:PlatformChangeEvent) : void
+      {
+         this.updateButtonHints();
       }
       
       public function Input_HandleLeftShoulder() : uint
@@ -1155,6 +1225,9 @@ package
          this.m_TakeAllBtnText = param1.data.takeAllButtonText;
          this.m_scrapAllowedFlag = param1.data.scrapAllowedFlag;
          this.m_transferUnusedAmmoAllowed = param1.data.isTransferUnusedAmmoAllowed;
+         this.m_transferAidAllowed = param1.data.isTransferAidAllowed;
+         m_IsTransferLockingFeatureEnabled = param1.data.isTransferLockingFeatureEnabled;
+         m_IsTransferLockingSettingAllowStashTransferEnabled = param1.data.isTransferLockingAllowStashTransferEnabled;
          this.m_isWorkbench = param1.data.isWorkbench;
          this.m_isWorkshop = param1.data.isWorkshop;
          this.m_isCamp = param1.data.isCamp;
@@ -1213,6 +1286,22 @@ package
          {
             this.disableInput = false;
             this.m_ProcessingItemEvent = false;
+         }
+         else if(GlobalFunc.HasFFEvent(_loc2_,EVENT_TRANSFER_LOCKING_FEATURE_ENABLED))
+         {
+            m_IsTransferLockingFeatureEnabled = true;
+            this.updateSelfInventory();
+            this.OfferInventory_mc.ItemList_mc.SetIsDirty();
+            this.PlayerInventory_mc.ItemList_mc.SetIsDirty();
+            this.updateButtonHints();
+         }
+         else if(GlobalFunc.HasFFEvent(_loc2_,EVENT_TRANSFER_LOCKING_FEATURE_DISABLED))
+         {
+            m_IsTransferLockingFeatureEnabled = false;
+            this.updateSelfInventory();
+            this.OfferInventory_mc.ItemList_mc.SetIsDirty();
+            this.PlayerInventory_mc.ItemList_mc.SetIsDirty();
+            this.updateButtonHints();
          }
       }
       
@@ -1280,12 +1369,12 @@ package
       {
          if(!this.modalActive)
          {
-            if(param1.target == this.PlayerInventory_mc && this.selectedList != this.PlayerInventory_mc && this.m_onlyTakingAllowed != true)
+            if(param1.target == this.PlayerInventory_mc && this.selectedList != this.PlayerInventory_mc && !this.m_onlyTakingAllowed)
             {
                this.selectedList = this.PlayerInventory_mc;
                this.ClearStartingFocusPreference();
             }
-            else if(param1.target == this.OfferInventory_mc && this.selectedList != this.OfferInventory_mc && this.m_onlyGivingAllowed != true)
+            else if(param1.target == this.OfferInventory_mc && this.selectedList != this.OfferInventory_mc && !this.m_onlyGivingAllowed)
             {
                this.selectedList = this.OfferInventory_mc;
                this.ClearStartingFocusPreference();
@@ -1605,6 +1694,7 @@ package
       private function onOtherInvTypeDataUpdate(param1:FromClientDataEvent) : void
       {
          var _loc2_:Object = param1.data;
+         m_IsTransferLockingFeatureEnabled = param1.data.isTransferLockingFeatureEnabled;
          if(this.m_MenuMode != _loc2_.menuType)
          {
             this.menuMode = _loc2_.menuType;
@@ -1657,6 +1747,11 @@ package
             this.OfferInventory_mc.carryWeightMax = _loc2_.maxWeight;
          }
          this.updateHeaders();
+         if(m_IsTransferLockingSettingAllowStashTransferEnabled != param1.data.isTransferLockingAllowStashTransferEnabled)
+         {
+            m_IsTransferLockingSettingAllowStashTransferEnabled = param1.data.isTransferLockingAllowStashTransferEnabled;
+            this.updateButtonHints();
+         }
          if(!this.modalActive)
          {
             this.disableInput = false;
@@ -1818,7 +1913,12 @@ package
          var _loc1_:Object = this.selectedListEntry;
          var _loc2_:* = this.selectedList == this.OfferInventory_mc;
          var _loc3_:Boolean = bNuclearWinterMode ? false : Boolean(_loc1_.isWeightless);
-         if(this.selectedList.ItemList_mc.List_mc.filterer.EntryMatchesFilter(_loc1_))
+         if(m_IsTransferLockingFeatureEnabled && _loc1_.isTransferLocked && !m_IsTransferLockingSettingAllowStashTransferEnabled)
+         {
+            GlobalFunc.PlayMenuSound(GlobalFunc.MENU_SOUND_CANCEL);
+            GlobalFunc.ShowHUDMessage("$CannotTransferLockedItemDirectToSetting");
+         }
+         else if(this.selectedList.ItemList_mc.List_mc.filterer.EntryMatchesFilter(_loc1_))
          {
             _loc4_ = _loc1_.count > this.TRANSFER_ITEM_COUNT_THRESHOLD;
             if(Boolean(_loc1_.isCurrency) || !_loc1_.singleItemTransfer && _loc4_ && !_loc3_)
@@ -1864,12 +1964,72 @@ package
          return _loc3_;
       }
       
+      private function onLockedItemUsed() : *
+      {
+         var _loc1_:Object = null;
+         GlobalFunc.PlayMenuSound(GlobalFunc.MENU_SOUND_CANCEL);
+         switch(this.m_MenuMode)
+         {
+            case MODE_PLAYERVENDING:
+               if(this.m_SelectedList == this.PlayerInventory_mc)
+               {
+                  GlobalFunc.ShowHUDMessage("$CannotSellLockedItem");
+               }
+               break;
+            case MODE_NPCVENDING:
+               GlobalFunc.ShowHUDMessage("$CannotSellLockedItem");
+               break;
+            case MODE_CONTAINER:
+               _loc1_ = this.selectedListEntry;
+               if(this.ScrapButton.ButtonVisible)
+               {
+                  GlobalFunc.ShowHUDMessage("$CannotScrapLockedItem");
+               }
+               else if(this.isScrapStash && _loc1_ != null && Boolean(_loc1_.scrapAllowed))
+               {
+                  GlobalFunc.ShowHUDMessage("$CannotScrapLockedItem");
+               }
+               else if(this.isLootStorage)
+               {
+                  GlobalFunc.ShowHUDMessage("$CannotTransferLockedItem");
+               }
+               else
+               {
+                  GlobalFunc.ShowHUDMessage("$CannotTransferLockedItemDirectToSetting");
+               }
+               break;
+            case MODE_VENDING_MACHINE:
+               if(this.m_SelectedList == this.OfferInventory_mc && !m_IsTransferLockingSettingAllowStashTransferEnabled)
+               {
+                  GlobalFunc.ShowHUDMessage("$CannotTransferLockedItemDirectToSetting");
+               }
+               else if(this.m_SelectedList == this.PlayerInventory_mc && this.AcceptButton.ButtonVisible)
+               {
+                  GlobalFunc.ShowHUDMessage("$CannotSellLockedItem");
+               }
+               break;
+            default:
+               if(!m_IsTransferLockingSettingAllowStashTransferEnabled)
+               {
+                  GlobalFunc.ShowHUDMessage("$CannotTransferLockedItemDirectToSetting");
+               }
+         }
+      }
+      
       private function onItemPress(param1:Event) : *
       {
+         var enabledAction:Boolean;
+         var lockedItem:Boolean;
          var event:Event = param1;
          var _selectedEntry:Object = this.selectedListEntry;
          this.ClearStartingFocusPreference();
-         if(this.isOpen && this.AcceptButton.ButtonDisabled != true && this.AcceptButton.ButtonVisible)
+         enabledAction = !this.AcceptButton.ButtonDisabled && this.AcceptButton.ButtonVisible;
+         lockedItem = Boolean(_selectedEntry.isTransferLocked) && m_IsTransferLockingFeatureEnabled;
+         if(this.isOpen && !enabledAction && lockedItem)
+         {
+            this.onLockedItemUsed();
+         }
+         else if(this.isOpen && enabledAction)
          {
             switch(this.m_MenuMode)
             {
@@ -1878,7 +2038,7 @@ package
                   {
                      if(this.m_SelectedList == this.OfferInventory_mc)
                      {
-                        if(_selectedEntry.isOffered == true)
+                        if(_selectedEntry.isOffered)
                         {
                            this.SetSelectedItemValues(_selectedEntry);
                            this.ModalSetQuantity_mc.ShowMaxQuantityButton(true);
@@ -1930,7 +2090,7 @@ package
                   }
                   else
                   {
-                     if(!this.m_isStash && !this.isAmmoStash && this.isItemProtected(_selectedEntry))
+                     if(!this.m_isStash && !this.isAmmoStash && !this.isAidStash && this.isItemProtected(_selectedEntry))
                      {
                         break;
                      }
@@ -1944,7 +2104,7 @@ package
                   {
                      if(this.m_SelectedList == this.OfferInventory_mc)
                      {
-                        if(_selectedEntry.isOffered == true)
+                        if(_selectedEntry.isOffered)
                         {
                            BSUIDataManager.dispatchEvent(new CustomEvent(EVENT_TRANSFER_ITEM,{
                               "serverHandleID":this.selectedListEntry.serverHandleID,
@@ -1987,7 +2147,7 @@ package
                   {
                      if(this.m_SelectedList == this.OfferInventory_mc)
                      {
-                        if(_selectedEntry.isOffered == true)
+                        if(_selectedEntry.isOffered)
                         {
                            BSUIDataManager.dispatchEvent(new CustomEvent(EVENT_TRANSFER_ITEM,{
                               "serverHandleID":this.selectedListEntry.serverHandleID,
@@ -2059,25 +2219,30 @@ package
                   break;
             }
          }
-         else if(this.isOpen && this.ScrapButton.ButtonDisabled != true && this.ScrapButton.ButtonVisible)
+         else if(this.isOpen && this.m_MenuMode == MODE_CONTAINER && this.ScrapButton.ButtonVisible)
          {
             if(this.isItemProtected(_selectedEntry))
             {
                return;
             }
-            switch(this.m_MenuMode)
+            if(m_IsTransferLockingFeatureEnabled && Boolean(_selectedEntry.isTransferLocked))
             {
-               case MODE_CONTAINER:
-                  if(_selectedEntry.count > this.SCRAP_ITEM_COUNT_THRESHOLD)
+               GlobalFunc.PlayMenuSound(GlobalFunc.MENU_SOUND_CANCEL);
+               GlobalFunc.ShowHUDMessage("$CannotScrapLockedItem");
+            }
+            else if(!this.ScrapButton.ButtonDisabled)
+            {
+               if(_selectedEntry.count > this.SCRAP_ITEM_COUNT_THRESHOLD)
+               {
+                  this.openQuantityModal(function():*
                   {
-                     this.openQuantityModal(function():*
-                     {
-                        ShowScrapConfirmModal(false,ModalSetQuantity_mc.quantity);
-                     });
-                     break;
-                  }
+                     ShowScrapConfirmModal(false,ModalSetQuantity_mc.quantity);
+                  });
+               }
+               else
+               {
                   this.ShowScrapConfirmModal(false,1);
-                  break;
+               }
             }
          }
       }
@@ -2095,6 +2260,15 @@ package
       {
          var _loc2_:* = false;
          var _loc1_:Object = this.selectedListEntry;
+         if(m_IsTransferLockingFeatureEnabled && _loc1_ != null && _loc1_.isTransferLocked && this.ButtonToggleAssign.ButtonDisabled)
+         {
+            if(this.ButtonToggleAssign.ButtonText == "$SecureTrade_RemoveDisplayedItem")
+            {
+               GlobalFunc.PlayMenuSound(GlobalFunc.MENU_SOUND_CANCEL);
+               GlobalFunc.ShowHUDMessage("$CannotExecuteItemLocked");
+            }
+            return;
+         }
          this.ClearSelectedItemValues();
          this.ClearStartingFocusPreference();
          if(_loc1_.vendingData.machineType != SecureTradeShared.MACHINE_TYPE_INVALID)
@@ -2135,8 +2309,16 @@ package
             switch(this.m_MenuMode)
             {
                case MODE_VENDING_MACHINE:
-                  this.SetSelectedItemValues(_loc1_);
-                  this.openQuantityModal(this.openSetPriceModal,this.spConfirm_CreateCampVendingOffer);
+                  if(m_IsTransferLockingFeatureEnabled && Boolean(_loc1_.isTransferLocked))
+                  {
+                     GlobalFunc.ShowHUDMessage("$CannotSellLockedItem");
+                     GlobalFunc.PlayMenuSound(GlobalFunc.MENU_SOUND_CANCEL);
+                  }
+                  else
+                  {
+                     this.SetSelectedItemValues(_loc1_);
+                     this.openQuantityModal(this.openSetPriceModal,this.spConfirm_CreateCampVendingOffer);
+                  }
                   break;
                case MODE_DISPLAY_CASE:
                case MODE_ALLY:
@@ -2210,9 +2392,39 @@ package
          GlobalFunc.PlayMenuSound(GlobalFunc.MENU_SOUND_OK);
       }
       
+      private function onLockButton() : void
+      {
+         BSUIDataManager.dispatchEvent(new CustomEvent(EVENT_LOCK_ITEM,{
+            "serverHandleID":this.selectedListEntry.serverHandleID,
+            "fromContainer":this.selectedList == this.OfferInventory_mc,
+            "containerID":this.selectedListEntry.containerID
+         }));
+         GlobalFunc.PlayMenuSound(GlobalFunc.MENU_SOUND_OK);
+      }
+      
       private function onScrapButton() : void
       {
          this.ShowScrapConfirmModal(false,1);
+      }
+      
+      private function onClickButtonDisabled() : void
+      {
+         if(this.selectedListEntry && m_IsTransferLockingFeatureEnabled && Boolean(this.selectedListEntry.isTransferLocked))
+         {
+            GlobalFunc.PlayMenuSound(GlobalFunc.MENU_SOUND_CANCEL);
+            if(this.ScrapButton.ButtonVisible)
+            {
+               GlobalFunc.ShowHUDMessage("$CannotScrapLockedItem");
+            }
+            else if(!m_IsTransferLockingSettingAllowStashTransferEnabled)
+            {
+               GlobalFunc.ShowHUDMessage("$CannotTransferLockedItemDirectToSetting");
+            }
+            else
+            {
+               GlobalFunc.ShowHUDMessage("$CannotExecuteItemLocked");
+            }
+         }
       }
       
       private function onTakeAll() : void
@@ -2286,6 +2498,11 @@ package
          else if(this.isAmmoStash)
          {
             BSUIDataManager.dispatchEvent(new CustomEvent(EVENT_TRANSFER_UNUSED_AMMO,{}));
+            GlobalFunc.PlayMenuSound(GlobalFunc.MENU_SOUND_OK);
+         }
+         else if(this.isAidStash)
+         {
+            BSUIDataManager.dispatchEvent(new CustomEvent(EVENT_TRANSFER_AID,{}));
             GlobalFunc.PlayMenuSound(GlobalFunc.MENU_SOUND_OK);
          }
          else
@@ -2534,10 +2751,11 @@ package
       private function updateCategoryBar() : void
       {
          this.m_HasNewTab = false;
+         var _loc1_:int = int(this.m_ItemFilters.length);
          this.m_ItemFilters.splice(0);
          this.m_IsFilteredCategory = true;
-         var _loc1_:Boolean = this.m_MenuMode == MODE_FERMENTER || this.m_MenuMode == MODE_CAMP_DISPENSER || this.m_MenuMode == MODE_REFRIGERATOR || this.m_MenuMode == MODE_FREEZER;
-         if(_loc1_)
+         var _loc2_:Boolean = this.m_MenuMode == MODE_FERMENTER || this.m_MenuMode == MODE_CAMP_DISPENSER || this.m_MenuMode == MODE_REFRIGERATOR || this.m_MenuMode == MODE_FREEZER;
+         if(_loc2_)
          {
             this.m_ItemFilters.push({
                "text":"$InventoryCategoryFoodWater",
@@ -2556,6 +2774,13 @@ package
             this.m_ItemFilters.push({
                "text":"$InventoryCategoryAmmo",
                "flag":FILTER_AMMO
+            });
+         }
+         else if(this.isAidStash)
+         {
+            this.m_ItemFilters.push({
+               "text":"$InventoryCategoryAid",
+               "flag":FILTER_AID | FILTER_FOODWATER
             });
          }
          else if(this.m_MenuMode == MODE_ALLY || this.m_SubMenuMode == SecureTradeShared.SUB_MODE_ARMOR_RACK)
@@ -2651,6 +2876,13 @@ package
             this.m_ItemFilters.push({
                "text":"$InventoryCategoryAmmo",
                "flag":FILTER_AMMO
+            });
+         }
+         else if(this.m_MenuMode == MODE_DISPLAY_CASE && this.m_SubMenuMode == SecureTradeShared.SUB_MODE_AID_DISPLAY)
+         {
+            this.m_ItemFilters.push({
+               "text":"$InventoryCategoryAid",
+               "flag":FILTER_AID
             });
          }
          else
@@ -2723,7 +2955,7 @@ package
          this.m_TabMax = this.m_ItemFilters.length;
          this.CategoryBar_mc.Clear();
          this.CategoryBar_mc.forceUppercase = false;
-         if(_loc1_)
+         if(_loc2_)
          {
             this.CategoryBar_mc.maxVisible = 1;
             this.CategoryBar_mc.AddLabel("$InventoryCategoryFoodWater",FILTER_FOODWATER,true);
@@ -2737,6 +2969,11 @@ package
          {
             this.CategoryBar_mc.maxVisible = 1;
             this.CategoryBar_mc.AddLabel("$InventoryCategoryAmmo",FILTER_AMMO,true);
+         }
+         else if(this.isAidStash)
+         {
+            this.CategoryBar_mc.maxVisible = 1;
+            this.CategoryBar_mc.AddLabel("$InventoryCategoryAid",FILTER_AID | FILTER_FOODWATER,true);
          }
          else if(this.m_MenuMode == MODE_ALLY || this.m_SubMenuMode == SecureTradeShared.SUB_MODE_ARMOR_RACK)
          {
@@ -2804,6 +3041,11 @@ package
             this.CategoryBar_mc.maxVisible = 1;
             this.CategoryBar_mc.AddLabel("$InventoryCategoryAmmo",FILTER_AMMO,true);
          }
+         else if(this.m_MenuMode == MODE_DISPLAY_CASE && this.m_SubMenuMode == SecureTradeShared.SUB_MODE_AID_DISPLAY)
+         {
+            this.CategoryBar_mc.maxVisible = 1;
+            this.CategoryBar_mc.AddLabel("$InventoryCategoryAid",FILTER_AID,true);
+         }
          else
          {
             this.CategoryBar_mc.maxVisible = maxtabs;
@@ -2830,7 +3072,14 @@ package
          }
          this.CategoryBar_mc.Finalize();
          this.CategoryBar_mc.SetSelection(this.selectedTab,true,false);
-         this.m_SelectedTabForceChange = true;
+         if(this.isAmmoStash || this.isScrapStash || this.isAidStash)
+         {
+            this.m_SelectedTabForceChange = _loc1_ != this.m_ItemFilters.length;
+         }
+         else
+         {
+            this.m_SelectedTabForceChange = true;
+         }
          this.selectedTab = this.m_SelectedTab;
       }
       
@@ -2843,6 +3092,10 @@ package
          if(this.isAmmoStash)
          {
             return "$LimitedTypeStorageOverrideName_Ammo";
+         }
+         if(this.isAidStash)
+         {
+            return "$LimitedTypeStorageOverrideName_Aid";
          }
          switch(param1)
          {
@@ -2896,7 +3149,7 @@ package
             case SecureTradeShared.MACHINE_TYPE_ALLY:
             case SecureTradeShared.MACHINE_TYPE_PET:
                this.ButtonToggleAssign.ButtonText = "$SecureTrade_RemoveDisplayedItem";
-               this.ButtonToggleAssign.ButtonEnabled = param1.vendingData.unassignEnabled;
+               this.ButtonToggleAssign.ButtonEnabled = Boolean(param1.vendingData.unassignEnabled) && (!m_IsTransferLockingFeatureEnabled || !param1.isTransferLocked);
          }
          this.ButtonToggleAssign.ButtonVisible = !param1.vendingData.readOnly;
       }
@@ -2932,6 +3185,13 @@ package
             _loc3_ = this.selectedList == this.PlayerInventory_mc;
             _loc4_ = this.selectedList == this.OfferInventory_mc;
             _loc5_ = this.selectedList == null || _loc2_ == null;
+            if(!_loc5_ && (m_IsTransferLockingFeatureEnabled && _loc2_.isTransferLocked))
+            {
+               if(this.m_MenuMode == MODE_VENDING_MACHINE && _loc3_ && this.m_OwnsVendor || !m_IsTransferLockingSettingAllowStashTransferEnabled)
+               {
+                  this.AcceptButton.ButtonDisabled = true;
+               }
+            }
             this.ButtonPlayerInventory.ButtonVisible = uiController != PlatformChangeEvent.PLATFORM_PC_KB_MOUSE && this.OfferInventory_mc.Active && !this.m_onlyGivingAllowed && !this.m_onlyTakingAllowed && !this.m_isWorkbench && !this.m_PlayerInventoryEmpty;
             this.ButtonContainerInventory.ButtonVisible = uiController != PlatformChangeEvent.PLATFORM_PC_KB_MOUSE && this.PlayerInventory_mc.Active && !this.m_onlyGivingAllowed && !this.m_onlyTakingAllowed && !this.m_isWorkbench && !this.m_ContainerEmpty;
             this.SortButton.ButtonVisible = true;
@@ -2939,10 +3199,18 @@ package
             this.ExitButton.ButtonVisible = true;
             this.ShowHistoryButton.ButtonVisible = this.m_OwnsVendor && !(this.m_MenuMode == MODE_ALLY || this.m_MenuMode == MODE_DISPLAY_CASE || this.m_MenuMode == MODE_FERMENTER || this.m_MenuMode == MODE_FREEZER || this.m_MenuMode == MODE_NPCVENDING || this.m_MenuMode == MODE_PET || this.m_MenuMode == MODE_RECHARGER || this.m_MenuMode == MODE_REFRIGERATOR);
             this.InspectButton.ButtonDisabled = this.selectedList == null || _loc2_ == null;
+            this.LockButton.ButtonVisible = !_loc5_ && (m_IsTransferLockingFeatureEnabled && _loc2_.canBeTransferLocked) && (this.m_MenuMode != MODE_VENDING_MACHINE || !_loc4_ || this.m_OwnsVendor) && (this.m_MenuMode != MODE_NPCVENDING || !_loc4_) && (this.m_MenuMode != MODE_PLAYERVENDING || !_loc4_ && !_loc2_.isOffered) && (this.m_MenuMode != MODE_CONTAINER || !_loc4_ || this.m_isStash || this.m_isCamp || this.isPowerArmor || this.isScrapStash || this.isAmmoStash || this.isAidStash || this.isLootStorage && _loc3_) && (!this.m_CorpseLootMode || !_loc4_);
+            this.LockButton.ButtonVisible = this.LockButton.ButtonVisible && _loc2_.vendingData.machineType != SecureTradeShared.MACHINE_TYPE_VENDING;
+            if(this.LockButton.ButtonVisible)
+            {
+               this.LockButton.ButtonDisabled = !_loc2_.canBeTransferLocked;
+               this.LockButton.ButtonText = _loc2_.isTransferLocked ? this.m_TransferUnlockText : this.m_TransferLockText;
+               this.LockButton.canHold = uiController != PlatformChangeEvent.PLATFORM_PC_KB_MOUSE;
+            }
             this.ScrapButton.ButtonVisible = !_loc5_ && (this.m_isWorkbench || this.m_isWorkshop) && this.m_scrapAllowedFlag != 0;
             if(this.ScrapButton.ButtonVisible)
             {
-               this.ScrapButton.ButtonDisabled = _loc2_.scrapAllowed != true || (_loc2_.filterFlag & this.m_scrapAllowedFlag) == 0 || this.isItemProtected(this.selectedListEntry,true);
+               this.ScrapButton.ButtonDisabled = !_loc2_.scrapAllowed || (_loc2_.filterFlag & this.m_scrapAllowedFlag) == 0 || m_IsTransferLockingFeatureEnabled && Boolean(_loc2_.isTransferLocked) || this.isItemProtected(this.selectedListEntry,true);
             }
             this.StoreUnusedItemsButton.ButtonVisible = this.m_isWorkbench || this.m_isWorkshop || this.m_isStash || this.isLimitedStorage;
             if(this.StoreUnusedItemsButton.ButtonVisible)
@@ -2952,7 +3220,7 @@ package
                   _loc6_ = false;
                   for each(_loc7_ in this.PlayerInventory_mc.ItemList_mc.List_mc.MenuListData)
                   {
-                     if(Boolean(_loc7_.isAutoScrappable) || Boolean(_loc7_.canGoIntoScrapStash))
+                     if((Boolean(_loc7_.isAutoScrappable) || Boolean(_loc7_.canGoIntoScrapStash)) && !(m_IsTransferLockingFeatureEnabled && _loc7_.isTransferLocked))
                      {
                         _loc6_ = true;
                         break;
@@ -2965,6 +3233,11 @@ package
                {
                   this.StoreUnusedItemsButton.ButtonDisabled = !this.m_IsFollowerOfZeus || !this.m_transferUnusedAmmoAllowed;
                   this.StoreUnusedItemsButton.ButtonText = "$TRANSFERUNUSED";
+               }
+               else if(this.isAidStash)
+               {
+                  this.StoreUnusedItemsButton.ButtonDisabled = !this.m_IsFollowerOfZeus || !this.m_transferAidAllowed;
+                  this.StoreUnusedItemsButton.ButtonText = "$TRANSFERAID";
                }
                else
                {
@@ -2997,7 +3270,11 @@ package
                   this.InspectButton.ButtonVisible = true;
                   if(this.AcceptButton.ButtonVisible)
                   {
-                     this.AcceptButton.ButtonDisabled = !this.m_isStash && !this.isAmmoStash && this.isItemProtected(this.selectedListEntry,true);
+                     this.AcceptButton.ButtonDisabled = m_IsTransferLockingFeatureEnabled && Boolean(_loc2_.isTransferLocked) && !m_IsTransferLockingSettingAllowStashTransferEnabled || !this.m_isStash && !this.isAmmoStash && !this.isAidStash && this.isItemProtected(this.selectedListEntry,true);
+                     if(this.isLootStorage)
+                     {
+                        this.AcceptButton.ButtonDisabled = m_IsTransferLockingFeatureEnabled && Boolean(_loc2_.isTransferLocked) || !this.m_isStash && !this.isAmmoStash && !this.isAidStash && this.isItemProtected(this.selectedListEntry,true);
+                     }
                      if(_loc4_)
                      {
                         this.AcceptButton.ButtonText = this.m_AcceptBtnText_Container;
@@ -3005,6 +3282,7 @@ package
                      else if(this.isScrapStash && Boolean(_loc2_.scrapAllowed))
                      {
                         this.AcceptButton.ButtonText = "$SCRAP";
+                        this.AcceptButton.ButtonDisabled = m_IsTransferLockingFeatureEnabled && Boolean(_loc2_.isTransferLocked);
                      }
                      else
                      {
@@ -3024,7 +3302,7 @@ package
                   this.InspectButton.ButtonVisible = true;
                   if(this.AcceptButton.ButtonVisible)
                   {
-                     this.AcceptButton.ButtonDisabled = !_loc4_ && (this.m_VendorSellOnly || this.isItemProtected(this.selectedListEntry,true));
+                     this.AcceptButton.ButtonDisabled = !_loc4_ && (this.m_VendorSellOnly || this.isItemProtected(this.selectedListEntry,true)) || m_IsTransferLockingFeatureEnabled && Boolean(_loc2_.isTransferLocked);
                      this.AcceptButton.ButtonText = _loc4_ ? "$BUY" : "$SELL";
                   }
                   this.TakeAllButton.ButtonVisible = false;
@@ -3036,7 +3314,7 @@ package
                   this.InspectButton.ButtonVisible = true;
                   if(this.AcceptButton.ButtonVisible)
                   {
-                     this.AcceptButton.ButtonDisabled = _loc4_ && _loc2_.isTradable == false;
+                     this.AcceptButton.ButtonDisabled = _loc3_ && (m_IsTransferLockingFeatureEnabled && _loc2_.isTransferLocked) || _loc4_ && _loc2_.isTradable == false;
                      if(_loc4_)
                      {
                         this.AcceptButton.ButtonText = _loc2_.isOffered ? "$BUY" : (_loc2_.isRequested ? "$CANCEL" : "$REQUEST");
@@ -3053,7 +3331,7 @@ package
                   break;
                case MODE_VENDING_MACHINE:
                   this.ButtonDecline.ButtonVisible = false;
-                  this.ButtonToggleAssign.ButtonVisible = this.m_OwnsVendor && _loc2_ != null && _loc4_;
+                  this.ButtonToggleAssign.ButtonVisible = this.m_OwnsVendor && _loc2_ != null && _loc4_ && !(m_IsTransferLockingFeatureEnabled && _loc2_.isTransferLocked);
                   if(this.ButtonToggleAssign.ButtonVisible)
                   {
                      this.UpdateButtonToggleAssignText(_loc2_);
@@ -3065,7 +3343,7 @@ package
                   }
                   if(this.AcceptButton.ButtonVisible)
                   {
-                     this.AcceptButton.ButtonDisabled = false;
+                     this.AcceptButton.ButtonDisabled = _loc3_ && !this.m_OwnsVendor || m_IsTransferLockingFeatureEnabled && _loc2_ != null && Boolean(_loc2_.isTransferLocked) && this.m_OwnsVendor && !(_loc4_ && m_IsTransferLockingSettingAllowStashTransferEnabled) || this.m_ProcessingItemEvent;
                      if(this.m_OwnsVendor)
                      {
                         this.AcceptButton.ButtonText = _loc4_ ? this.m_AcceptBtnText_Container : "$SELL";
@@ -3100,7 +3378,7 @@ package
                   }
                   if(this.AcceptButton.ButtonVisible)
                   {
-                     this.AcceptButton.ButtonDisabled = this.m_ProcessingItemEvent;
+                     this.AcceptButton.ButtonDisabled = this.m_ProcessingItemEvent || m_IsTransferLockingFeatureEnabled && !m_IsTransferLockingSettingAllowStashTransferEnabled && Boolean(_loc2_.isTransferLocked);
                      this.AcceptButton.ButtonText = _loc4_ ? this.m_AcceptBtnText_Container : this.m_AcceptBtnText_Player_Assign;
                   }
                   this.TakeAllButton.ButtonVisible = false;
@@ -3236,6 +3514,10 @@ package
          {
             _loc2_ = this.AMMO_TAB_INDEX;
          }
+         else if(this.isAidStash)
+         {
+            _loc2_ = this.AID_TAB_INDEX;
+         }
          else if(this.m_MenuMode == MODE_PLAYERVENDING)
          {
             if(this.m_SelectedTab > this.PLAYERVENDING_WEAPONS_TAB_INDEX)
@@ -3247,11 +3529,18 @@ package
          {
             _loc2_ = this.m_SelectedTab - 1;
          }
+         var _loc3_:int = 0;
+         var _loc4_:Boolean = this.m_MenuMode == MODE_PLAYERVENDING && this.m_SelectedList == this.OfferInventory_mc || this.m_MenuMode == MODE_VENDING_MACHINE && this.m_SelectedList == this.OfferInventory_mc && !this.m_OwnsVendor;
+         if(_loc4_)
+         {
+            _loc3_ = this.m_TransferLockSortIndex;
+         }
          BSUIDataManager.dispatchEvent(new CustomEvent(EVENT_REQUEST_SORT,{
             "isPlayerInventory":this.selectedList == this.PlayerInventory_mc,
             "filter":_loc2_,
             "incrementSort":param1,
-            "tabIndex":this.m_SelectedTab
+            "tabIndex":this.m_SelectedTab,
+            "skipSortIndex":_loc3_
          }));
       }
       
@@ -3358,6 +3647,7 @@ package
       private function PopulatePlayerInventory(param1:Array) : void
       {
          var _loc2_:uint = 0;
+         var _loc3_:* = false;
          this.SortListData(param1,this.m_PlayerInventorySortField);
          this.m_playerHasMiscItems = false;
          this.m_playerHasAutoScrappableJunkItems = false;
@@ -3367,11 +3657,12 @@ package
             _loc2_ = 0;
             while(_loc2_ < param1.length)
             {
-               if((param1[_loc2_].filterFlag & FILTER_JUNK) > 0)
+               _loc3_ = !(m_IsTransferLockingFeatureEnabled && param1[_loc2_].isTransferLocked);
+               if((param1[_loc2_].filterFlag & FILTER_JUNK) > 0 && _loc3_)
                {
                   this.m_playerHasMiscItems = true;
                }
-               if((param1[_loc2_].filterFlag & FILTER_CANAUTOSCRAP) > 0)
+               if((param1[_loc2_].filterFlag & FILTER_CANAUTOSCRAP) > 0 && _loc3_)
                {
                   this.m_playerHasAutoScrappableJunkItems = true;
                }
@@ -3403,6 +3694,10 @@ package
          }
          this.m_PlayerInventoryEmpty = this.PlayerInventory_mc != null && this.IsInventoryEmpty(this.PlayerInventory_mc);
          this.updateButtonHints();
+         if((this.isAmmoStash || this.isScrapStash || this.isAidStash) && this.selectedList == this.PlayerInventory_mc)
+         {
+            BSUIDataManager.dispatchEvent(new CustomEvent(EVENT_REFRESH_STASH,{}));
+         }
          this.onSelectedDataChanged(null);
       }
       
@@ -3484,8 +3779,6 @@ package
       
       public function ProcessUserEvent(param1:String, param2:Boolean) : Boolean
       {
-         var _loc4_:Boolean = false;
-         var _loc5_:Object = null;
          if(param1 == "DISABLED")
          {
             return false;
@@ -3507,26 +3800,38 @@ package
          {
             _loc3_ = this.ModalSetQuantity_mc.ProcessUserEvent(this.ConvertEventString(param1),param2);
          }
+         if(!_loc3_ && param2 && param1 == "TransferLockItem_Hold")
+         {
+            if(this.m_bLockHoldReleased)
+            {
+               this.m_bLockHoldReleased = false;
+               if(this.m_LockHoldStartTimeout == -1 && this.LockButton.ButtonVisible && this.LockButton.canHold)
+               {
+                  this.m_LockHoldStartTimeout = setTimeout(this.startItemLockHold,GlobalFunc.HOLD_METER_DELAY);
+                  _loc3_ = true;
+               }
+            }
+         }
          if(!_loc3_ && this.isOpen && !param2)
          {
             switch(param1)
             {
                case "SwitchToPlayer":
-                  if(this.ButtonPlayerInventory.ButtonVisible == true && this.ButtonPlayerInventory.ButtonDisabled != true && this.m_PlayerInventoryEmpty != true)
+                  if(this.ButtonPlayerInventory.ButtonVisible && !this.ButtonPlayerInventory.ButtonDisabled && !this.m_PlayerInventoryEmpty)
                   {
                      this.onSwapInventoryPlayer();
                      _loc3_ = true;
                   }
                   break;
                case "SwitchToContainer":
-                  if(this.ButtonContainerInventory.ButtonVisible == true && this.ButtonContainerInventory.ButtonDisabled != true && this.m_ContainerEmpty != true)
+                  if(this.ButtonContainerInventory.ButtonVisible && !this.ButtonContainerInventory.ButtonDisabled && !this.m_ContainerEmpty)
                   {
                      this.onSwapInventoryContainer();
                      _loc3_ = true;
                   }
                   break;
                case "DeclineItem":
-                  if(this.InspectButton.ButtonVisible == true && this.InspectButton.ButtonDisabled != true)
+                  if(this.InspectButton.ButtonVisible && !this.InspectButton.ButtonDisabled)
                   {
                      this.onInspectItem();
                      _loc3_ = true;
@@ -3540,75 +3845,47 @@ package
                   }
                   break;
                case "TakeAll":
-                  if(this.ButtonDecline.ButtonVisible == true && this.ButtonDecline.ButtonDisabled != true)
+                  if(this.ButtonDecline.ButtonVisible && !this.ButtonDecline.ButtonDisabled)
                   {
                      this.onDeclineItem();
                      _loc3_ = true;
                   }
-                  else if(this.ButtonToggleAssign.ButtonVisible == true && this.ButtonToggleAssign.ButtonDisabled != true)
+                  else if(this.ButtonToggleAssign.ButtonVisible)
                   {
                      this.onToggleAssign();
                      _loc3_ = true;
                   }
-                  else if(this.TakeAllButton.ButtonVisible == true && this.TakeAllButton.ButtonDisabled != true)
+                  else if(this.TakeAllButton.ButtonVisible && !this.TakeAllButton.ButtonDisabled)
                   {
                      this.onTakeAll();
                      _loc3_ = true;
                   }
                   break;
+               case "TransferLockItem_Press":
+                  if(this.LockButton.ButtonVisible && !this.LockButton.ButtonDisabled)
+                  {
+                     this.onLockButton();
+                     _loc3_ = true;
+                  }
+                  break;
+               case "TransferLockItem_Hold":
+                  this.m_bLockHoldReleased = true;
+                  if(this.TryItemLock())
+                  {
+                     _loc3_ = true;
+                     break;
+                  }
                case "StoreAllJunk":
-                  if(this.StoreUnusedItemsButton.ButtonVisible == true)
+                  _loc3_ = true;
+                  if(!this.TryStoreAllJunk())
                   {
-                     if(this.StoreUnusedItemsButton.ButtonDisabled)
+                     if(!this.TryToggleOffers())
                      {
-                        if(this.isScrapStash)
+                        if(!this.TryToggleMarked())
                         {
-                           _loc4_ = false;
-                           for each(_loc5_ in this.PlayerInventory_mc.ItemList_mc.List_mc.MenuListData)
-                           {
-                              if(Boolean(_loc5_.isAutoScrappable) || Boolean(_loc5_.canGoIntoScrapStash))
-                              {
-                                 _loc4_ = true;
-                                 break;
-                              }
-                           }
-                           if(!this.m_IsFollowerOfZeus)
-                           {
-                              GlobalFunc.ShowHUDMessage("$StoreJunkFailNoFO1st");
-                           }
-                           else if(!_loc4_)
-                           {
-                              GlobalFunc.ShowHUDMessage("$StoreJunkFailNoScrappableItems");
-                           }
-                        }
-                        else if(this.isAmmoStash)
-                        {
-                           if(!this.m_IsFollowerOfZeus)
-                           {
-                              GlobalFunc.ShowHUDMessage("$TransferUnusedFailNoFO1st");
-                           }
-                           else if(!this.m_transferUnusedAmmoAllowed)
-                           {
-                              GlobalFunc.ShowHUDMessage("$TransferUnusedFailNoUnusedAmmo");
-                           }
+                           _loc3_ = false;
                         }
                      }
-                     else
-                     {
-                        this.onStoreUnusedItems();
-                     }
-                     _loc3_ = true;
-                  }
-                  else if(this.ButtonOffersOnly.ButtonVisible == true && this.ButtonOffersOnly.ButtonDisabled != true && this.m_DownEventRecieved)
-                  {
-                     this.onOffersOnly();
-                     _loc3_ = true;
-                     this.m_DownEventRecieved = false;
-                  }
-                  else if(this.ToggleShowMarkedItemsOnlyButton.ButtonVisible == true && this.ToggleShowMarkedItemsOnlyButton.ButtonDisabled != true)
-                  {
-                     this.onToggleShowMarkedItemsOnlyButton();
-                     _loc3_ = true;
                   }
                   break;
                case "Select":
@@ -3623,6 +3900,136 @@ package
             }
          }
          return _loc3_;
+      }
+      
+      private function TryItemLock() : Boolean
+      {
+         var _loc1_:Boolean = false;
+         if(this.m_bLockHolding)
+         {
+            this.m_bLockHolding = false;
+            this.stopItemLockHold();
+            _loc1_ = true;
+         }
+         else if(this.m_LockHoldStartTimeout != -1)
+         {
+            this.stopItemLockHold();
+         }
+         return _loc1_;
+      }
+      
+      private function TryStoreAllJunk() : Boolean
+      {
+         var _loc2_:Boolean = false;
+         var _loc3_:Object = null;
+         var _loc1_:Boolean = false;
+         if(this.StoreUnusedItemsButton.ButtonVisible)
+         {
+            if(this.StoreUnusedItemsButton.ButtonDisabled)
+            {
+               if(this.isScrapStash)
+               {
+                  _loc2_ = false;
+                  for each(_loc3_ in this.PlayerInventory_mc.ItemList_mc.List_mc.MenuListData)
+                  {
+                     if(Boolean(_loc3_.isAutoScrappable) || Boolean(_loc3_.canGoIntoScrapStash))
+                     {
+                        _loc2_ = true;
+                        break;
+                     }
+                  }
+                  if(!this.m_IsFollowerOfZeus)
+                  {
+                     GlobalFunc.ShowHUDMessage("$StoreJunkFailNoFO1st");
+                  }
+                  else if(!_loc2_)
+                  {
+                     GlobalFunc.ShowHUDMessage("$StoreJunkFailNoScrappableItems");
+                  }
+               }
+               else if(this.isAmmoStash)
+               {
+                  if(!this.m_IsFollowerOfZeus)
+                  {
+                     GlobalFunc.ShowHUDMessage("$TransferUnusedFailNoFO1st");
+                  }
+                  else if(!this.m_transferUnusedAmmoAllowed)
+                  {
+                     GlobalFunc.ShowHUDMessage("$TransferUnusedFailNoUnusedAmmo");
+                  }
+               }
+               else if(this.isAidStash)
+               {
+                  if(!this.m_IsFollowerOfZeus)
+                  {
+                     GlobalFunc.ShowHUDMessage("$TransferUnusedFailNoFO1st");
+                  }
+                  else if(!this.m_transferAidAllowed)
+                  {
+                     GlobalFunc.ShowHUDMessage("$TransferFailNoAid");
+                  }
+               }
+            }
+            else
+            {
+               this.onStoreUnusedItems();
+            }
+            _loc1_ = true;
+         }
+         return _loc1_;
+      }
+      
+      private function TryToggleOffers() : Boolean
+      {
+         var _loc1_:Boolean = false;
+         if(this.ButtonOffersOnly.ButtonVisible && !this.ButtonOffersOnly.ButtonDisabled && this.m_DownEventRecieved)
+         {
+            this.onOffersOnly();
+            _loc1_ = true;
+            this.m_DownEventRecieved = false;
+         }
+         return _loc1_;
+      }
+      
+      private function TryToggleMarked() : Boolean
+      {
+         var _loc1_:Boolean = false;
+         if(this.ToggleShowMarkedItemsOnlyButton.ButtonVisible && !this.ToggleShowMarkedItemsOnlyButton.ButtonDisabled)
+         {
+            this.onToggleShowMarkedItemsOnlyButton();
+            _loc1_ = true;
+         }
+         return _loc1_;
+      }
+      
+      private function startItemLockHold() : void
+      {
+         this.m_bLockHolding = true;
+         addEventListener(Event.ENTER_FRAME,this.onEnterFrame);
+      }
+      
+      private function onEnterFrame(param1:Event) : void
+      {
+         if(this.m_bLockHolding)
+         {
+            this.LockButton.holdPercent += GlobalFunc.HOLD_METER_TICK_AMOUNT;
+            if(this.LockButton.holdPercent >= 1)
+            {
+               this.onLockButton();
+               this.stopItemLockHold();
+            }
+         }
+      }
+      
+      private function stopItemLockHold() : *
+      {
+         if(this.m_LockHoldStartTimeout != -1)
+         {
+            clearTimeout(this.m_LockHoldStartTimeout);
+            this.m_LockHoldStartTimeout = -1;
+         }
+         this.LockButton.holdPercent = 0;
+         removeEventListener(Event.ENTER_FRAME,this.onEnterFrame);
       }
       
       private function SortListData(param1:Array, param2:int) : void
@@ -3689,6 +4096,9 @@ package
                         break;
                      case SOF_WEIGHT:
                         _loc6_ = "weight";
+                        break;
+                     case SOF_LOCK:
+                        _loc6_ = "isTransferLocked";
                         break;
                      case SOF_STACKWEIGHT:
                         _loc7_ = _loc4_ * param1.weight;
@@ -3854,7 +4264,7 @@ package
          if(param1 != null)
          {
             this.m_SelectedStackName = param1.text;
-            this.m_SelectedItemOffered = param1.isOffered;
+            this.m_SelectedItemOffered = Boolean(param1.isOffered) && !param1.isTransferLocked;
             this.m_SelectedItemValue = param1.itemValue;
             this.m_SelectedItemCount = param1.count;
             this.m_SelectedItemServerHandleID = param1.serverHandleID;
@@ -3907,7 +4317,7 @@ package
          var _loc3_:int = int(param1.length);
          while(--_loc3_ > -1)
          {
-            if(param1[_loc3_].partialOffer == true)
+            if(param1[_loc3_].partialOffer)
             {
                param1.splice(_loc3_,1);
             }
@@ -3915,7 +4325,7 @@ package
          var _loc4_:Number = 0;
          while(_loc4_ < param2.length)
          {
-            if(param2[_loc4_].partialOffer == true)
+            if(param2[_loc4_].partialOffer)
             {
                param1.push(param2[_loc4_]);
             }
@@ -3936,7 +4346,7 @@ package
          var _loc4_:Number = 0;
          while(_loc4_ < param2.length)
          {
-            if(param2[_loc4_].isRequested == true)
+            if(param2[_loc4_].isRequested)
             {
                param1.push(param2[_loc4_]);
             }

@@ -571,8 +571,8 @@ package Shared.AS3
       public function onArrowMouseDown(param1:MouseEvent) : *
       {
          var _loc3_:MovieClip = null;
-         var _loc4_:Number = NaN;
-         var _loc5_:Number = NaN;
+         var _loc4_:Number = Number(NaN);
+         var _loc5_:Number = Number(NaN);
          var _loc2_:Object = param1.target;
          if(param1.target as MovieClip)
          {

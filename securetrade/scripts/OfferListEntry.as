@@ -203,6 +203,10 @@ package
          _loc5_ = false;
          switch(menuMode)
          {
+            case SecureTradeShared.MODE_PLAYERVENDING:
+               LeftIcon_mc.ItemLockIcon_mc.visible = false;
+               LeftIcon_mc.EquipIcon_mc.visible = false;
+               break;
             case SecureTradeShared.MODE_CONTAINER:
                _loc5_ = !_loc4_;
                break;
