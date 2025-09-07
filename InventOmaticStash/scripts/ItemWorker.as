@@ -1219,7 +1219,7 @@ package
                i = 0;
                while(i < inventory.length && !end)
                {
-                  if(inventory[i].scrapAllowed)
+                  if(inventory[i].scrapAllowed && !inventory[i].isTransferLocked)
                   {
                      subConfigIndex = 0;
                      while(subConfigIndex < validConfigs.length)
@@ -1366,82 +1366,85 @@ package
                i = 0;
                while(i < inventory.length && !end)
                {
-                  subConfigIndex = 0;
-                  while(subConfigIndex < validConfigs.length)
+                  if(!inventory[i].isTransferLocked)
                   {
-                     if(isItemMatchingConfig(inventory[i],validConfigs[subConfigIndex]))
+                     subConfigIndex = 0;
+                     while(subConfigIndex < validConfigs.length)
                      {
-                        if(inventory[i].favorite && !Boolean(validConfigs[subConfigIndex].sellFavorite))
+                        if(isItemMatchingConfig(inventory[i],validConfigs[subConfigIndex]))
                         {
-                           subConfigIndex++;
-                           continue;
-                        }
-                        if(inventory[i].equipState == 1 && !Boolean(validConfigs[subConfigIndex].sellEquipped))
-                        {
-                           subConfigIndex++;
-                           continue;
-                        }
-                        if(vendorCurrency == 0)
-                        {
-                           end = true;
-                           if(config.debug)
+                           if(inventory[i].favorite && !Boolean(validConfigs[subConfigIndex].sellFavorite))
                            {
-                              Logger.get().info("Vendor has no currency left!");
+                              subConfigIndex++;
+                              continue;
                            }
-                           break;
-                        }
-                        if(playerCurrency == playerCurrencyMax)
-                        {
-                           end = true;
-                           if(config.debug)
+                           if(inventory[i].equipState == 1 && !Boolean(validConfigs[subConfigIndex].sellEquipped))
                            {
-                              Logger.get().info("Player reached max currency (" + playerCurrencyMax + ")!");
+                              subConfigIndex++;
+                              continue;
                            }
-                           break;
-                        }
-                        configAmount = int(Parser.parseNumber(validConfigs[subConfigIndex].amount));
-                        itemValue = Number(inventory[i].itemValue);
-                        if(itemValue > 0)
-                        {
-                           maxItems = Math.min(Math.floor((playerCurrencyMax - playerCurrency) / itemValue),Math.floor(vendorCurrency / itemValue));
-                        }
-                        else
-                        {
-                           maxItems = 0;
-                        }
-                        if(configAmount != 0)
-                        {
-                           amountToSell = Math.min(getAmount(configAmount,inventory[i].count),maxItems);
-                        }
-                        else
-                        {
-                           amountToSell = Math.min(inventory[i].count,maxItems);
-                        }
-                        if(amountToSell > 0)
-                        {
-                           vendorCurrency -= amountToSell * itemValue;
-                           playerCurrency += amountToSell * itemValue;
-                           if(config.debug)
-                           {
-                              Logger.get().info("Item queued: " + inventory[i].text + " (" + amountToSell + "/" + inventory[i].count + ") for " + itemValue + " per; total: " + itemValue * amountToSell + "; currency after sale: vendor " + vendorCurrency + ", player " + playerCurrency);
-                           }
-                           _queue.push({
-                              "text":inventory[i].text,
-                              "serverHandleID":inventory[i].serverHandleID,
-                              "count":amountToSell
-                           });
-                           if(countItemsToSell && ++itemsSold >= config.maxItems)
+                           if(vendorCurrency == 0)
                            {
                               end = true;
                               if(config.debug)
                               {
-                                 Logger.get().info("NPC sell maxItems limit reached: " + config.maxItems);
+                                 Logger.get().info("Vendor has no currency left!");
                               }
                               break;
                            }
+                           if(playerCurrency == playerCurrencyMax)
+                           {
+                              end = true;
+                              if(config.debug)
+                              {
+                                 Logger.get().info("Player reached max currency (" + playerCurrencyMax + ")!");
+                              }
+                              break;
+                           }
+                           configAmount = int(Parser.parseNumber(validConfigs[subConfigIndex].amount));
+                           itemValue = Number(inventory[i].itemValue);
+                           if(itemValue > 0)
+                           {
+                              maxItems = Math.min(Math.floor((playerCurrencyMax - playerCurrency) / itemValue),Math.floor(vendorCurrency / itemValue));
+                           }
+                           else
+                           {
+                              maxItems = 0;
+                           }
+                           if(configAmount != 0)
+                           {
+                              amountToSell = Math.min(getAmount(configAmount,inventory[i].count),maxItems);
+                           }
+                           else
+                           {
+                              amountToSell = Math.min(inventory[i].count,maxItems);
+                           }
+                           if(amountToSell > 0)
+                           {
+                              vendorCurrency -= amountToSell * itemValue;
+                              playerCurrency += amountToSell * itemValue;
+                              if(config.debug)
+                              {
+                                 Logger.get().info("Item queued: " + inventory[i].text + " (" + amountToSell + "/" + inventory[i].count + ") for " + itemValue + " per; total: " + itemValue * amountToSell + "; currency after sale: vendor " + vendorCurrency + ", player " + playerCurrency);
+                              }
+                              _queue.push({
+                                 "text":inventory[i].text,
+                                 "serverHandleID":inventory[i].serverHandleID,
+                                 "count":amountToSell
+                              });
+                              if(countItemsToSell && ++itemsSold >= config.maxItems)
+                              {
+                                 end = true;
+                                 if(config.debug)
+                                 {
+                                    Logger.get().info("NPC sell maxItems limit reached: " + config.maxItems);
+                                 }
+                                 break;
+                              }
+                           }
                         }
+                        subConfigIndex++;
                      }
-                     subConfigIndex++;
                   }
                   i++;
                }
