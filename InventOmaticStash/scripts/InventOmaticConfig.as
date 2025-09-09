@@ -13,6 +13,8 @@ package
       
       private static const _AMOUNT:String = "R_AMOUNT";
       
+      private static const AMOUNT:String = "{amount}";
+      
       private static const TITLE_EXTRACT:String = "Extract Items";
       
       private static const TITLE_SCRAP:String = "AutoScrap";
@@ -23,7 +25,7 @@ package
       
       private static const TITLE_NPC_SELL:String = "AutoSell";
       
-      private static const TITLE_ASSIGN:String = "Assign " + _AMOUNT;
+      private static const TITLE_ASSIGN:String = "Assign " + AMOUNT;
       
       private static const TITLE_BUY:String = "AutoBuy";
       
@@ -169,8 +171,12 @@ package
          }
          if(config.campAssignConfig)
          {
-            setName(config.campAssignConfig,TITLE_ASSIGN);
-            config.campAssignConfig.name = config.campAssignConfig.name.replace(_AMOUNT,config.campAssignConfig.amount);
+            config.campAssignConfig = loadAssignConfig(config.campAssignConfig);
+            for(c in config.campAssignConfig.configs)
+            {
+               setName(config.campAssignConfig.configs[c],TITLE_ASSIGN);
+               config.campAssignConfig.configs[c].name = config.campAssignConfig.configs[c].name.replace(_AMOUNT,AMOUNT).replace(AMOUNT,config.campAssignConfig.configs[c].amount);
+            }
          }
          if(config.buyConfig)
          {
@@ -280,6 +286,15 @@ package
          if(Object.prototype.toString.call(config) != ARRAY_DESC)
          {
             return new Array(config);
+         }
+         return config;
+      }
+      
+      private static function loadAssignConfig(config:*) : *
+      {
+         if(!config.configs || !(config.configs is Array))
+         {
+            config.configs = [].concat(config);
          }
          return config;
       }

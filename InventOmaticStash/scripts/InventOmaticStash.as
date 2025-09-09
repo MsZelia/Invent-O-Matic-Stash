@@ -44,6 +44,8 @@ package
       
       public var transferButtons:Vector.<BSButtonHintData>;
       
+      public var assignButtons:Vector.<BSButtonHintData>;
+      
       public var scrapItemsButton:BSButtonHintData;
       
       public var lootItemsButton:BSButtonHintData;
@@ -70,6 +72,10 @@ package
       
       private var offerHeader:String = "";
       
+      private var OtherInventoryTypeData:*;
+      
+      private var ContainerOptionsData:*;
+      
       public function InventOmaticStash()
       {
          this.modHeaders = {};
@@ -83,6 +89,8 @@ package
             addEventListener(Event.ADDED_TO_STAGE,this.addedToStageHandler);
             BSUIDataManager.Subscribe("CharacterInfoData",this.onCharacterInfoDataUpdate);
             BSUIDataManager.Subscribe("HUDMessageProvider",this.onHUDMessageProviderUpdate);
+            this.OtherInventoryTypeData = BSUIDataManager.GetDataFromClient("OtherInventoryTypeData").data;
+            this.ContainerOptionsData = BSUIDataManager.GetDataFromClient("ContainerOptionsData").data;
          }
          catch(e:Error)
          {
@@ -112,6 +120,31 @@ package
       public function get parentClip() : MovieClip
       {
          return this._parent;
+      }
+      
+      public function get MenuMode() : uint
+      {
+         return OtherInventoryTypeData.menuType;
+      }
+      
+      public function get SubMenuMode() : uint
+      {
+         return OtherInventoryTypeData.menuSubType;
+      }
+      
+      public function get OwnsVendor() : Boolean
+      {
+         return OtherInventoryTypeData.ownsVendor;
+      }
+      
+      public function get IsWorkbench() : Boolean
+      {
+         return ContainerOptionsData.isWorkbench;
+      }
+      
+      public function get IsScrapStash() : Boolean
+      {
+         return ContainerOptionsData.storageMode == SecureTradeShared.LIMITED_TYPE_STORAGE_SCRAP;
       }
       
       public function log(param1:String) : void
@@ -204,7 +237,7 @@ package
             {
                this.config.protectionConfig.transferProtection.containerName = offerHeader;
             }
-            if(this.parentClip.MenuMode == SecureTradeShared.MODE_NPCVENDING)
+            if(this.MenuMode == SecureTradeShared.MODE_NPCVENDING)
             {
                if(ItemProtection.isProtected(item,this.config.protectionConfig.saleProtection))
                {
@@ -215,7 +248,7 @@ package
                   return true;
                }
             }
-            else if(this.parentClip.IsWorkbench || this.parentClip.isScrapStash)
+            else if(this.IsWorkbench || this.IsScrapStash)
             {
                if(ItemProtection.isProtected(item,this.config.protectionConfig.scrapProtection))
                {
@@ -327,27 +360,60 @@ package
             }
             if(this.scrapItemsButton)
             {
-               this.scrapItemsButton.ButtonVisible = Boolean(this.parentClip.IsWorkbench) && Parser.parseBoolean(config.scrapConfig.showButton,DEFAULT_SHOW_BUTTON_STATE);
+               this.scrapItemsButton.ButtonVisible = Boolean(this.IsWorkbench) && Parser.parseBoolean(config.scrapConfig.showButton,DEFAULT_SHOW_BUTTON_STATE);
                end = true;
             }
             if(this.npcSellItemsButton)
             {
-               this.npcSellItemsButton.ButtonVisible = this.parentClip.MenuMode == SecureTradeShared.MODE_NPCVENDING && Parser.parseBoolean(config.npcSellConfig.showButton,DEFAULT_SHOW_BUTTON_STATE);
+               this.npcSellItemsButton.ButtonVisible = this.MenuMode == SecureTradeShared.MODE_NPCVENDING && Parser.parseBoolean(config.npcSellConfig.showButton,DEFAULT_SHOW_BUTTON_STATE);
                end = true;
             }
             if(this.buyItemsButton)
             {
-               this.buyItemsButton.ButtonVisible = Parser.parseBoolean(config.buyConfig.showButton,DEFAULT_SHOW_BUTTON_STATE) && (this.parentClip.MenuMode == SecureTradeShared.MODE_NPCVENDING || this.parentClip.MenuMode == SecureTradeShared.MODE_VENDING_MACHINE && !this.parentClip.OwnsVendor);
-               end = true;
-            }
-            if(this.campAssignItemsButton)
-            {
-               this.campAssignItemsButton.ButtonVisible = Parser.parseBoolean(config.campAssignConfig.showButton,DEFAULT_SHOW_BUTTON_STATE) && (this.parentClip.MenuMode == SecureTradeShared.MODE_FREEZER || this.parentClip.MenuMode == SecureTradeShared.MODE_FERMENTER || this.parentClip.MenuMode == SecureTradeShared.MODE_REFRIGERATOR || this.parentClip.MenuMode == SecureTradeShared.MODE_DISPLAY_CASE || this.parentClip.MenuMode == SecureTradeShared.MODE_CAMP_DISPENSER || this.parentClip.MenuMode == SecureTradeShared.MODE_RECHARGER);
+               this.buyItemsButton.ButtonVisible = Parser.parseBoolean(config.buyConfig.showButton,DEFAULT_SHOW_BUTTON_STATE) && (this.MenuMode == SecureTradeShared.MODE_NPCVENDING || this.MenuMode == SecureTradeShared.MODE_VENDING_MACHINE && !this.OwnsVendor);
                end = true;
             }
             if(this.lockItemsButton)
             {
                this.lockItemsButton.ButtonVisible = Parser.parseBoolean(config.protectionConfig.itemLocking.showButton,DEFAULT_SHOW_BUTTON_STATE);
+               end = true;
+            }
+            if(this.campAssignItemsButton)
+            {
+               this.campAssignItemsButton.ButtonVisible = Parser.parseBoolean(config.campAssignConfig.showButton,DEFAULT_SHOW_BUTTON_STATE) && (this.MenuMode == SecureTradeShared.MODE_FREEZER || this.MenuMode == SecureTradeShared.MODE_FERMENTER || this.MenuMode == SecureTradeShared.MODE_REFRIGERATOR || this.MenuMode == SecureTradeShared.MODE_DISPLAY_CASE || this.MenuMode == SecureTradeShared.MODE_CAMP_DISPENSER || this.MenuMode == SecureTradeShared.MODE_RECHARGER);
+               end = true;
+            }
+            if(this.assignButtons && this.assignButtons.length > 0)
+            {
+               button = 0;
+               i = 0;
+               while(i < config.campAssignConfig.configs.length)
+               {
+                  if(config.campAssignConfig.configs[i].enabled)
+                  {
+                     if(this.assignButtons[button])
+                     {
+                        if(config.campAssignConfig.configs[i].assignMode = "VENDOR" && this.MenuMode == SecureTradeShared.MODE_VENDING_MACHINE && this.OwnsVendor)
+                        {
+                           this.assignButtons[button].ButtonVisible = Parser.parseBoolean(config.transferConfig[i].showButton,DEFAULT_SHOW_BUTTON_STATE) && ItemWorker.isTheSameCharacterName(config.transferConfig[i]);
+                        }
+                        else if(config.campAssignConfig.configs[i].assignMode = "DISPLAY" && (this.MenuMode == SecureTradeShared.MODE_DISPLAY_CASE || this.MenuMode == SecureTradeShared.MODE_ALLY || this.MenuMode == SecureTradeShared.MODE_PET))
+                        {
+                           this.assignButtons[button].ButtonVisible = Parser.parseBoolean(config.transferConfig[i].showButton,DEFAULT_SHOW_BUTTON_STATE) && ItemWorker.isTheSameCharacterName(config.transferConfig[i]);
+                        }
+                        else if(config.campAssignConfig.configs[i].assignMode = "FOOD_DRINK" && (this.MenuMode == SecureTradeShared.MODE_FERMENTER || this.MenuMode == SecureTradeShared.MODE_FREEZER || this.MenuMode == SecureTradeShared.MODE_REFRIGERATOR || this.MenuMode == SecureTradeShared.MODE_RECHARGER || this.MenuMode == SecureTradeShared.MODE_CAMP_DISPENSER))
+                        {
+                           this.assignButtons[button].ButtonVisible = Parser.parseBoolean(config.transferConfig[i].showButton,DEFAULT_SHOW_BUTTON_STATE) && ItemWorker.isTheSameCharacterName(config.transferConfig[i]);
+                        }
+                        else
+                        {
+                           this.assignButtons[button].ButtonVisible = false;
+                        }
+                     }
+                     button++;
+                  }
+                  i++;
+               }
                end = true;
             }
             if(this.transferButtons && this.transferButtons.length > 0)
@@ -360,7 +426,7 @@ package
                   {
                      if(this.transferButtons[button])
                      {
-                        if(this.parentClip.IsWorkbench || this.parentClip.MenuMode == SecureTradeShared.MODE_NPCVENDING || this.parentClip.MenuMode == SecureTradeShared.MODE_PLAYERVENDING || this.parentClip.MenuMode == SecureTradeShared.MODE_VENDING_MACHINE && !this.parentClip.OwnsVendor)
+                        if(this.IsWorkbench || this.MenuMode == SecureTradeShared.MODE_NPCVENDING || this.MenuMode == SecureTradeShared.MODE_PLAYERVENDING || this.MenuMode == SecureTradeShared.MODE_VENDING_MACHINE && !this.OwnsVendor)
                         {
                            this.transferButtons[button].ButtonVisible = false;
                         }
@@ -537,13 +603,6 @@ package
                this.npcSellItemsButton.ButtonDisabled = false;
                buttons.push(this.npcSellItemsButton);
             }
-            if(config.campAssignConfig && config.campAssignConfig.enabled)
-            {
-               this.campAssignItemsButton = new BSButtonHintData(config.campAssignConfig.name,Buttons.getButtonKey(InventOmaticConfig.CampAssignKeyCode),Buttons.getButtonGamepad(InventOmaticConfig.CampAssignKeyCode),Buttons.getButtonGamepad(InventOmaticConfig.CampAssignKeyCode),1,this.campAssignItemsCallback);
-               this.campAssignItemsButton.ButtonVisible = Parser.parseBoolean(config.campAssignConfig.showButton,DEFAULT_SHOW_BUTTON_STATE);
-               this.campAssignItemsButton.ButtonDisabled = false;
-               buttons.push(this.campAssignItemsButton);
-            }
             if(ItemProtection.isValidLockConfig(config.protectionConfig))
             {
                this.lockItemsButton = new BSButtonHintData(config.protectionConfig.itemLocking.name,Buttons.getButtonKey(InventOmaticConfig.LockAllKeyCode),Buttons.getButtonGamepad(InventOmaticConfig.LockAllKeyCode),Buttons.getButtonGamepad(InventOmaticConfig.LockAllKeyCode),1,this.lockItemsCallback);
@@ -557,6 +616,23 @@ package
                this.buyItemsButton.ButtonVisible = Parser.parseBoolean(config.buyConfig.showButton,DEFAULT_SHOW_BUTTON_STATE);
                this.buyItemsButton.ButtonDisabled = false;
                buttons.push(this.buyItemsButton);
+            }
+            if(config.campAssignConfig && config.campAssignConfig.enabled && config.campAssignConfig.configs.length > 0)
+            {
+               this.assignButtons = new Vector.<BSButtonHintData>();
+               indexConfig = 0;
+               while(indexConfig < config.campAssignConfig.configs.length)
+               {
+                  if(config.campAssignConfig.configs[indexConfig].enabled)
+                  {
+                     button = new BSButtonHintData(config.campAssignConfig.configs[indexConfig].name,Buttons.getButtonKey(config.campAssignConfig.configs[indexConfig].hotkey),Buttons.getButtonGamepad(config.campAssignConfig.configs[indexConfig].hotkey),Buttons.getButtonGamepad(config.campAssignConfig.configs[indexConfig].hotkey),1,null);
+                     button.ButtonVisible = ItemWorker.isTheSameCharacterName(config.campAssignConfig.configs[indexConfig]) && Parser.parseBoolean(config.campAssignConfig.configs[indexConfig].showButton,DEFAULT_SHOW_BUTTON_STATE);
+                     button.ButtonDisabled = false;
+                     this.assignButtons.push(button);
+                     buttons.push(button);
+                  }
+                  indexConfig++;
+               }
             }
             if(config.transferConfig && config.transferConfig.length > 0)
             {
@@ -758,7 +834,7 @@ package
       {
          try
          {
-            if(this.parentClip.IsWorkbench || this.parentClip.MenuMode == SecureTradeShared.MODE_NPCVENDING || this.parentClip.MenuMode == SecureTradeShared.MODE_PLAYERVENDING || this.parentClip.MenuMode == SecureTradeShared.MODE_VENDING_MACHINE && !this.parentClip.OwnsVendor)
+            if(this.IsWorkbench || this.MenuMode == SecureTradeShared.MODE_NPCVENDING || this.MenuMode == SecureTradeShared.MODE_PLAYERVENDING || this.MenuMode == SecureTradeShared.MODE_VENDING_MACHINE && !this.OwnsVendor)
             {
                return;
             }
@@ -797,7 +873,7 @@ package
       {
          try
          {
-            if(!this.parentClip.IsWorkbench)
+            if(!this.IsWorkbench)
             {
                return;
             }
@@ -836,7 +912,7 @@ package
       {
          try
          {
-            if(this.parentClip.MenuMode != SecureTradeShared.MODE_FREEZER && this.parentClip.MenuMode != SecureTradeShared.MODE_FERMENTER && this.parentClip.MenuMode != SecureTradeShared.MODE_REFRIGERATOR && this.parentClip.MenuMode != SecureTradeShared.MODE_DISPLAY_CASE && this.parentClip.MenuMode != SecureTradeShared.MODE_CAMP_DISPENSER && this.parentClip.MenuMode != SecureTradeShared.MODE_RECHARGER)
+            if(this.MenuMode != SecureTradeShared.MODE_FREEZER && this.MenuMode != SecureTradeShared.MODE_FERMENTER && this.MenuMode != SecureTradeShared.MODE_REFRIGERATOR && this.MenuMode != SecureTradeShared.MODE_DISPLAY_CASE && this.MenuMode != SecureTradeShared.MODE_CAMP_DISPENSER && this.MenuMode != SecureTradeShared.MODE_RECHARGER)
             {
                return;
             }
@@ -862,7 +938,7 @@ package
       {
          try
          {
-            if(false && this.parentClip.MenuMode != SecureTradeShared.MODE_CONTAINER)
+            if(false && this.MenuMode != SecureTradeShared.MODE_CONTAINER)
             {
                Logger.get().error("Unable to lock items: not in stash box");
                return;
@@ -882,11 +958,11 @@ package
          var playerCurrency:Number;
          try
          {
-            if(this.parentClip.MenuMode != SecureTradeShared.MODE_NPCVENDING && (this.parentClip.MenuMode != SecureTradeShared.MODE_VENDING_MACHINE || this.parentClip.OwnsVendor))
+            if(this.MenuMode != SecureTradeShared.MODE_NPCVENDING && (this.MenuMode != SecureTradeShared.MODE_VENDING_MACHINE || this.OwnsVendor))
             {
                return;
             }
-            Logger.get().info("Buy Items Callback! Mode: " + (this.parentClip.MenuMode == SecureTradeShared.MODE_NPCVENDING ? "NPC Vendor" : "CAMP Vendor"));
+            Logger.get().info("Buy Items Callback! Mode: " + (this.MenuMode == SecureTradeShared.MODE_NPCVENDING ? "NPC Vendor" : "CAMP Vendor"));
             setTimeout(this._itemWorker.vendorBuyItems,10);
          }
          catch(e:Error)
