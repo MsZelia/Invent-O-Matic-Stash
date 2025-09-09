@@ -1050,6 +1050,10 @@ package
                                  amount = Math.min(amount,config.amount - itemInDestination.count);
                               }
                            }
+                           else if(config.debug)
+                           {
+                              Logger.get().info("exactAmountInDestination: no item in destination " + item.text);
+                           }
                         }
                         if(amount != 0)
                         {
