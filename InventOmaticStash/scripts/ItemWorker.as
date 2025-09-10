@@ -1554,7 +1554,7 @@ package
                   {
                      subConfig = config.configs[subConfigIndex];
                      inventory = this._playerInventory;
-                     if(inventory)
+                     if(subConfig.enabled && inventory)
                      {
                         itemIndex = 0;
                         while(itemIndex < inventory.length)
