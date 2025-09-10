@@ -407,19 +407,19 @@ package
                      {
                         if(this.assignButtons[button])
                         {
-                           if(config.campAssignConfig.configs[i].assignMode == "VENDOR")
+                           if(config.campAssignConfig.configs[i].assignMode == CampAssignContainer.VENDOR)
                            {
                               isValidMode = this.MenuMode == SecureTradeShared.MODE_VENDING_MACHINE && this.OwnsVendor;
                               this.assignButtons[button].ButtonEnabled = isValidMode;
                               this.assignButtons[button].ButtonVisible = isValidMode && Parser.parseBoolean(config.campAssignConfig.configs[i].showButton,DEFAULT_SHOW_BUTTON_STATE) && ItemWorker.isTheSameCharacterName(config.campAssignConfig.configs[i]);
                            }
-                           else if(config.campAssignConfig.configs[i].assignMode == "DISPLAY")
+                           else if(config.campAssignConfig.configs[i].assignMode == CampAssignContainer.DISPLAY)
                            {
                               isValidMode = this.MenuMode == SecureTradeShared.MODE_DISPLAY_CASE || this.MenuMode == SecureTradeShared.MODE_ALLY || this.MenuMode == SecureTradeShared.MODE_PET;
                               this.assignButtons[button].ButtonEnabled = isValidMode;
                               this.assignButtons[button].ButtonVisible = isValidMode && Parser.parseBoolean(config.campAssignConfig.configs[i].showButton,DEFAULT_SHOW_BUTTON_STATE) && ItemWorker.isTheSameCharacterName(config.campAssignConfig.configs[i]);
                            }
-                           else if(config.campAssignConfig.configs[i].assignMode == "OTHER")
+                           else if(config.campAssignConfig.configs[i].assignMode == CampAssignContainer.OTHER)
                            {
                               isValidMode = this.MenuMode == SecureTradeShared.MODE_FERMENTER || this.MenuMode == SecureTradeShared.MODE_FREEZER || this.MenuMode == SecureTradeShared.MODE_REFRIGERATOR || this.MenuMode == SecureTradeShared.MODE_RECHARGER || this.MenuMode == SecureTradeShared.MODE_CAMP_DISPENSER;
                               this.assignButtons[button].ButtonEnabled = isValidMode;

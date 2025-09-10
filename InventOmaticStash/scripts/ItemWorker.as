@@ -2374,7 +2374,7 @@ package
          var filterValidConfigs:Array = [];
          switch(assignMode)
          {
-            case "VENDOR":
+            case CampAssignContainer.VENDOR:
                i = 0;
                while(i < validConfigs.length)
                {
@@ -2397,8 +2397,8 @@ package
                   this.vendorAssign(filterValidConfigs);
                }
                break;
-            case "DISPLAY":
-            case "OTHER":
+            case CampAssignContainer.DISPLAY:
+            case CampAssignContainer.OTHER:
                i = 0;
                while(i < validConfigs.length)
                {
@@ -2418,7 +2418,7 @@ package
                }
                if(filterValidConfigs.length > 0)
                {
-                  if(assignMode == "DISPLAY")
+                  if(assignMode == CampAssignContainer.DISPLAY)
                   {
                      this.displayAssign(filterValidConfigs);
                   }

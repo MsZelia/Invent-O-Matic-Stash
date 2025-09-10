@@ -7,6 +7,12 @@ package utils
       
       private static var OtherInventoryTypeData:*;
       
+      public static const VENDOR:String = "VENDOR";
+      
+      public static const DISPLAY:String = "DISPLAY";
+      
+      public static const OTHER:String = "OTHER";
+      
       public function CampAssignContainer()
       {
          super();
