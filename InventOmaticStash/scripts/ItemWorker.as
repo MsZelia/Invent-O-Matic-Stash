@@ -1487,42 +1487,114 @@ package
          return Boolean(param1.isWeightless) || param3.carryWeightMax <= 0 || param3.carryWeightCurrent + param1.weight * param2 <= param3.carryWeightMax;
       }
       
-      private function campAssign(config:Object) : void
+      private function campAssign(validConfigs:Array) : void
       {
          var amount:int;
          var selectedListEntry:Object;
+         var assignSlotsFree:int;
+         var configIndex:int;
+         var config:Object;
+         var subConfigIndex:int;
+         var subConfig:Object;
+         var inventory:Array;
+         var item:Object;
+         var isValidMenuMode:Boolean;
+         var itemIndex:int;
          var i:int = 0;
          var end:Boolean = false;
-         if(config.debug)
-         {
-            Logger.get().info("Camp assign");
-         }
+         var delay:int = 0;
+         var delayStep:int = 0;
          try
          {
-            selectedListEntry = this._selectedEntry;
-            amount = Math.min(config.amount,selectedListEntry.count);
-            if(config.debug)
+            if(!validConfigs || validConfigs.length == 0)
             {
-               Logger.get().info("Assigning: " + amount + " " + selectedListEntry.text);
+               return;
             }
-            while(i < amount)
+            assignSlotsFree = int(CampAssignContainer.AssignSlotsFree);
+            configIndex = 0;
+            while(configIndex < validConfigs.length)
             {
-               setTimeout(function():void
+               config = validConfigs[configIndex];
+               if(config.debug)
                {
-                  if(!end && performContainerWeightCheck(selectedListEntry,1,secureTrade.OfferInventory_mc))
+                  Logger.get().info("Assign slots free: " + assignSlotsFree + "/" + CampAssignContainer.AssignSlotsMax);
+               }
+               if(config.onlyHighlightedItem)
+               {
+                  selectedListEntry = this._selectedEntry;
+                  if(selectedListEntry.currentHealth != -1 || CampAssignContainer.MenuMode == SecureTradeShared.MODE_CAMP_DISPENSER)
                   {
-                     if(!secureTrade.SlotInfo_mc.visible || secureTrade.SlotInfo_mc.AreSlotsFull() || selectedListEntry.currentHealth == -1 && (secureTrade.MenuMode == SecureTradeShared.MODE_FERMENTER || secureTrade.MenuMode == SecureTradeShared.MODE_REFRIGERATOR || secureTrade.MenuMode == SecureTradeShared.MODE_FREEZER))
+                     amount = Math.min(getAmount(config.amount,selectedListEntry.count),assignSlotsFree);
+                     if(amount > 0)
                      {
-                        end = true;
-                        Logger.get().error("Unable to assign item");
-                     }
-                     else
-                     {
-                        GameApiDataExtractor.campAssignItem(selectedListEntry,false);
+                        delayStep = Parser.parsePositiveNumber(config.delay,600);
+                        assignSlotsFree -= amount;
+                        while(i < amount)
+                        {
+                           delay += delayStep;
+                           setTimeout(function(item:Object, debug:Boolean):void
+                           {
+                              if(debug)
+                              {
+                                 Logger.get().info("Assigning: " + item.text);
+                              }
+                              GameApiDataExtractor.campAssignItem(item,false);
+                           },delay,selectedListEntry,config.debug);
+                           i++;
+                        }
+                        delay += delayStep;
                      }
                   }
-               },config.delay * i);
-               i++;
+               }
+               else if(config.configs && config.configs.length > 0)
+               {
+                  subConfigIndex = 0;
+                  isValidMenuMode = CampAssignContainer.MenuMode == SecureTradeShared.MODE_CAMP_DISPENSER;
+                  while(subConfigIndex < config.configs.length)
+                  {
+                     subConfig = config.configs[subConfigIndex];
+                     inventory = this._playerInventory;
+                     if(inventory)
+                     {
+                        itemIndex = 0;
+                        while(itemIndex < inventory.length)
+                        {
+                           item = inventory[itemIndex];
+                           if(item.currentHealth != -1 || isValidMenuMode)
+                           {
+                              if(isItemMatchingConfig(item,subConfig))
+                              {
+                                 Logger.get().info("Valid item to assign: " + item.text);
+                                 amount = Math.min(getAmount(subConfig.amount,item.count),assignSlotsFree);
+                                 if(amount > 0)
+                                 {
+                                    delayStep = Parser.parsePositiveNumber(config.delay,600);
+                                    assignSlotsFree -= amount;
+                                    i = 0;
+                                    while(i < amount)
+                                    {
+                                       delay += delayStep;
+                                       setTimeout(function(_item:Object, debug:Boolean):void
+                                       {
+                                          if(debug)
+                                          {
+                                             Logger.get().info("Assigning: " + _item.text);
+                                          }
+                                          GameApiDataExtractor.campAssignItem(_item,false);
+                                       },delay,item,config.debug);
+                                       i++;
+                                    }
+                                    delay += delayStep;
+                                 }
+                              }
+                           }
+                           itemIndex++;
+                        }
+                     }
+                     subConfigIndex++;
+                  }
+               }
+               configIndex++;
             }
          }
          catch(e:Error)
@@ -2258,6 +2330,10 @@ package
                   }
                   i++;
                }
+               if(filterValidConfigs.length > 0)
+               {
+                  this.vendorAssign(filterValidConfigs);
+               }
                break;
             case "DISPLAY":
             case "OTHER":
@@ -2277,6 +2353,17 @@ package
                      Logger.get().error("Invalid " + assignMode + " Assign config: " + validConfigs[i].name);
                   }
                   i++;
+               }
+               if(filterValidConfigs.length > 0)
+               {
+                  if(assignMode == "DISPLAY")
+                  {
+                     this.displayAssign(filterValidConfigs);
+                  }
+                  else
+                  {
+                     this.campAssign(filterValidConfigs);
+                  }
                }
                break;
             default:

@@ -514,6 +514,7 @@ package
       private function init() : void
       {
          ItemCardData.init();
+         CampAssignContainer.init();
          ArmorGrade.initLocalization(config.localizationConfig);
          this._itemExtractor.init(config.extractConfig);
          this._customFormatExtractor.init(config.extractConfig);
