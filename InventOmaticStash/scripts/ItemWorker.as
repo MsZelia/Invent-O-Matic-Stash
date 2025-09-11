@@ -73,6 +73,11 @@ package
          return new JSONEncoder(param1).getString();
       }
       
+      private static function ShowMessage(param1:String) : void
+      {
+         GlobalFunc.ShowHUDMessage("[" + InventOmaticStash.FULL_MOD_NAME + "] " + param1);
+      }
+      
       public static function isMatchingString(param1:String, param2:String, param3:String) : Boolean
       {
          var itemName:String = param1;
@@ -1500,6 +1505,7 @@ package
          var item:Object;
          var isValidMenuMode:Boolean;
          var itemIndex:int;
+         var assignSlotsFreeBefore:int;
          var i:int = 0;
          var end:Boolean = false;
          var delay:int = 0;
@@ -1511,6 +1517,13 @@ package
                return;
             }
             assignSlotsFree = int(CampAssignContainer.AssignSlotsFree);
+            assignSlotsFreeBefore = assignSlotsFree;
+            if(assignSlotsFree <= 0)
+            {
+               Logger.get().info("No free assign slots left!");
+               ShowMessage("No free assign slots left!");
+               return;
+            }
             configIndex = 0;
             while(configIndex < validConfigs.length)
             {
@@ -1547,6 +1560,10 @@ package
                            if(config.debug)
                            {
                               Logger.get().info("No free assign slots left!");
+                           }
+                           if(config.showMessage)
+                           {
+                              setTimeout(ShowMessage,delay,"Assigned " + (assignSlotsFreeBefore - assignSlotsFree) + " items, no free assign slots left!");
                            }
                            return;
                         }
@@ -1600,6 +1617,10 @@ package
                                        {
                                           Logger.get().info("No free assign slots left!");
                                        }
+                                       if(config.showMessage)
+                                       {
+                                          setTimeout(ShowMessage,delay,"Assigned " + (assignSlotsFreeBefore - assignSlotsFree) + " items, no free assign slots left!");
+                                       }
                                        return;
                                     }
                                  }
@@ -1611,6 +1632,7 @@ package
                      subConfigIndex++;
                   }
                }
+               setTimeout(ShowMessage,delay,"Assigned " + (assignSlotsFreeBefore - assignSlotsFree) + " items");
                configIndex++;
             }
          }
@@ -1634,6 +1656,7 @@ package
          var isValidMenuMode:Boolean;
          var itemIndex:int;
          var items:Array;
+         var assignSlotsFreeBefore:int;
          var i:int = 0;
          var j:int = 0;
          var end:Boolean = false;
@@ -1646,6 +1669,13 @@ package
                return;
             }
             assignSlotsFree = int(CampAssignContainer.AssignSlotsFree);
+            assignSlotsFreeBefore = assignSlotsFree;
+            if(assignSlotsFree <= 0)
+            {
+               Logger.get().info("No free assign slots left!");
+               ShowMessage("No free assign slots left!");
+               return;
+            }
             configIndex = 0;
             while(configIndex < validConfigs.length)
             {
@@ -1706,6 +1736,10 @@ package
                            {
                               Logger.get().info("No free assign slots left!");
                            }
+                           if(config.showMessage)
+                           {
+                              setTimeout(ShowMessage,delay,"Assigned " + (assignSlotsFreeBefore - assignSlotsFree) + " items, no free assign slots left!");
+                           }
                            return;
                         }
                         i++;
@@ -1756,6 +1790,10 @@ package
                                     {
                                        Logger.get().info("No free assign slots left!");
                                     }
+                                    if(config.showMessage)
+                                    {
+                                       setTimeout(ShowMessage,delay,"Assigned " + (assignSlotsFreeBefore - assignSlotsFree) + " items, no free assign slots left!");
+                                    }
                                     return;
                                  }
                               }
@@ -1766,6 +1804,7 @@ package
                      subConfigIndex++;
                   }
                }
+               setTimeout(ShowMessage,delay,"Assigned " + (assignSlotsFreeBefore - assignSlotsFree) + " items");
                configIndex++;
             }
          }
@@ -1792,6 +1831,7 @@ package
          var end:Boolean = false;
          var delay:int = 0;
          var delayStep:int = 0;
+         var assignSlotsFreeBefore:int = 0;
          try
          {
             if(!validConfigs || validConfigs.length == 0)
@@ -1799,6 +1839,13 @@ package
                return;
             }
             assignSlotsFree = int(CampAssignContainer.AssignSlotsFree);
+            assignSlotsFreeBefore = assignSlotsFree;
+            if(assignSlotsFree <= 0)
+            {
+               Logger.get().info("No free assign slots left!");
+               ShowMessage("No free assign slots left!");
+               return;
+            }
             configIndex = 0;
             while(configIndex < validConfigs.length)
             {
@@ -1830,6 +1877,10 @@ package
                         if(config.debug)
                         {
                            Logger.get().info("No free assign slots left!");
+                        }
+                        if(config.showMessage)
+                        {
+                           setTimeout(ShowMessage,delay,"Assigned " + (assignSlotsFreeBefore - assignSlotsFree) + " items, no free assign slots left!");
                         }
                         return;
                      }
@@ -1876,6 +1927,10 @@ package
                                     {
                                        Logger.get().info("No free assign slots left!");
                                     }
+                                    if(config.showMessage)
+                                    {
+                                       setTimeout(ShowMessage,delay,"Assigned " + (assignSlotsFreeBefore - assignSlotsFree) + " items, no free assign slots left!");
+                                    }
                                     return;
                                  }
                               }
@@ -1886,6 +1941,7 @@ package
                      subConfigIndex++;
                   }
                }
+               setTimeout(ShowMessage,delay,"Assigned " + (assignSlotsFreeBefore - assignSlotsFree) + " items");
                configIndex++;
             }
          }
@@ -2433,14 +2489,14 @@ package
          {
             if(showMessage == "FULL")
             {
-               GlobalFunc.ShowHUDMessage("[" + InventOmaticStash.FULL_MOD_NAME + "] " + actionName + " " + _queue.length + " items: " + _queue.map(function(x:Object):String
+               ShowMessage(actionName + " " + _queue.length + " items: " + _queue.map(function(x:Object):String
                {
                   return x.text + (x.count > 1 ? " (" + x.count + ")" : "");
                }).join(", "));
             }
             else
             {
-               GlobalFunc.ShowHUDMessage("[" + InventOmaticStash.FULL_MOD_NAME + "] " + actionName + " " + _queue.length + " items");
+               ShowMessage(actionName + " " + _queue.length + " items");
             }
          }
          i = 0;
