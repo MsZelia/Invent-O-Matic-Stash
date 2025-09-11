@@ -217,6 +217,7 @@ package
             }
             buyKeyCode = Parser.parseHotkey(config.buyConfig,buyKeyCode);
             calculateCatWeightKeyCode = Parser.parseHotkey(config.categoryWeightConfig,calculateCatWeightKeyCode);
+            config.categoryWeightConfig.hotkey = calculateCatWeightKeyCode;
             for(var c in config.transferConfig)
             {
                config.transferConfig[c].hotkey = Parser.parseHotkey(config.transferConfig[c],transferKeyCode);

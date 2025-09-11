@@ -39,7 +39,7 @@ package utils
          var oHotkey:Object = config;
          if(oHotkey != null)
          {
-            if(oHotkey.hotkey != null)
+            if(oHotkey.hasOwnProperty("hotkey"))
             {
                oHotkey = oHotkey.hotkey;
             }
