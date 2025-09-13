@@ -467,7 +467,7 @@ package
                         }
                         else
                         {
-                           this.transferButtons[button].ButtonVisible = Parser.parseBoolean(config.transferConfig[i].showButton,DEFAULT_SHOW_BUTTON_STATE) && ItemWorker.isTheSameCharacterName(config.transferConfig[i]);
+                           this.transferButtons[button].ButtonVisible = Parser.parseBoolean(config.transferConfig[i].showButton,DEFAULT_SHOW_BUTTON_STATE) && ItemWorker.isTheSameCharacterName(config.transferConfig[i]) && ItemWorker.isValidContainerName(config.transferConfig[i]);
                         }
                      }
                      button++;
