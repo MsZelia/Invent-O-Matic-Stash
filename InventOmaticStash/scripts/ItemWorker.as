@@ -435,6 +435,25 @@ package
          return "";
       }
       
+      public static function isInvalidCondition(item:Object, sectionConfig:Object, defaultValue:Boolean = false) : *
+      {
+         if(Boolean(sectionConfig.conditionUnder) && item.currentHealth > 0)
+         {
+            if(item.currentHealth == item.maximumHealth)
+            {
+               return false;
+            }
+            var currentCnd:Number = item.currentHealth / item.maximumHealth;
+            var cndUnder:Number = Number(sectionConfig.conditionUnder);
+            if(!isNaN(cndUnder) && cndUnder > currentCnd * 100)
+            {
+               return true;
+            }
+            return false;
+         }
+         return defaultValue;
+      }
+      
       private function get _queueValid() : Boolean
       {
          return Boolean(_queue) && _queueIndex < _queue.length && Boolean(_queue[_queueIndex]);
@@ -1504,6 +1523,7 @@ package
          var inventory:Array;
          var item:Object;
          var isValidMenuMode:Boolean;
+         var isRechargerMenuMode:Boolean;
          var itemIndex:int;
          var assignSlotsFreeBefore:int;
          var i:int = 0;
@@ -1575,6 +1595,7 @@ package
                   delayStep = Parser.parsePositiveNumber(config.delay,600);
                   subConfigIndex = 0;
                   isValidMenuMode = CampAssignContainer.MenuMode == SecureTradeShared.MODE_CAMP_DISPENSER;
+                  isRechargerMenuMode = CampAssignContainer.MenuMode == SecureTradeShared.MODE_RECHARGER;
                   while(subConfigIndex < config.configs.length)
                   {
                      subConfig = config.configs[subConfigIndex];
@@ -1587,7 +1608,7 @@ package
                            item = inventory[itemIndex];
                            if(item.currentHealth != -1 || isValidMenuMode)
                            {
-                              if(isItemMatchingConfig(item,subConfig))
+                              if(isItemMatchingConfig(item,subConfig) && (!isRechargerMenuMode || isInvalidCondition(item,subConfig)))
                               {
                                  amount = Math.min(getAmount(subConfig.amount,item.count),assignSlotsFree);
                                  if(amount > 0)
