@@ -401,14 +401,19 @@ package
          if(sectionConfig.checkContainerName)
          {
             var configContainerNames:Array = [].concat(sectionConfig.containerName);
-            if(configContainerNames.indexOf(ContainerName) == -1)
+            if(configContainerNames.indexOf(ContainerName) != -1)
             {
-               if(debug)
-               {
-                  Logger.get().error("Container name not matching in config: " + ContainerName + " != " + sectionConfig.containerName);
-               }
-               return false;
+               return true;
             }
+            if(configContainerNames.indexOf(CampAssignContainer.DefaultHeaderText) != -1)
+            {
+               return true;
+            }
+            if(debug)
+            {
+               Logger.get().error("Container name not matching in config: " + ContainerName + "/" + CampAssignContainer.DefaultHeaderText + " != " + sectionConfig.containerName);
+            }
+            return false;
          }
          return true;
       }

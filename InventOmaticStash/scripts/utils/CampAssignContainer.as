@@ -28,6 +28,11 @@ package utils
          return OtherInventoryTypeData.menuType;
       }
       
+      public static function get DefaultHeaderText() : String
+      {
+         return OtherInventoryTypeData.defaultHeaderText.toUpperCase();
+      }
+      
       public static function get AssignSlotsFilled() : int
       {
          if(OtherInventoryTypeData && OtherInventoryTypeData.slotDataA && OtherInventoryTypeData.slotDataA.length > 0)

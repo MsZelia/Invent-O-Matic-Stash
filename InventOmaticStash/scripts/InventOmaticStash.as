@@ -363,9 +363,12 @@ package
          var i:int;
          var isValidMode:Boolean;
          var cnf:Object;
+         var t1:Number;
+         var t2:Number;
          var end:Boolean = false;
          try
          {
+            t1 = Number(getTimer());
             if(this.extractButton)
             {
                this.extractButton.ButtonVisible = Parser.parseBoolean(config.extractConfig.showButton,DEFAULT_SHOW_BUTTON_STATE);
@@ -475,6 +478,11 @@ package
                   i++;
                }
                end = true;
+            }
+            t2 = Number(getTimer());
+            if(false)
+            {
+               Logger.get().info("Updating buttons: " + (t2 - t1) + "ms");
             }
          }
          catch(e:Error)
@@ -1098,6 +1106,7 @@ package
                offerHeader = this.parentClip.OfferInventory_mc.Header_mc.Header_tf.text;
                ItemWorker.ContainerName = offerHeader;
                Logger.get().info("Offer header: " + offerHeader);
+               Logger.get().info("Container name: " + CampAssignContainer.DefaultHeaderText);
             }
             if(!config || !config.showCategoryItemCount)
             {
