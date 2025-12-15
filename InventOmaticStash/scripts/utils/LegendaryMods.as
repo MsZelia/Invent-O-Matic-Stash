@@ -38,7 +38,7 @@ package utils
       
       private static var IMPROVED_WORKBENCH_MOD_NAME:String = "ImprovedWorkbench";
       
-      public static var FILE_LOCATION:String = "../itemsmod.ini";
+      public static var FILE_LOCATION:String = "../LegendaryMods.ini";
       
       private static const LEGENDARY_MOD_CURRENTLY_REGEX:* = /(Currently|Aktuell|Actualmente|Valeur actuelle|Attuale|現在|현재|Obecnie|Atualmente|Сейчас|当前效果为|目前為)[^¬]+/;
       
@@ -64,10 +64,6 @@ package utils
          if(config.legendaryModsConfig == null || !config.legendaryModsConfig.enabled)
          {
             return;
-         }
-         if(config.legendaryModsConfig != null && config.legendaryModsConfig.loadFileDirectory != null && config.legendaryModsConfig.loadFileDirectory.length > 0)
-         {
-            FILE_LOCATION = config.legendaryModsConfig.loadFileDirectory;
          }
          BSUIDataManager.Subscribe("ContainerOptionsData",onContainerOptionsUpdate);
          BSUIDataManager.Subscribe("CharacterNameData",onCharacterNameUpdate);
