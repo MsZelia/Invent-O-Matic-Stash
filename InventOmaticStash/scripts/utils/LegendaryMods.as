@@ -506,7 +506,7 @@ package utils
          }
          if(Boolean(config.legendaryModsConfig.showUnknownModsAmongAllChars))
          {
-            if(json.indexOf("\"modName\":\"" + IMPROVED_WORKBENCH_MOD_NAME + "\"") != -1)
+            if(json.search(/\"modName\":\s*\"ImprovedWorkbench\"/) != -1)
             {
                var decoder:JsonDecoderAsync = new JsonDecoderAsync(json,false);
                if(!decoder.process())
