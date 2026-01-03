@@ -49,10 +49,10 @@
 		"learnableTextColor": "0xff0000",
 		"keepText": "[Keep]",
 		"keepTextColorStyle": "PREFIX",
-		"keepTextColor": "0x00cc44",
+		"keepTextColor": "0x00ffd1",
 		"keepLearnableText": "[Keep+Learnable]",
 		"keepLearnableTextColorStyle": "PREFIX",
-		"keepLearnableTextColor": "0xff00ff"
+		"keepLearnableTextColor": "0xd100ff"
 	},
 	"categoryWeightConfig": {
 		"enabled": false,
