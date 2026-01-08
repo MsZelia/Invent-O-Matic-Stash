@@ -44,6 +44,7 @@
 		"showInWorldContainers": true,
 		"learnableText": "[Learnable]",
 		"learnableFromArmorText": "[Learnable from Armor]",
+		"learnableFromPowerArmorText": "[Learnable from Power Armor]",
 		"learnableFromWeaponText": "[Learnable from Weapon]",
 		"learnableTextColorStyle": "PREFIX",
 		"learnableTextColor": "0xff0000",
