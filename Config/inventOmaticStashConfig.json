@@ -36,7 +36,7 @@
 		"ExampleGroup2": ["item 3", "item 4"]
 	},
 	"legendaryModsConfig": {
-		"enabled": false,
+		"enabled": true,
 		"showUnknownModsAmongAllChars": false,
 		"showInWorkbench": true,
 		"showInStash": true,
