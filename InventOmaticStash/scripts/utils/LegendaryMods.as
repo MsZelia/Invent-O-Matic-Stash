@@ -56,6 +56,8 @@ package utils
       
       private static var learnableArmorPrefix:* = "[Learnable from Armor]";
       
+      private static var learnablePowerArmorPrefix:* = "[Learnable from Power Armor]";
+      
       private static var learnableWeaponPrefix:* = "[Learnable from Weapon]";
       
       private static var stats:* = [[0,0],[0,0],[0,0],[0,0]];
@@ -206,9 +208,11 @@ package utils
                   keepPrefix = !config.legendaryModsConfig.keepText ? keepPrefix : config.legendaryModsConfig.keepText;
                   learnablePrefix = !config.legendaryModsConfig.learnableText ? learnablePrefix : config.legendaryModsConfig.learnableText;
                   learnableArmorPrefix = !config.legendaryModsConfig.learnableFromArmorText ? learnableArmorPrefix : config.legendaryModsConfig.learnableFromArmorText;
+                  learnablePowerArmorPrefix = !config.legendaryModsConfig.learnableFromPowerArmorText ? learnablePowerArmorPrefix : config.legendaryModsConfig.learnableFromPowerArmorText;
                   learnableWeaponPrefix = !config.legendaryModsConfig.learnableFromWeaponText ? learnableWeaponPrefix : config.legendaryModsConfig.learnableFromWeaponText;
                   var activePrefix:* = currentMod.isKept ? (currentMod.isLearned ? keepPrefix : keepLearnablePrefix) : learnablePrefix;
                   var activeArmorPrefix:* = currentMod.isKept ? (currentMod.isLearned ? keepPrefix : keepLearnablePrefix) : learnableArmorPrefix;
+                  var activePowerArmorPrefix:* = currentMod.isKept ? (currentMod.isLearned ? keepPrefix : keepLearnablePrefix) : learnablePowerArmorPrefix;
                   var activeWeaponPrefix:* = currentMod.isKept ? (currentMod.isLearned ? keepPrefix : keepLearnablePrefix) : learnableWeaponPrefix;
                   var descObj:* = currentMod.description;
                   var descBase:* = "";
@@ -265,6 +269,11 @@ package utils
                      if(descObj.armor)
                      {
                         descBase = descObj.armor + " " + starsText;
+                        legendaryModsByDesc[descBase] = activePrefix + " " + descBase;
+                     }
+                     if(descObj.powerArmor)
+                     {
+                        descBase = descObj.powerArmor + " " + starsText;
                         legendaryModsByDesc[descBase] = activePrefix + " " + descBase;
                      }
                   }
@@ -325,6 +334,11 @@ package utils
                if(descObj.armor)
                {
                   descBase = descObj.armor + " " + starsText;
+                  legendaryModsByDesc[descBase] = legendaryModsByDesc[descBase] != null && legendaryModsByDesc[descBase] != currentMod.name ? legendaryModsByDesc[descBase] + "|" + currentMod.name : currentMod.name;
+               }
+               if(descObj.powerArmor)
+               {
+                  descBase = descObj.powerArmor + " " + starsText;
                   legendaryModsByDesc[descBase] = legendaryModsByDesc[descBase] != null && legendaryModsByDesc[descBase] != currentMod.name ? legendaryModsByDesc[descBase] + "|" + currentMod.name : currentMod.name;
                }
             }
@@ -476,9 +490,9 @@ package utils
             {
                format = new TextFormat();
                format.color = Parser.parseNumber(config.legendaryModsConfig.learnableTextColor,RED);
-               prefixes = [learnablePrefix,learnableArmorPrefix,learnableWeaponPrefix];
+               prefixes = [learnablePrefix,learnableArmorPrefix,learnablePowerArmorPrefix,learnableWeaponPrefix];
                i = 0;
-               while(i < 3)
+               while(i < 4)
                {
                   index = int(description_tf.text.indexOf(prefixes[i]));
                   while(index != -1)
