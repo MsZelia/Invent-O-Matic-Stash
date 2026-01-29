@@ -722,7 +722,11 @@ package
             errorCode = "loopInv " + index;
             item = inventory[index];
             errorCode = "loopInv " + index + " check1";
-            if(!Boolean(sectionConfig.transferFavorite) && item.favorite)
+            if(!Boolean(sectionConfig.transferLocked) && item.isTransferLocked)
+            {
+               index++;
+            }
+            else if(!Boolean(sectionConfig.transferFavorite) && item.favorite)
             {
                index++;
             }
