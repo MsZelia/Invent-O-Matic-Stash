@@ -439,11 +439,9 @@ package utils
                      {
                         modBoxLearnableString = modBoxLearnableString.replace(/$/," " + currentlyText);
                      }
-
-                     // Put learnable/keep prefix before [WEAPONS]/[ARMOR]/[POWER ARMOR] prefix
                      if(modBoxPrefix.length > 0)
                      {
-                        descLines.push(modBoxLearnableString.replace(modBoxLookupDesc, modBoxPrefix + modBoxLookupDesc));
+                        descLines.push(modBoxLearnableString.replace(modBoxLookupDesc,modBoxPrefix + modBoxLookupDesc));
                      }
                      else
                      {
@@ -462,7 +460,7 @@ package utils
             }
             else
             {
-               var currentlyText:* = (descParts[i].match(LEGENDARY_MOD_CURRENTLY_REGEX) || [])[0] || "";
+               currentlyText = (descParts[i].match(LEGENDARY_MOD_CURRENTLY_REGEX) || [])[0] || "";
                var lookupDesc:* = descParts[i].replace(LEGENDARY_MOD_CURRENTLY_REGEX,"").replace(/^\s+|\s+$/g,"").replace(/\s*¬/," ¬");
                if(lookupDesc.length === 0 || !_legendaryModsByDesc[lookupDesc])
                {
@@ -518,17 +516,17 @@ package utils
                      {
                         endIndex = index + keepPrefix.length;
                      }
-                    else if(colorStyle == "LINE")
-                    {
-                       endIndex = int(description_tf.text.indexOf("\r",index));
-                       if(endIndex == -1)
-                       {
-                          endIndex = description_tf.text.length - 1;
-                       }
-                    }
-                    description_tf.setTextFormat(format,index,endIndex + 1);
-                 }
-                 index = int(description_tf.text.indexOf(keepPrefix,index + 1));
+                     else if(colorStyle == "LINE")
+                     {
+                        endIndex = int(description_tf.text.indexOf("\r",index));
+                        if(endIndex == -1)
+                        {
+                           endIndex = description_tf.text.length - 1;
+                        }
+                     }
+                     description_tf.setTextFormat(format,index,endIndex + 1);
+                  }
+                  index = int(description_tf.text.indexOf(keepPrefix,index + 1));
                }
             }
             colorStyle = config.legendaryModsConfig.keepLearnableTextColorStyle || config.legendaryModsConfig.learnableTextColorStyle;
@@ -540,20 +538,20 @@ package utils
                index = int(description_tf.text.indexOf(keepLearnablePrefix));
                while(index != -1)
                {
-                 if(colorStyle == "PREFIX")
-                 {
-                    endIndex = index + keepLearnablePrefix.length;
-                 }
-                 else if(colorStyle == "LINE")
-                 {
-                    endIndex = int(description_tf.text.indexOf("\r",index));
-                    if(endIndex == -1)
-                    {
-                       endIndex = description_tf.text.length - 1;
-                    }
-                 }
-                 description_tf.setTextFormat(format,index,endIndex + 1);
-                 index = int(description_tf.text.indexOf(keepLearnablePrefix,endIndex));
+                  if(colorStyle == "PREFIX")
+                  {
+                     endIndex = index + keepLearnablePrefix.length;
+                  }
+                  else if(colorStyle == "LINE")
+                  {
+                     endIndex = int(description_tf.text.indexOf("\r",index));
+                     if(endIndex == -1)
+                     {
+                        endIndex = description_tf.text.length - 1;
+                     }
+                  }
+                  description_tf.setTextFormat(format,index,endIndex + 1);
+                  index = int(description_tf.text.indexOf(keepLearnablePrefix,endIndex));
                }
             }
             colorStyle = config.legendaryModsConfig.learnableTextColorStyle;
@@ -568,20 +566,20 @@ package utils
                   index = int(description_tf.text.indexOf(prefixes[i]));
                   while(index != -1)
                   {
-                    if(colorStyle == "PREFIX")
-                    {
-                       endIndex = index + prefixes[i].length;
-                    }
-                    else if(colorStyle == "LINE")
-                    {
-                       endIndex = int(description_tf.text.indexOf("\r",index));
-                       if(endIndex == -1)
-                       {
-                          endIndex = description_tf.text.length - 1;
-                       }
-                    }
-                    description_tf.setTextFormat(format,index,endIndex + 1);
-                    index = int(description_tf.text.indexOf(prefixes[i],endIndex));
+                     if(colorStyle == "PREFIX")
+                     {
+                        endIndex = index + prefixes[i].length;
+                     }
+                     else if(colorStyle == "LINE")
+                     {
+                        endIndex = int(description_tf.text.indexOf("\r",index));
+                        if(endIndex == -1)
+                        {
+                           endIndex = description_tf.text.length - 1;
+                        }
+                     }
+                     description_tf.setTextFormat(format,index,endIndex + 1);
+                     index = int(description_tf.text.indexOf(prefixes[i],endIndex));
                   }
                   i++;
                }
