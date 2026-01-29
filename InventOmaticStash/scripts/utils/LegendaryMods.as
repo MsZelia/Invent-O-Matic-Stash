@@ -48,6 +48,10 @@ package utils
       
       private static const LEGENDARY_MOD_DEFENDER_LOCALIZED:* = /(Defender|Defensor|Défenseur|Des Verteidigers|Difensore|Obronny|Защитная|ディフェンダーの|방어자의|防御者的|護衛)/i;
       
+      private static const MODBOX_PREFIX_REGEX:* = /^\[(WEAPONS|ARMOR|POWER ARMOR)\]\s*/i;
+      
+      private static var _legendaryModsByDescNoStars:* = null;
+      
       private static var keepLearnablePrefix:* = "[Keep+Learnable]";
       
       private static var keepPrefix:* = "[Keep]";
@@ -184,6 +188,7 @@ package utils
          loadExistingItemsmodIni(function(legendaryModsList:*):*
          {
             var legendaryModsByDesc:* = {};
+            var legendaryModsByDescNoStars:* = {};
             var legendaryModsByName:* = {};
             var i:* = 0;
             while(i < legendaryModsList.length)
@@ -220,6 +225,7 @@ package utils
                   {
                      descBase = descObj.all + " " + starsText;
                      legendaryModsByDesc[descBase] = activePrefix + " " + descBase;
+                     legendaryModsByDescNoStars[descObj.all] = activePrefix + " " + descObj.all;
                   }
                   else if(currentMod.name.search(LEGENDARY_MOD_CAVALIER_LOCALIZED) != -1)
                   {
@@ -233,6 +239,15 @@ package utils
                      else
                      {
                         legendaryModsByDesc[descBase] = activePrefix + " " + descBase;
+                     }
+                     legendaryModsByDescNoStars[descObj.armor] = activePrefix + " " + descObj.armor;
+                     if(!legendaryModsByDescNoStars[descObj.weapons])
+                     {
+                        legendaryModsByDescNoStars[descObj.weapons] = activeWeaponPrefix + " " + descObj.weapons;
+                     }
+                     else
+                     {
+                        legendaryModsByDescNoStars[descObj.weapons] = activePrefix + " " + descObj.weapons;
                      }
                   }
                   else if(currentMod.name.search(LEGENDARY_MOD_DEFENDER_LOCALIZED) != -1)
@@ -248,6 +263,15 @@ package utils
                      {
                         legendaryModsByDesc[descBase] = activePrefix + " " + descBase;
                      }
+                     legendaryModsByDescNoStars[descObj.weapons] = activePrefix + " " + descObj.weapons;
+                     if(!legendaryModsByDescNoStars[descObj.armor])
+                     {
+                        legendaryModsByDescNoStars[descObj.armor] = activeArmorPrefix + " " + descObj.armor;
+                     }
+                     else
+                     {
+                        legendaryModsByDescNoStars[descObj.armor] = activePrefix + " " + descObj.armor;
+                     }
                   }
                   else
                   {
@@ -255,26 +279,31 @@ package utils
                      {
                         descBase = descObj.melee + " " + starsText;
                         legendaryModsByDesc[descBase] = activePrefix + " " + descBase;
+                        legendaryModsByDescNoStars[descObj.melee] = activePrefix + " " + descObj.melee;
                      }
                      if(descObj.ranged)
                      {
                         descBase = descObj.ranged + " " + starsText;
                         legendaryModsByDesc[descBase] = activePrefix + " " + descBase;
+                        legendaryModsByDescNoStars[descObj.ranged] = activePrefix + " " + descObj.ranged;
                      }
                      if(descObj.weapons)
                      {
                         descBase = descObj.weapons + " " + starsText;
                         legendaryModsByDesc[descBase] = activePrefix + " " + descBase;
+                        legendaryModsByDescNoStars[descObj.weapons] = activePrefix + " " + descObj.weapons;
                      }
                      if(descObj.armor)
                      {
                         descBase = descObj.armor + " " + starsText;
                         legendaryModsByDesc[descBase] = activePrefix + " " + descBase;
+                        legendaryModsByDescNoStars[descObj.armor] = activePrefix + " " + descObj.armor;
                      }
                      if(descObj.powerArmor)
                      {
                         descBase = descObj.powerArmor + " " + starsText;
                         legendaryModsByDesc[descBase] = activePrefix + " " + descBase;
+                        legendaryModsByDescNoStars[descObj.powerArmor] = activePrefix + " " + descObj.powerArmor;
                      }
                   }
                }
@@ -282,6 +311,7 @@ package utils
             }
             _legendaryModsByName = legendaryModsByName;
             _legendaryModsByDesc = legendaryModsByDesc;
+            _legendaryModsByDescNoStars = legendaryModsByDescNoStars;
             if(config.legendaryModsConfig.debug)
             {
                log(toString(legendaryModsByDesc));
@@ -390,12 +420,45 @@ package utils
          }
          var descLines:* = [];
          var descParts:* = desc.split("\n");
+         var showOnModItems:* = config.legendaryModsConfig && config.legendaryModsConfig.showOnModItems;
          var i:* = 0;
          while(i < descParts.length)
          {
             if(descParts[i].indexOf("¬") == -1)
             {
-               descLines.push(descParts[i]);
+               if(showOnModItems && _legendaryModsByDescNoStars)
+               {
+                  var currentlyText:* = (descParts[i].match(LEGENDARY_MOD_CURRENTLY_REGEX) || [])[0] || "";
+                  var modBoxLine:* = descParts[i].replace(/^\s+|\s+$/g,"");
+                  var modBoxPrefix:* = (modBoxLine.match(MODBOX_PREFIX_REGEX) || [])[0] || "";
+                  var modBoxLookupDesc:* = modBoxLine.replace(MODBOX_PREFIX_REGEX,"").replace(LEGENDARY_MOD_CURRENTLY_REGEX,"").replace(/^\s+|\s+$/g,"");
+                  if(modBoxLookupDesc.length > 0 && _legendaryModsByDescNoStars[modBoxLookupDesc])
+                  {
+                     var modBoxLearnableString:* = _legendaryModsByDescNoStars[modBoxLookupDesc];
+                     if(currentlyText.length > 0)
+                     {
+                        modBoxLearnableString = modBoxLearnableString.replace(/$/," " + currentlyText);
+                     }
+
+                     // Put learnable/keep prefix before [WEAPONS]/[ARMOR]/[POWER ARMOR] prefix
+                     if(modBoxPrefix.length > 0)
+                     {
+                        descLines.push(modBoxLearnableString.replace(modBoxLookupDesc, modBoxPrefix + modBoxLookupDesc));
+                     }
+                     else
+                     {
+                        descLines.push(modBoxLearnableString);
+                     }
+                  }
+                  else
+                  {
+                     descLines.push(descParts[i]);
+                  }
+               }
+               else
+               {
+                  descLines.push(descParts[i]);
+               }
             }
             else
             {
@@ -455,13 +518,17 @@ package utils
                      {
                         endIndex = index + keepPrefix.length;
                      }
-                     else if(colorStyle == "LINE")
-                     {
-                        endIndex = int(description_tf.text.indexOf("\r",index));
-                     }
-                     description_tf.setTextFormat(format,index,endIndex + 1);
-                  }
-                  index = int(description_tf.text.indexOf(keepPrefix,index + 1));
+                    else if(colorStyle == "LINE")
+                    {
+                       endIndex = int(description_tf.text.indexOf("\r",index));
+                       if(endIndex == -1)
+                       {
+                          endIndex = description_tf.text.length - 1;
+                       }
+                    }
+                    description_tf.setTextFormat(format,index,endIndex + 1);
+                 }
+                 index = int(description_tf.text.indexOf(keepPrefix,index + 1));
                }
             }
             colorStyle = config.legendaryModsConfig.keepLearnableTextColorStyle || config.legendaryModsConfig.learnableTextColorStyle;
@@ -473,16 +540,20 @@ package utils
                index = int(description_tf.text.indexOf(keepLearnablePrefix));
                while(index != -1)
                {
-                  if(colorStyle == "PREFIX")
-                  {
-                     endIndex = index + keepLearnablePrefix.length;
-                  }
-                  else if(colorStyle == "LINE")
-                  {
-                     endIndex = int(description_tf.text.indexOf("\r",index));
-                  }
-                  description_tf.setTextFormat(format,index,endIndex + 1);
-                  index = int(description_tf.text.indexOf(keepLearnablePrefix,endIndex));
+                 if(colorStyle == "PREFIX")
+                 {
+                    endIndex = index + keepLearnablePrefix.length;
+                 }
+                 else if(colorStyle == "LINE")
+                 {
+                    endIndex = int(description_tf.text.indexOf("\r",index));
+                    if(endIndex == -1)
+                    {
+                       endIndex = description_tf.text.length - 1;
+                    }
+                 }
+                 description_tf.setTextFormat(format,index,endIndex + 1);
+                 index = int(description_tf.text.indexOf(keepLearnablePrefix,endIndex));
                }
             }
             colorStyle = config.legendaryModsConfig.learnableTextColorStyle;
@@ -497,16 +568,20 @@ package utils
                   index = int(description_tf.text.indexOf(prefixes[i]));
                   while(index != -1)
                   {
-                     if(colorStyle == "PREFIX")
-                     {
-                        endIndex = index + prefixes[i].length;
-                     }
-                     else if(colorStyle == "LINE")
-                     {
-                        endIndex = int(description_tf.text.indexOf("\r",index));
-                     }
-                     description_tf.setTextFormat(format,index,endIndex + 1);
-                     index = int(description_tf.text.indexOf(prefixes[i],endIndex));
+                    if(colorStyle == "PREFIX")
+                    {
+                       endIndex = index + prefixes[i].length;
+                    }
+                    else if(colorStyle == "LINE")
+                    {
+                       endIndex = int(description_tf.text.indexOf("\r",index));
+                       if(endIndex == -1)
+                       {
+                          endIndex = description_tf.text.length - 1;
+                       }
+                    }
+                    description_tf.setTextFormat(format,index,endIndex + 1);
+                    index = int(description_tf.text.indexOf(prefixes[i],endIndex));
                   }
                   i++;
                }
