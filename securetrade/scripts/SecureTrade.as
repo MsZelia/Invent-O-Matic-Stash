@@ -10,6 +10,7 @@ package
    import Shared.AS3.Events.CustomEvent;
    import Shared.AS3.Events.PlatformChangeEvent;
    import Shared.AS3.IMenu;
+   import Shared.AS3.LabelSelector;
    import Shared.AS3.QuantityMenu;
    import Shared.AS3.SWFLoaderClip;
    import Shared.AS3.SecureTradeShared;
@@ -183,19 +184,31 @@ package
       
       private static const FILTER_AID:* = 1 << 6;
       
+      private static const FILTER_SCROLLS:* = 1 << 7;
+      
+      private static const FILTER_FOOD:* = 1 << 8;
+      
+      private static const FILTER_INGREDIENTS:* = 1 << 9;
+      
       private static const FILTER_BOOKS:* = 1 << 10;
       
-      private static const FILTER_MISC:* = 1 << 12;
+      private static const FILTER_LEARNABLE:* = 1 << 11;
       
-      private static const FILTER_JUNK:* = 1 << 13;
+      private static const FILTER_KEYS:* = 1 << 12;
       
-      private static const FILTER_MODS:* = 1 << 14;
+      private static const FILTER_MISC:* = 1 << 13;
       
-      private static const FILTER_AMMO:* = 1 << 15;
+      private static const FILTER_JUNK:* = 1 << 14;
       
-      private static const FILTER_HOLOTAPES:* = 1 << 16;
+      private static const FILTER_MODS:* = 1 << 15;
       
-      private static const FILTER_CANAUTOSCRAP:* = 1 << 18;
+      private static const FILTER_AMMO:* = 1 << 16;
+      
+      private static const FILTER_HOLOTAPES:* = 1 << 17;
+      
+      private static const FILTER_COMPONENT:* = 1 << 18;
+      
+      private static const FILTER_CANAUTOSCRAP:* = 1 << 19;
       
       private static const FILTER_ALL:* = 4294967295;
       
@@ -367,7 +380,7 @@ package
       
       private var m_transferUnusedAmmoAllowed:Boolean = false;
       
-      private var m_transferAidAllowed:Boolean = false;
+      private var m_transferSlowAidAllowed:Boolean = false;
       
       private var m_playerHasMiscItems:Boolean = false;
       
@@ -1225,7 +1238,7 @@ package
          this.m_TakeAllBtnText = param1.data.takeAllButtonText;
          this.m_scrapAllowedFlag = param1.data.scrapAllowedFlag;
          this.m_transferUnusedAmmoAllowed = param1.data.isTransferUnusedAmmoAllowed;
-         this.m_transferAidAllowed = param1.data.isTransferAidAllowed;
+         this.m_transferSlowAidAllowed = param1.data.isTransferSlowAidAllowed;
          m_IsTransferLockingFeatureEnabled = param1.data.isTransferLockingFeatureEnabled;
          m_IsTransferLockingSettingAllowStashTransferEnabled = param1.data.isTransferLockingAllowStashTransferEnabled;
          this.m_isWorkbench = param1.data.isWorkbench;
@@ -1956,12 +1969,17 @@ package
       
       private function performContainerWeightCheck(param1:Object, param2:uint) : Boolean
       {
-         var _loc3_:Boolean = Boolean(param1.isWeightless) || this.OfferInventory_mc.carryWeightMax <= 0 || this.OfferInventory_mc.carryWeightCurrent + param1.weight * param2 <= this.OfferInventory_mc.carryWeightMax;
-         if(!_loc3_)
+         var _loc3_:Number = Number(param1.weight);
+         if(param1.weightInStash > 0)
+         {
+            _loc3_ = Number(param1.weightInStash);
+         }
+         var _loc4_:Boolean = Boolean(param1.isWeightless) || this.OfferInventory_mc.carryWeightMax <= 0 || this.OfferInventory_mc.carryWeightCurrent + _loc3_ * param2 <= this.OfferInventory_mc.carryWeightMax;
+         if(!_loc4_)
          {
             BSUIDataManager.dispatchEvent(new CustomEvent(EVENT_TRANSFER_TOO_HEAVY_ERROR,{}));
          }
-         return _loc3_;
+         return _loc4_;
       }
       
       private function onLockedItemUsed() : *
@@ -3246,7 +3264,7 @@ package
                }
                else if(this.isAidStash)
                {
-                  this.StoreUnusedItemsButton.ButtonDisabled = !this.m_IsFollowerOfZeus || !this.m_transferAidAllowed;
+                  this.StoreUnusedItemsButton.ButtonDisabled = !this.m_IsFollowerOfZeus || !this.m_transferSlowAidAllowed;
                   this.StoreUnusedItemsButton.ButtonText = "$TRANSFERAID";
                }
                else
@@ -3974,9 +3992,9 @@ package
                   {
                      GlobalFunc.ShowHUDMessage("$TransferUnusedFailNoFO1st");
                   }
-                  else if(!this.m_transferAidAllowed)
+                  else if(!this.m_transferSlowAidAllowed)
                   {
-                     GlobalFunc.ShowHUDMessage("$TransferFailNoAid");
+                     GlobalFunc.ShowHUDMessage("$TransferFailNoSlowAid");
                   }
                }
             }

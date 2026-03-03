@@ -71,6 +71,8 @@ package Map.CampBuilds
       
       public static const CAMP_SLOTS_PUBLIC_OFF_SOUND:String = "UICampSlotPublicIconOff";
       
+      public static const CAMP_TITLES_SHOW:String = "CampCustomizersMenu::Show";
+      
       private static const CAMP_SLOTS_ICON_ARRAY:Array = ["DefaultCampMarker","AgriculturalCenterMarker","AirfieldMarker","AmusementParkMarker","AppalachianAntiquesMarker","ArktosPharmaMarker","BloodEagleMarker","BoSBaseMarker","BoSMarker","BunkerMarker","CabinMarker","CamperMarker","CapitalBuildingMarker","CarMarker","CastleMarker","CaveMarker","ChurchMarker","CityMarker","LastCorpseMarker","CountryClubMarker","CowSpotsCreameryMarker","CultistMarker","CustomHouseMarker","DamMarker","SkyscraperMarker","DriveInMarker","ElectricalSubstationMarker","ElevatedHighwayMarker","EncampmentMarker","ExcavatorMarker","FactoryMarker","FarmMarker","FillingStationMarker","FissureMarker","ForestedMarker","GoodneighborMarker","GraveyardMarker","HammerWingMarker","HighTechBuildingMarker","HospitalMarker","HouseTrailerMarker","IndustrialDomeMarker","IrishPrideMarker","JunkyardMarker","LandmarkMarker","LegendaryPurveyorMarker","LibertaliaMarker","LighthouseMarker","LookoutTowerMarker","LowRiseMarker","MansionMarker"
       ,"MechanistMarker","MetroMarker","MilitaryBaseMarker","MissileSiloMarker","MonorailMarker","MonumentMarker","NukaColaQuantumPlant","ObservatoryMarker","OfficeMarker","OverlookMarker","PalaceWindingPathMarker","PierMarker","PoliceStationMarker","PondLakeMarker","PowerPlantMarker","PumpkinMarker","QuarryMarker","RadioactiveAreaMarker","RadioTowerMarker","RaiderSettlementMarker","RailroadFactionMarker","RailroadMarker","SancHillsMarker","SatelliteMarker","SchoolMarker","SentinelMarker","SettlementMarker","SewerMarker","ShipwreckMarker","SkiResortMarker","SkullRingMarker","SpaceStationMarker","SubmarineMarker","SwanPondMarker","TeapotMarker","TopOfTheWorldMarker","TownMarker","TownRuinsMarker","TrainStationMarker","TrainTrackMark","UrbanRuinsMarker","VaultMarker","WhitespringResort","WoodShackMarker"];
       
@@ -79,57 +81,64 @@ package Map.CampBuilds
          super();
       }
       
-      public static function getCampActivationOptions(param1:Boolean, param2:Boolean, param3:Boolean, param4:Boolean, param5:Boolean = false, param6:Boolean = false) : Array
+      public static function getCampActivationOptions(param1:Boolean, param2:Boolean, param3:Boolean, param4:Boolean, param5:Boolean, param6:Boolean = false, param7:Boolean = false) : Array
       {
-         var _loc7_:Array = new Array();
+         var _loc8_:Array = new Array();
          if(param1)
          {
-            if(param5)
-            {
-               _loc7_.push({
-                  "text":"$BESTBUILDSSUBMIT",
-                  "funcName":CAMP_SLOTS_SUBMIT_BESTBUILD_FUNC
-               });
-            }
-            else if(param6)
-            {
-               _loc7_.push({
-                  "text":"$BESTBUILDSMANAGE",
-                  "funcName":CAMP_SLOTS_MANAGE_BESTBUILD_FUNC
-               });
-            }
             if(param3 && !param4)
             {
-               _loc7_.push({
+               _loc8_.push({
                   "text":"$$FastTravel",
                   "funcName":CAMP_SLOTS_FAST_TRAVEL_FUNC
                });
             }
-            _loc7_.push({
+            if(param6)
+            {
+               _loc8_.push({
+                  "text":"$BESTBUILDSSUBMIT",
+                  "funcName":CAMP_SLOTS_SUBMIT_BESTBUILD_FUNC
+               });
+            }
+            else if(param7)
+            {
+               _loc8_.push({
+                  "text":"$BESTBUILDSMANAGE",
+                  "funcName":CAMP_SLOTS_MANAGE_BESTBUILD_FUNC
+               });
+            }
+            if(param5)
+            {
+               _loc8_.push({
+                  "text":"$CAMP_TITLE",
+                  "funcName":CAMP_TITLES_SHOW
+               });
+            }
+            _loc8_.push({
                "text":"$CAMP_SLOTS_RENAME",
                "funcName":(param4 ? CAMP_SLOTS_MAP_RENAME_FUNC : CAMP_SLOTS_RENAME_FUNC)
             });
-            _loc7_.push({
+            _loc8_.push({
                "text":(param2 ? "$CAMP_SLOTS_TOGGLE_PUBLIC_ON" : "$CAMP_SLOTS_TOGGLE_PUBLIC_OFF"),
                "funcName":(param4 ? CAMP_SLOTS_MAP_TOGGLE_PUBLIC_FUNC : CAMP_SLOTS_SET_PUBLIC_FUNC)
             });
-            _loc7_.push({
+            _loc8_.push({
                "text":"$CAMP_SLOTS_CHANGE_ICON",
                "funcName":(param4 ? CAMP_SLOTS_MAP_SET_CUSTOM_ICON_FUNC : CAMP_SLOTS_SET_CUSTOM_ICON_FUNC)
             });
-            _loc7_.push({
+            _loc8_.push({
                "text":"$CAMP_SLOTS_VENDING_HISTORY",
                "funcName":CAMP_SLOTS_MAP_VENDING_HISTORY_SHOW_FUNC
             });
          }
          else
          {
-            _loc7_.push({
+            _loc8_.push({
                "text":"$CAMP_SLOTS_ACTIVATE",
                "funcName":(param4 ? CAMP_SLOTS_MAP_ACTIVATE_FUNC : CAMP_SLOTS_ACTIVATE_FUNC)
             });
          }
-         return _loc7_;
+         return _loc8_;
       }
       
       public static function getCampIconStringFromIndex(param1:uint) : String

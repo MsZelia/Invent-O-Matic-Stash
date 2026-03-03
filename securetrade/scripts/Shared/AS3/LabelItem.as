@@ -1,4 +1,4 @@
-package
+package Shared.AS3
 {
    import Shared.GlobalFunc;
    import flash.display.MovieClip;

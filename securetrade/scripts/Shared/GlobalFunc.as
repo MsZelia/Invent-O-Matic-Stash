@@ -290,9 +290,9 @@ package Shared
       
       public static const REWARD_TYPE_ENUM_PLAYER_TITLE:* = 39;
       
-      public static const PLAYER_TITLE_DELIMITER:* = "|";
+      public static const CUSTOM_TITLE_DELIMITER:* = "<";
       
-      public static const PLAYER_TITLE_DIVIDER:* = " |";
+      public static const CUSTOM_TITLE_DIVIDER:* = " |";
       
       private static const ButtonMappingToFontKey:Object = {
          "Xenon_A":"A",
@@ -426,40 +426,47 @@ package Shared
          return _loc2_.readObject();
       }
       
-      public static function GeneratePlayerNameAndTitle(param1:String) : String
+      public static function GenerateNameAndTitle(param1:String) : String
       {
-         var _loc4_:uint = 0;
+         var _loc5_:uint = 0;
          var _loc2_:String = "";
-         var _loc3_:Array = param1.split(PLAYER_TITLE_DELIMITER);
+         var _loc3_:Array = param1.split(CUSTOM_TITLE_DELIMITER);
          _loc2_ = _loc3_[0];
-         if(_loc3_.length > 1)
+         var _loc4_:Boolean = _loc3_.length > 2 ? !(_loc3_[1] == "" && _loc3_[2] == "") : _loc3_.length > 1 && _loc3_[1] != "";
+         if(_loc4_)
          {
-            _loc2_ += PLAYER_TITLE_DIVIDER;
-            _loc4_ = 1;
-            while(_loc4_ < _loc3_.length)
+            _loc2_ += CUSTOM_TITLE_DIVIDER;
+            _loc5_ = 1;
+            while(_loc5_ < _loc3_.length)
             {
-               _loc2_ += " " + _loc3_[_loc4_];
-               _loc4_++;
+               _loc2_ += " " + _loc3_[_loc5_];
+               _loc5_++;
             }
          }
          return _loc2_;
       }
       
-      public static function GeneratePlayerName(param1:String) : String
+      public static function GenerateName(param1:String) : String
       {
-         return param1.split(PLAYER_TITLE_DELIMITER)[0];
+         return param1.split(CUSTOM_TITLE_DELIMITER)[0];
       }
       
       public static function HasPlayerTitle(param1:String) : Boolean
       {
-         return param1.indexOf(PLAYER_TITLE_DELIMITER) > -1;
+         return param1.indexOf(CUSTOM_TITLE_DELIMITER) > -1;
       }
       
-      public static function GeneratePlayerTitle(param1:String) : String
+      public static function HasCampTitle(param1:String) : Boolean
+      {
+         var _loc2_:Array = param1.split(CUSTOM_TITLE_DELIMITER);
+         return _loc2_.length > 2 && !(_loc2_[1] == "" && _loc2_[2] == "");
+      }
+      
+      public static function GenerateTitle(param1:String) : String
       {
          var _loc4_:uint = 0;
          var _loc2_:String = "";
-         var _loc3_:Array = param1.split(PLAYER_TITLE_DELIMITER);
+         var _loc3_:Array = param1.split(CUSTOM_TITLE_DELIMITER);
          if(_loc3_.length > 1)
          {
             _loc2_ = _loc3_[1];
@@ -476,10 +483,10 @@ package Shared
          return _loc2_;
       }
       
-      public static function GeneratePlayerNameAndTitleArray(param1:String) : Array
+      public static function GenerateNameAndTitleArray(param1:String) : Array
       {
          var _loc5_:uint = 0;
-         var _loc2_:Array = param1.split(PLAYER_TITLE_DELIMITER);
+         var _loc2_:Array = param1.split(CUSTOM_TITLE_DELIMITER);
          var _loc3_:String = "";
          if(_loc2_.length > 1)
          {
