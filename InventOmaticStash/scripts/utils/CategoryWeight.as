@@ -358,7 +358,10 @@ package utils
          inv.forEach(function(param1:Object):void
          {
             var item:Object = param1;
-            if(filter.length > 0 && filter.indexOf(int((item.filterFlag | 1) ^ 1)) !== -1)
+            if(filter.length > 0 && filter.some(function(flag:int):Boolean
+            {
+               return item.filterFlag & flag;
+            }))
             {
                if(!inverse)
                {

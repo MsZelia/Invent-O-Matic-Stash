@@ -289,7 +289,10 @@ package extractors
                matchingFilterFlags = matchingFilterFlags.concat(ItemTypes.ITEM_TYPES[_filterTypes[i]]);
                i++;
             }
-            return matchingFilterFlags.indexOf(item.filterFlag) !== -1;
+            return matchingFilterFlags.some(function(flag:int):Boolean
+            {
+               return item.filterFlag & flag;
+            });
          }
          catch(e:Error)
          {

@@ -234,7 +234,10 @@ package
                matchingFilterFlags = matchingFilterFlags.concat(ItemTypes.ITEM_TYPES[types[i]]);
                i++;
             }
-            return matchingFilterFlags.indexOf(item.filterFlag) !== -1;
+            return matchingFilterFlags.some(function(flag:int):Boolean
+            {
+               return item.filterFlag & flag;
+            });
          }
          catch(e:Error)
          {
@@ -257,7 +260,10 @@ package
                matchingFilterFlags = matchingFilterFlags.concat(ItemTypes.ITEM_TYPES[types[i]]);
                i++;
             }
-            return matchingFilterFlags.indexOf(item.filterFlag) !== -1;
+            return matchingFilterFlags.some(function(flag:int):Boolean
+            {
+               return item.filterFlag & flag;
+            });
          }
          catch(e:Error)
          {
