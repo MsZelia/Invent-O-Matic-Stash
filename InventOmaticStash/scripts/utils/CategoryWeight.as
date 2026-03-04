@@ -24,6 +24,8 @@ package utils
       
       private static const ITEM_FILTER_TO_GET_STASH_WEIGHT:Array = [4,8,32,64,8192,32768,270336];
       
+      private static const FILTER_NOT:* = 4294440956;
+      
       private static var INIT:Boolean = false;
       
       public static var categoryWeights:Object = {};
@@ -246,7 +248,7 @@ package utils
             {
                weight = Number(item.weight);
             }
-            var filter:String = String(item.filterFlag - int(item.favorite));
+            var filter:String = String(item.filterFlag & FILTER_NOT);
             if(!output[filter])
             {
                output[filter] = 0;
