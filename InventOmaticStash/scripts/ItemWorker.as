@@ -22,6 +22,8 @@ package
       
       public static const DIRECTION_FROM_CONTAINER:String = "FROM_CONTAINER";
       
+      public static const MIN_DELAY:uint = 50;
+      
       private static var matchingID:int = -1;
       
       private var secureTrade:Object;
@@ -2021,7 +2023,7 @@ package
                   showTestRun("LOCK (" + lockConfig.name + ")");
                   return;
                }
-               delay = Parser.parsePositiveNumber(lockConfig.delay,50);
+               delay = Parser.parsePositiveNumber(lockConfig.delay);
                executeForQueue(lockQueued,delay,1,lockConfig.debug,lockConfig.showMessage,"Locking");
             }
          }
@@ -2510,6 +2512,7 @@ package
          _queueDebug = debug;
          _queueIndex = 0;
          var DELAY:uint = 0;
+         delay = Math.max(delay,MIN_DELAY);
          if(debug)
          {
             if(repeat > 1)
