@@ -263,6 +263,12 @@ package
                               _loc20_.populateStackWeight(this._InfoObj[_loc12_],this.m_Count);
                               _loc3_.push(_loc20_);
                            }
+                           if(this._InfoObj[_loc12_].text == "$WeightInStash" && this.m_Count > 1)
+                           {
+                              _loc20_ = new ItemCard_StandardEntry();
+                              _loc20_.populateStashStackWeight(this._InfoObj[_loc12_],this.m_Count," *");
+                              _loc3_.push(_loc20_);
+                           }
                            _loc2_.PopulateEntry(this._InfoObj[_loc12_]);
                            _loc3_.push(_loc2_);
                         }
