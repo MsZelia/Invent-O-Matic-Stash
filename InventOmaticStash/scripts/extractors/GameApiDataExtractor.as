@@ -28,6 +28,8 @@ package extractors
       
       public static const EVENT_LOCK_ITEM:String = "Container::TransferLockToggle";
       
+      public static const EVENT_TAKE_ALL:String = "Container::TakeAll";
+      
       public static var PlayerInventoryData:String = "PlayerInventoryData";
       
       public static var CharacterInfoData:String = "CharacterInfoData";
@@ -191,6 +193,11 @@ package extractors
             "fromContainer":param2,
             "containerID":param3
          }));
+      }
+      
+      public static function lootAll() : void
+      {
+         BSUIDataManager.dispatchEvent(new CustomEvent(EVENT_TAKE_ALL,{"containerID":uint(0)}));
       }
    }
 }

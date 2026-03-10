@@ -22,7 +22,7 @@ package
       
       public static const DIRECTION_FROM_CONTAINER:String = "FROM_CONTAINER";
       
-      public static const MIN_DELAY:uint = 50;
+      public static const MIN_DELAY:uint = 20;
       
       private static var matchingID:int = -1;
       
@@ -2234,6 +2234,11 @@ package
          {
             Logger.get().info("Valid loot config");
             var config:Object = _config.lootConfig;
+            if(config.matchMode == MatchMode.ALL)
+            {
+               GameApiDataExtractor.lootAll();
+               return;
+            }
             if(config.configs)
             {
                var indexConfig:int = 0;
