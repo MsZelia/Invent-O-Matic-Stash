@@ -24,6 +24,8 @@ package
       
       public static const MIN_DELAY:uint = 20;
       
+      public static const DEFAULT_DELAY:uint = 50;
+      
       private static var matchingID:int = -1;
       
       private var secureTrade:Object;
@@ -612,7 +614,7 @@ package
                showTestRun("TRANSFER (" + config.name + ")");
                return 0;
             }
-            delay = Math.max(Parser.parsePositiveNumber(config.delay),MIN_DELAY);
+            delay = Math.max(Parser.parsePositiveNumber(config.delay,DEFAULT_DELAY),MIN_DELAY);
             repeat = Parser.parsePositiveNumber(config.repeat,1);
             ReturnDelay = delay * repeat * _queue.length;
             executeForQueue(transferQueued,delay,repeat,config.debug,config.showMessage,"Transferring selected");
@@ -1161,7 +1163,7 @@ package
                   showTestRun("TRANSFER (" + config.name + ")");
                   return 0;
                }
-               delay = Math.max(Parser.parsePositiveNumber(config.delay),MIN_DELAY);
+               delay = Math.max(Parser.parsePositiveNumber(config.delay,DEFAULT_DELAY),MIN_DELAY);
                repeat = Parser.parsePositiveNumber(config.repeat,1);
                ReturnDelay = delay * repeat * _queue.length;
                executeForQueue(transferQueued,delay,repeat,config.debug,config.showMessage,"Transferring");
@@ -1311,7 +1313,7 @@ package
                   showTestRun("SCRAP (" + config.name + ")");
                   return;
                }
-               delay = Math.max(Parser.parsePositiveNumber(config.delay),MIN_DELAY);
+               delay = Math.max(Parser.parsePositiveNumber(config.delay,DEFAULT_DELAY),MIN_DELAY);
                repeat = Parser.parsePositiveNumber(config.repeat,1);
                executeForQueue(scrapQueued,delay,repeat,config.debug,config.showMessage,"Scrapping");
             }
@@ -1498,7 +1500,7 @@ package
                   showTestRun("SELL (" + config.name + ")");
                   return;
                }
-               delay = Math.max(Parser.parsePositiveNumber(config.delay),MIN_DELAY);
+               delay = Math.max(Parser.parsePositiveNumber(config.delay,DEFAULT_DELAY),MIN_DELAY);
                repeat = Parser.parsePositiveNumber(config.repeat,1);
                executeForQueue(sellQueued,delay,repeat,config.debug,config.showMessage,"Selling");
             }
@@ -2023,7 +2025,7 @@ package
                   showTestRun("LOCK (" + lockConfig.name + ")");
                   return;
                }
-               delay = Math.max(Parser.parsePositiveNumber(lockConfig.delay),MIN_DELAY);
+               delay = Math.max(Parser.parsePositiveNumber(lockConfig.delay,DEFAULT_DELAY),MIN_DELAY);
                executeForQueue(lockQueued,delay,1,lockConfig.debug,lockConfig.showMessage,"Locking");
             }
          }
@@ -2499,7 +2501,7 @@ package
                   showTestRun("BUY (" + config.name + ")");
                   return;
                }
-               delay = int(isNpcVendor ? Math.max(Parser.parsePositiveNumber(config.delayNpcVendor),MIN_DELAY) : Parser.parsePositiveNumber(config.delayCampVendor,1500));
+               delay = int(isNpcVendor ? Math.max(Parser.parsePositiveNumber(config.delayNpcVendor,DEFAULT_DELAY),MIN_DELAY) : Parser.parsePositiveNumber(config.delayCampVendor,1500));
                repeat = Parser.parsePositiveNumber(config.repeat,1);
                executeForQueue(buyQueued,delay,repeat,config.debug,config.showMessage,"Buying");
             }
