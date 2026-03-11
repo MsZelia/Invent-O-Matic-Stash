@@ -87,6 +87,7 @@ package
             addEventListener(Event.ADDED_TO_STAGE,this.addedToStageHandler);
             BSUIDataManager.Subscribe("CharacterInfoData",this.onCharacterInfoDataUpdate);
             BSUIDataManager.Subscribe("HUDMessageProvider",this.onHUDMessageProviderUpdate);
+            BSUIDataManager.Subscribe("OtherInventoryData",this.onOtherInvDataUpdate);
             this.OtherInventoryTypeData = BSUIDataManager.GetDataFromClient("OtherInventoryTypeData").data;
             this.ContainerOptionsData = BSUIDataManager.GetDataFromClient("ContainerOptionsData").data;
          }
@@ -218,7 +219,12 @@ package
       private function onCharacterInfoDataUpdate(param1:Event) : void
       {
          setTimeout(updateVendorCurrencyTextField,10);
-         setTimeout(CategoryWeight.updateWeightLabels,20);
+         CategoryWeight.updateWeightLabels();
+      }
+      
+      private function onOtherInvDataUpdate(param1:Event) : void
+      {
+         CategoryWeight.updateWeightLabels();
       }
       
       private function onHUDMessageProviderUpdate(param1:Event) : void
@@ -1101,7 +1107,6 @@ package
       
       public function calculateCatWeightCallback() : void
       {
-         var delay:Number = 0;
          try
          {
             if(!config.categoryWeightConfig || !config.categoryWeightConfig.enabled)
@@ -1109,15 +1114,7 @@ package
                return;
             }
             Logger.get().info("Calculate Category Weight callback");
-            if(this.parentClip.PlayerInventory_mc.ItemList_mc.List_mc.filterer.itemFilter == 4)
-            {
-               delay = Number(CategoryWeight.calculateCurrentCategoryWeight(false));
-            }
-            if(config.categoryWeightConfig.debug)
-            {
-               Logger.get().info("Calculating category weight for selected tab: " + this.parentClip.selectedTab + ", filter player: " + this.parentClip.PlayerInventory_mc.ItemList_mc.List_mc.filterer.itemFilter + ", filter offer: " + this.parentClip.OfferInventory_mc.ItemList_mc.List_mc.filterer.itemFilter + ", delay: " + delay);
-            }
-            setTimeout(CategoryWeight.calculateCurrentCategoryWeight,delay);
+            setTimeout(CategoryWeight.updateWeightLabels,CategoryWeight.calculateWeaponCategoryWeight());
          }
          catch(e:Error)
          {
@@ -1610,17 +1607,7 @@ package
          {
             Logger.get().info("KeyUp: " + param1.keyCode + "(" + Buttons.getButtonKey(param1.keyCode) + "), shift: " + _shift);
          }
-         if(param1.keyCode == Keyboard.F5)
-         {
-            keys = ["bksp","tab","enter","shift","ctrl","alt","pause","caps","esc","pgup","pgdn","end","home","left","up","right","down","ins","del","0","1","2","3","4","5","6","7","8","9","a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z","sel","n0","n1","n2","n3","n4","n5","n6","n7","n8","n9","n*","n+","n-","n.","n/","f1","f2","f3","f4","f5","f6","f7","f8","f9","f10","f11","f12","numlk","scrlk",";","=",",","-",".","/","`","\\","\'"];
-            output = "";
-            for each(key in keys)
-            {
-               output += key + ":" + Buttons.getButtonValue(key) + " (" + Buttons.getButtonKey(Buttons.getButtonValue(key)) + "), ";
-            }
-            Logger.get().info("keys: " + output);
-         }
-         else if(param1.keyCode == Keyboard.F6)
+         if(param1.keyCode == Keyboard.F6)
          {
             if(this.config.down != null)
             {
@@ -1728,26 +1715,6 @@ package
             Logger.get().info(selectedItem);
          }
          else if(param1.keyCode == Keyboard.F10)
-         {
-            Logger.get().info("Category weights");
-            weights = "";
-            totalWt = 0;
-            for(key in CategoryWeight.icategoryWeights)
-            {
-               weights += ItemTypes.getName(key) + ":" + CategoryWeight.icategoryWeights[key].toFixed(2) + ", ";
-               totalWt += CategoryWeight.icategoryWeights[key];
-            }
-            Logger.get().info("Inventory weights: " + weights + " - TOTAL:" + totalWt.toFixed(2));
-            totalWt = 0;
-            weights = "";
-            for(key in CategoryWeight.categoryWeights)
-            {
-               weights += ItemTypes.getName(key) + ":" + CategoryWeight.categoryWeights[key].toFixed(2) + ", ";
-               totalWt += CategoryWeight.categoryWeights[key];
-            }
-            Logger.get().info("Stash weights: " + weights + " - TOTAL:" + totalWt.toFixed(2));
-         }
-         else if(param1.keyCode == Keyboard.F11)
          {
             if(this.config.testEvent != null && this.config.testEventData != null)
             {

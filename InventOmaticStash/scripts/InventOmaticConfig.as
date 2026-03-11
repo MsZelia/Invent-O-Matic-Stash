@@ -359,7 +359,6 @@ package
             {
                config.weightLabelWidth = Parser.parsePositiveNumber(config.weightLabelWidth,200);
                config.itemCardDelay = Parser.parsePositiveNumber(config.itemCardDelay,100);
-               config.itemCardFilters = config.itemCardFilters && config.itemCardFilters.length > 0 ? config.itemCardFilters : new Array();
             }
             return config;
          }
