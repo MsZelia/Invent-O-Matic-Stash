@@ -57,12 +57,11 @@
 		"keepLearnableTextColor": "0xd100ff"
 	},
 	"categoryWeightConfig": {
-		"enabled": false,
+		"enabled": true,
 		"debug": false,
 		"hotkey": "F5",
 		"weightLabelWidth": 200,
-		"itemCardDelay":75,
-		"itemCardFilters": ["WEAPON", "ARMOR", "FOOD_WATER", "AID", "JUNK", "AMMO"]
+		"itemCardDelay": 125
 	},
 	"protectionConfig": {
 		"debug": true,
@@ -329,7 +328,7 @@
 		"showMessage": "FULL",
 		"hotkey": "N",
 		"maxItems": 100,
-		"delay": 25,
+		"delay": 50,
 		"configs": [
 			{
 				"enabled": false,
@@ -365,7 +364,7 @@
 		"showMessage": false,
 		"hotkey": "F",
 		"maxItems": 100,
-		"delay": 25,
+		"delay": 50,
 		"transferLegendaries": [1,2,3,4,5],
 		"transferTaggedForSearch": true,
 		"matchMode": "CONTAINS",
@@ -400,7 +399,7 @@
 		"showMessage": false,
 		"hotkey": "F",
 		"maxItems": 100,
-		"delay": 25,
+		"delay": 50,
 		"configs": [
 			{
 				"README": "READ DESCRIPTION ON NEXUSMODS BEFORE ENABLING MULTIPLE SCRAP CONFIGS",
