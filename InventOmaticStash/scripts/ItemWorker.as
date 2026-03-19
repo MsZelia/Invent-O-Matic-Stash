@@ -2236,7 +2236,7 @@ package
          {
             Logger.get().info("Valid loot config");
             var config:Object = _config.lootConfig;
-            if(config.matchMode == MatchMode.ALL)
+            if(config.matchMode == MatchMode.ALL && (config.types == null || config.types.length == 0))
             {
                GameApiDataExtractor.lootAll();
                return;
