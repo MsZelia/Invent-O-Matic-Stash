@@ -960,12 +960,12 @@ package
                this.updateButtonHints();
             }
             _loc2_ = this.selectedList == this.PlayerInventory_mc ? this.OfferInventory_mc : this.PlayerInventory_mc;
-            if(this.selectedList != null)
+            if(this.selectedList != null && this.selectedList.ItemList_mc.List_mc.hasBeenUpdated)
             {
                this.selectedList.selectedItemIndex = this.IsInventoryEmpty(this.selectedList) ? -1 : this.selectedList.ItemList_mc.List_mc.filterer.ClampIndex(0);
                this.ItemCardContainer_mc.visible = this.selectedList.selectedItemIndex != -1;
             }
-            if(_loc2_ != null)
+            if(_loc2_ != null && _loc2_.ItemList_mc.List_mc.hasBeenUpdated)
             {
                _loc2_.selectedItemIndex = -1;
             }

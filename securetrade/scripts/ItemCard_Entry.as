@@ -59,10 +59,80 @@ package
       
       public function PopulateEntry(param1:Object) : *
       {
-         var _loc2_:Number = NaN;
-         var _loc3_:* = null;
+         var _loc2_:* = null;
+         if(this.Label_tf != null)
+         {
+            TextFieldEx.setTextAutoSize(this.Label_tf,TextFieldEx.TEXTAUTOSZ_SHRINK);
+         }
+         if(this.Value_tf != null)
+         {
+            TextFieldEx.setTextAutoSize(this.Value_tf,TextFieldEx.TEXTAUTOSZ_SHRINK);
+         }
+         this.PopulateDifferenceValue(param1);
+         this.PopulateText(param1.text);
+         if(this.Value_tf != null)
+         {
+            if(param1.value is String)
+            {
+               _loc2_ = param1.value;
+            }
+            else
+            {
+               _loc2_ = this.getValueTextWithPrecision(param1.value,param1.precision,param1.scaleWithDuration,param1.duration);
+               if(param1.showAsPercent)
+               {
+                  _loc2_ += "%";
+               }
+            }
+            GlobalFunc.SetText(this.Value_tf,_loc2_,false);
+            this.setIconPosition();
+         }
+      }
+      
+      public function getValueTextWithPrecision(param1:Number, param2:uint, param3:Boolean, param4:uint) : String
+      {
+         var _loc5_:String = null;
+         var _loc6_:Number = param1;
+         if(param3)
+         {
+            _loc6_ *= param4;
+         }
+         if(param2)
+         {
+            _loc5_ = _loc6_.toFixed(param2);
+         }
+         else
+         {
+            _loc5_ = Math.round(_loc6_).toString();
+         }
+         if(_loc6_ > 0 && parseFloat(_loc5_) < 0.001)
+         {
+            _loc5_ = "< 0.001";
+         }
+         return GlobalFunc.TrimZeros(_loc5_);
+      }
+      
+      public function PopulateDifferenceValue(param1:Object) : *
+      {
+         var _loc2_:String = null;
+         var _loc3_:String = null;
+         var _loc4_:Number = NaN;
+         var _loc5_:Number = NaN;
+         var _loc6_:uint = 0;
+         var _loc7_:Number = NaN;
          if(ShouldShowDifference(param1))
          {
+            _loc2_ = "";
+            _loc3_ = "";
+            _loc4_ = Number(param1.value);
+            _loc5_ = Number(param1.originalValue);
+            _loc6_ = param1.precision ? uint(param1.precision) : 0;
+            if(!param1.precision)
+            {
+               _loc4_ = Math.round(_loc4_);
+               _loc5_ = Math.round(_loc5_);
+            }
+            _loc7_ = _loc4_ - _loc5_;
             if(Boolean(this.Difference_mc) && DynamicModDescEnable)
             {
                gotoAndStop(AdvanceModDescMode ? "numbers" : "symbols");
@@ -71,40 +141,42 @@ package
                   case "$APCost":
                      if(AdvanceModDescMode)
                      {
-                        this.Difference_mc.gotoAndStop(param1.difference < 0 ? "Good" : "Bad");
-                        this.Difference_mc.Difference_tf.text = (param1.difference > 0 ? "+" : "") + param1.difference.toFixed(param1.precision != undefined ? 1 : 0);
+                        this.Difference_mc.gotoAndStop(_loc7_ < 0 ? "Good" : "Bad");
+                        _loc3_ = _loc7_ > 0 ? "+" : "";
                      }
                      else
                      {
-                        this.Difference_mc.gotoAndStop(param1.difference < 0 ? "GoodDecrease" : "BadIncrease");
+                        this.Difference_mc.gotoAndStop(_loc7_ < 0 ? "GoodDecrease" : "BadIncrease");
                      }
                      break;
                   case "$wt":
-                     _loc2_ = param1.difference * -1;
+                     _loc7_ *= -1;
                      if(AdvanceModDescMode)
                      {
-                        this.Difference_mc.gotoAndStop(_loc2_ < 0 ? "Good" : "Bad");
-                        this.Difference_mc.Difference_tf.text = (_loc2_ > 0 ? "+" : "") + _loc2_.toFixed(param1.precision != undefined ? 1 : 0);
+                        this.Difference_mc.gotoAndStop(_loc7_ < 0 ? "Good" : "Bad");
+                        _loc3_ = _loc7_ > 0 ? "+" : "";
                      }
                      else
                      {
-                        this.Difference_mc.gotoAndStop(_loc2_ < 0 ? "GoodDecrease" : "BadIncrease");
+                        this.Difference_mc.gotoAndStop(_loc7_ < 0 ? "GoodDecrease" : "BadIncrease");
                      }
                      break;
                   default:
                      if(AdvanceModDescMode)
                      {
-                        this.Difference_mc.gotoAndStop(param1.difference < 0 ? "Bad" : "Good");
-                        this.Difference_mc.Difference_tf.text = (param1.difference > 0 ? "+" : "") + param1.difference.toFixed(param1.precision != undefined ? 1 : 0);
+                        this.Difference_mc.gotoAndStop(_loc7_ < 0 ? "Bad" : "Good");
+                        _loc3_ = _loc7_ > 0 ? "+" : "";
                      }
                      else
                      {
-                        this.Difference_mc.gotoAndStop(param1.difference < 0 ? "BadDecrease" : "GoodIncrease");
+                        this.Difference_mc.gotoAndStop(_loc7_ < 0 ? "BadDecrease" : "GoodIncrease");
                      }
                }
                if(this.Difference_mc.Difference_tf)
                {
                   TextFieldEx.setTextAutoSize(this.Difference_mc.Difference_tf,TextFieldEx.TEXTAUTOSZ_SHRINK);
+                  _loc2_ = _loc7_.toFixed(_loc6_);
+                  this.Difference_mc.Difference_tf.text = _loc3_ + _loc2_;
                }
             }
             else if(this.Comparison_mc != null)
@@ -134,49 +206,6 @@ package
                }
             }
          }
-         if(this.Label_tf != null)
-         {
-            TextFieldEx.setTextAutoSize(this.Label_tf,TextFieldEx.TEXTAUTOSZ_SHRINK);
-         }
-         if(this.Value_tf != null)
-         {
-            TextFieldEx.setTextAutoSize(this.Value_tf,TextFieldEx.TEXTAUTOSZ_SHRINK);
-         }
-         this.PopulateText(param1.text);
-         if(this.Value_tf != null)
-         {
-            if(param1.value is String)
-            {
-               _loc3_ = param1.value;
-            }
-            else
-            {
-               _loc3_ = this.getValueTextWithPrecision(param1.value,param1.precision,param1.scaleWithDuration,param1.duration);
-               if(param1.showAsPercent)
-               {
-                  _loc3_ += "%";
-               }
-            }
-            GlobalFunc.SetText(this.Value_tf,_loc3_,false);
-            this.setIconPosition();
-         }
-      }
-      
-      public function getValueTextWithPrecision(param1:Number, param2:uint, param3:Boolean, param4:uint) : String
-      {
-         var _loc5_:String = null;
-         var _loc6_:Number = param1;
-         if(param3)
-         {
-            _loc6_ *= param4;
-         }
-         var _loc7_:uint = param2 ? param2 : 0;
-         _loc5_ = _loc6_.toFixed(_loc7_);
-         if(_loc6_ > 0 && parseFloat(_loc5_) < 0.001)
-         {
-            _loc5_ = "< 0.001";
-         }
-         return GlobalFunc.TrimZeros(_loc5_);
       }
       
       public function setIconPosition() : void
