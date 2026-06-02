@@ -364,6 +364,11 @@ package Shared
          "PSN_L2_Alt":"y"
       };
       
+      private static const ButtonMappingToFontKeyGen9:Object = {
+         "PSN_Select":"}",
+         "PSN_Start":"|"
+      };
+      
       public static const IMAGE_FRAME_MAP:Object = {
          "a":1,
          "b":2,
@@ -408,14 +413,18 @@ package Shared
          super();
       }
       
-      public static function GetButtonFontKey(param1:String) : String
+      public static function GetButtonFontKey(param1:String, param2:Boolean = false) : String
       {
-         var _loc2_:String = "";
-         if(ButtonMappingToFontKey.hasOwnProperty(param1))
+         var _loc3_:String = "";
+         if(param2 && Boolean(ButtonMappingToFontKeyGen9.hasOwnProperty(param1)))
          {
-            _loc2_ = ButtonMappingToFontKey[param1];
+            _loc3_ = ButtonMappingToFontKeyGen9[param1];
          }
-         return _loc2_;
+         else if(ButtonMappingToFontKey.hasOwnProperty(param1))
+         {
+            _loc3_ = ButtonMappingToFontKey[param1];
+         }
+         return _loc3_;
       }
       
       public static function CloneObject(param1:Object) : *

@@ -232,7 +232,7 @@ package Shared.AS3
                case PlatformChangeEvent.PLATFORM_MOBILE:
                   _loc1_ = "";
             }
-            _loc2_ = GlobalFunc.GetButtonFontKey(_loc1_);
+            _loc2_ = GlobalFunc.GetButtonFontKey(_loc1_,bIsGen9);
             if(_loc2_ != "")
             {
                _loc1_ = _loc2_;

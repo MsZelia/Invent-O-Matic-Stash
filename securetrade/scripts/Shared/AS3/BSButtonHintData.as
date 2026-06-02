@@ -38,6 +38,8 @@ package Shared.AS3
       
       private var m_UserEvent:String;
       
+      private var m_DispatchDataID:uint = 0;
+      
       private var _hasSecondaryButton:Boolean;
       
       private var _strSecondaryPCKey:String;
@@ -125,9 +127,24 @@ package Shared.AS3
          return this.m_DispatchEvent;
       }
       
+      public function set DispatchEvent(param1:String) : void
+      {
+         this.m_DispatchEvent = param1;
+      }
+      
       public function get UserEvent() : String
       {
          return this.m_UserEvent;
+      }
+      
+      public function get DispatchDataID() : uint
+      {
+         return this.m_DispatchDataID;
+      }
+      
+      public function set DispatchDataID(param1:uint) : void
+      {
+         this.m_DispatchDataID = param1;
       }
       
       public function get SecondaryPCKey() : String
