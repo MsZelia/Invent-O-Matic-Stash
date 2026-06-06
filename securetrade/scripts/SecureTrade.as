@@ -2689,7 +2689,7 @@ package
       private function calcMaxQuantity(param1:Boolean = false) : uint
       {
          var _loc7_:int = 0;
-         var _loc2_:Number = Number(this.selectedListEntry.offerValue);
+         var _loc2_:Number = Number(this.selectedListEntry.isOffered ? this.selectedListEntry.offerValue : this.selectedListEntry.value);
          var _loc3_:Number = this.OfferInventory_mc.currency;
          var _loc4_:Number = this.PlayerInventory_mc.currency;
          var _loc5_:Number = this.selectedList == this.PlayerInventory_mc ? _loc3_ : _loc4_;
@@ -2710,7 +2710,7 @@ package
                   {
                      if(this.ItemCardContainer_mc.ItemCard_mc.InfoObj[_loc7_].text == "$val")
                      {
-                        _loc2_ = Number(this.ItemCardContainer_mc.ItemCard_mc.InfoObj[_loc7_].offerValue);
+                        _loc2_ = Number(this.ItemCardContainer_mc.ItemCard_mc.InfoObj[_loc7_].value);
                         break;
                      }
                      _loc7_++;
