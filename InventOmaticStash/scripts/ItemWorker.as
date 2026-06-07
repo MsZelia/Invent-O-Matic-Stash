@@ -26,6 +26,8 @@ package
       
       public static const DEFAULT_DELAY:uint = 50;
       
+      public static const CLOSE_MENU_DELAY:uint = 1000;
+      
       private static var matchingID:int = -1;
       
       private var secureTrade:Object;
@@ -617,7 +619,7 @@ package
             delay = Math.max(Parser.parsePositiveNumber(config.delay,DEFAULT_DELAY),MIN_DELAY);
             repeat = Parser.parsePositiveNumber(config.repeat,1);
             ReturnDelay = delay * repeat * _queue.length;
-            executeForQueue(transferQueued,delay,repeat,config.debug,config.showMessage,"Transferring selected");
+            executeForQueue(transferQueued,delay,repeat,config.debug,config.showMessage,"Transferring selected",config.closeMenu);
          }
          catch(e:Error)
          {
@@ -1166,7 +1168,7 @@ package
                delay = Math.max(Parser.parsePositiveNumber(config.delay,DEFAULT_DELAY),MIN_DELAY);
                repeat = Parser.parsePositiveNumber(config.repeat,1);
                ReturnDelay = delay * repeat * _queue.length;
-               executeForQueue(transferQueued,delay,repeat,config.debug,config.showMessage,"Transferring");
+               executeForQueue(transferQueued,delay,repeat,config.debug,config.showMessage,"Transferring",config.closeMenu);
             }
             catch(e:Error)
             {
@@ -1315,7 +1317,7 @@ package
                }
                delay = Math.max(Parser.parsePositiveNumber(config.delay,DEFAULT_DELAY),MIN_DELAY);
                repeat = Parser.parsePositiveNumber(config.repeat,1);
-               executeForQueue(scrapQueued,delay,repeat,config.debug,config.showMessage,"Scrapping");
+               executeForQueue(scrapQueued,delay,repeat,config.debug,config.showMessage,"Scrapping",config.closeMenu);
             }
          }
          catch(e:Error)
@@ -1502,7 +1504,7 @@ package
                }
                delay = Math.max(Parser.parsePositiveNumber(config.delay,DEFAULT_DELAY),MIN_DELAY);
                repeat = Parser.parsePositiveNumber(config.repeat,1);
-               executeForQueue(sellQueued,delay,repeat,config.debug,config.showMessage,"Selling");
+               executeForQueue(sellQueued,delay,repeat,config.debug,config.showMessage,"Selling",config.closeMenu);
             }
          }
          catch(e:Error)
@@ -2026,7 +2028,7 @@ package
                   return;
                }
                delay = Math.max(Parser.parsePositiveNumber(lockConfig.delay,DEFAULT_DELAY),MIN_DELAY);
-               executeForQueue(lockQueued,delay,1,lockConfig.debug,lockConfig.showMessage,"Locking");
+               executeForQueue(lockQueued,delay,1,lockConfig.debug,lockConfig.showMessage,"Locking",config.closeMenu);
             }
          }
          catch(e:Error)
@@ -2503,7 +2505,7 @@ package
                }
                delay = int(isNpcVendor ? Math.max(Parser.parsePositiveNumber(config.delayNpcVendor,DEFAULT_DELAY),MIN_DELAY) : Parser.parsePositiveNumber(config.delayCampVendor,1500));
                repeat = Parser.parsePositiveNumber(config.repeat,1);
-               executeForQueue(buyQueued,delay,repeat,config.debug,config.showMessage,"Buying");
+               executeForQueue(buyQueued,delay,repeat,config.debug,config.showMessage,"Buying",config.closeMenu);
             }
          }
          catch(e:Error)
@@ -2512,7 +2514,7 @@ package
          }
       }
       
-      private function executeForQueue(func:Function, delay:uint, repeat:uint, debug:Boolean, showMessage:*, actionName:String = "Exec") : void
+      private function executeForQueue(func:Function, delay:uint, repeat:uint, debug:Boolean, showMessage:*, actionName:String = "Exec", closeMenu:Boolean = false) : void
       {
          var i:int;
          var loop:int;
@@ -2575,6 +2577,17 @@ package
                _queueIndex = 0;
             }
             loop++;
+         }
+         if(closeMenu)
+         {
+            setTimeout(function(debug:Boolean):void
+            {
+               if(debug)
+               {
+                  Logger.get().info("Closing menu...");
+               }
+               GameApiDataExtractor.exitMenu();
+            },DELAY + CLOSE_MENU_DELAY,debug);
          }
       }
       
