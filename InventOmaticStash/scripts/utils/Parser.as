@@ -60,6 +60,19 @@ package utils
          }
          return defaultValue;
       }
+      
+      public static function parseNumberOrMulti(obj:*, defaultValue:int) : Number
+      {
+         if(obj is Number)
+         {
+            return obj == -1 ? defaultValue : Number(obj);
+         }
+         if(obj is String && /x\d+/i.test(obj))
+         {
+            return Number(defaultValue * Parser.parsePositiveNumber(obj.substr(1),1));
+         }
+         return defaultValue;
+      }
    }
 }
 

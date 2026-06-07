@@ -332,8 +332,6 @@ package
       
       private var maxtabs:uint = 14;
       
-      private var defaultVendorItemPrice:int = -1;
-      
       private var checkItemProtectionOnSelectionChange:Boolean = false;
       
       private var hideTakeAllConfirm:Boolean = false;
@@ -669,9 +667,13 @@ package
          this.hideTakeAllConfirm = value;
       }
       
-      public function set DefaultVendorItemPrice(value:int) : void
+      public function get DefaultVendorItemPrice() : int
       {
-         this.defaultVendorItemPrice = value;
+         if(!this.modLoader || !this.modLoader.content)
+         {
+            return this.selectedListEntry.itemValue;
+         }
+         return this.modLoader.content.getDefaultVendorItemPrice(this.selectedListEntry);
       }
       
       public function set MaintainScrollPosition(value:uint) : void
@@ -2659,7 +2661,7 @@ package
          this.ModalSetPrice_mc.tooltip = "$ItemWillBeAvailableForImmediatePurchase";
          var _loc1_:Number = Math.min(this.selectedListEntry.count,this.ModalSetQuantity_mc.quantity);
          var _loc2_:String = _loc1_ > 1 ? "$SETPRICEPERITEM" : "$SETITEMPRICE";
-         this.ModalSetPrice_mc.OpenMenuRange(stage.focus,_loc2_,0,MAX_SELL_PRICE,this.defaultVendorItemPrice > -1 ? this.defaultVendorItemPrice : this.selectedListEntry.itemValue,0,true);
+         this.ModalSetPrice_mc.OpenMenuRange(stage.focus,_loc2_,0,MAX_SELL_PRICE,this.DefaultVendorItemPrice,0,true);
          stage.focus = this.ModalSetPrice_mc;
          GlobalFunc.PlayMenuSound(GlobalFunc.MENU_SOUND_POPUP);
          this.updateModalActive();

@@ -1899,7 +1899,7 @@ package
                   delayStep = Parser.parsePositiveNumber(config.delay,600);
                   selectedListEntry = this._selectedEntry;
                   amount = getAmount(config.amount,selectedListEntry.count);
-                  price = Parser.parseNumber(config.price,-1);
+                  price = Parser.parseNumberOrMulti(config.price,selectedListEntry.itemValue);
                   if(amount > 0)
                   {
                      assignSlotsFree--;
@@ -1911,7 +1911,7 @@ package
                            Logger.get().info("Assigning: " + _item.text + "(" + amount + ") x" + price + "c");
                         }
                         GameApiDataExtractor.campSellItem(_item.serverHandleID,amount,price);
-                     },delay,selectedListEntry,amount,price < 0 ? selectedListEntry.itemValue : price,config.debug);
+                     },delay,selectedListEntry,amount,price,config.debug);
                      if(assignSlotsFree <= 0)
                      {
                         if(config.debug)
@@ -1936,7 +1936,6 @@ package
                      inventory = this._playerInventory;
                      if(subConfig.enabled && inventory)
                      {
-                        price = Parser.parseNumber(subConfig.price,-1);
                         itemIndex = 0;
                         while(itemIndex < inventory.length)
                         {
@@ -1944,6 +1943,7 @@ package
                            if(isItemMatchingConfig(item,subConfig))
                            {
                               amount = getAmount(subConfig.amount,item.count);
+                              price = Parser.parseNumberOrMulti(subConfig.price,item.itemValue);
                               if(amount > 0)
                               {
                                  if(config.debug)
@@ -1960,7 +1960,7 @@ package
                                        Logger.get().info("Assigning: " + text + "(" + amount + ") x" + price + "c");
                                     }
                                     GameApiDataExtractor.campSellItem(serverHandleID,amount,price);
-                                 },delay,item.text,item.serverHandleID,amount,price < 0 ? item.itemValue : price,config.debug);
+                                 },delay,item.text,item.serverHandleID,amount,price,config.debug);
                                  if(assignSlotsFree <= 0)
                                  {
                                     if(config.debug)

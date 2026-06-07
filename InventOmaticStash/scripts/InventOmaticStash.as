@@ -349,6 +349,54 @@ package
          return LegendaryMods.getLegendaryItemDescription(desc);
       }
       
+      public function getDefaultVendorItemPrice(item:Object) : int
+      {
+         var t1:*;
+         var itemName:String;
+         var catName:String;
+         var customQuantity:int;
+         var regex:RegExp;
+         var configValue:*;
+         try
+         {
+            t1 = getTimer();
+            if(this.config.defaultVendorItemPrice && this.config.defaultVendorItemPrice.enabled)
+            {
+               itemName = item.text;
+               catName = ItemTypes.getName(item.filterFlag);
+               customQuantity = int(item.itemValue);
+               for(configItemName in this.config.defaultVendorItemPrice.itemNames)
+               {
+                  regex = new RegExp(configItemName,"i");
+                  if(regex.test(itemName))
+                  {
+                     customQuantity = Parser.parseNumberOrMulti(this.config.defaultVendorItemPrice.itemNames[configItemName],item.itemValue);
+                     Logger.get().info("(" + (getTimer() - t1) + "ms) SET defaultVendorItemPrice for itemName(" + configItemName + "): " + catName + " > " + itemName + " : " + customQuantity);
+                     return customQuantity;
+                  }
+               }
+               for(configCatName in this.config.defaultVendorItemPrice.categoryNames)
+               {
+                  regex = new RegExp(configCatName,"i");
+                  if(regex.test(catName))
+                  {
+                     customQuantity = Parser.parseNumberOrMulti(this.config.defaultVendorItemPrice.categoryNames[configCatName],item.itemValue);
+                     Logger.get().info("(" + (getTimer() - t1) + "ms) SET defaultVendorItemPrice for categoryName(" + configCatName + "): " + catName + " > " + itemName + " : " + customQuantity);
+                     return customQuantity;
+                  }
+               }
+               Logger.get().error("(" + (getTimer() - t1) + "ms) defaultVendorItemPrice NOT FOUND for: " + catName + " > " + itemName + ", using default value (" + this.config.defaultVendorItemPrice.defaultValue + ")");
+               return Parser.parseNumberOrMulti(this.config.defaultVendorItemPrice.defaultValue,item.itemValue);
+            }
+         }
+         catch(e:Error)
+         {
+            Logger.get().error("Error getDefaultVendorItemPrice: " + e);
+            ShowHUDMessage("Error getDefaultVendorItemPrice: " + e,true);
+         }
+         return item.itemValue;
+      }
+      
       public function formatLegendaryItemDescription(description_tf:TextField) : void
       {
          LegendaryMods.formatLegendaryItemDescription(description_tf);
@@ -589,7 +637,6 @@ package
          this.initDurabilityValue();
          this.initScrollPosition();
          this.initHideTakeAll();
-         this.initDefaultVendorItemPrice();
          this.initDefaultSelectedTab();
          this.initItemProtection();
          this.initUIChanges();
@@ -839,19 +886,6 @@ package
          {
             Logger.get().error("Error initHideTakeAll: " + e);
             ShowHUDMessage("Error initHideTakeAll: " + e,true);
-         }
-      }
-      
-      private function initDefaultVendorItemPrice() : void
-      {
-         try
-         {
-            this._parent.DefaultVendorItemPrice = Parser.parseNumber(config.defaultVendorItemPrice,-1);
-         }
-         catch(e:Error)
-         {
-            Logger.get().error("Error initDefaultVendorItemPrice: " + e);
-            ShowHUDMessage("Error initDefaultVendorItemPrice: " + e,true);
          }
       }
       

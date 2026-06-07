@@ -197,6 +197,7 @@ package
          config.categoryWeightConfig = loadCategoryWeightConfig(config.categoryWeightConfig);
          config.itemNamesGroupConfig = loadItemNamesGroupConfig(config.itemNamesGroupConfig);
          config.additionalColumnsConfig = loadAdditionalColumnsConfig(config.additionalColumnsConfig);
+         config.defaultVendorItemPrice = loadDefaultVendorItemPriceConfig(config.defaultVendorItemPrice);
          initHotkeys(config);
          _config = config;
          return _config;
@@ -388,6 +389,40 @@ package
             config.columns = {};
          }
          config.offsetInventories = Parser.parseNumber(config.offsetInventories,125);
+         return config;
+      }
+      
+      private static function loadDefaultVendorItemPriceConfig(config:*) : *
+      {
+         if(config == null)
+         {
+            return {"enabled":false};
+         }
+         if(config is Number || config is String)
+         {
+            return {
+               "enabled":true,
+               "defaultValue":config,
+               "itemNames":{},
+               "categoryNames":{}
+            };
+         }
+         if(!(config is Object))
+         {
+            return {"enabled":false};
+         }
+         if(config.defaultValue == null)
+         {
+            config.defaultValue = -1;
+         }
+         if(config.itemNames == null)
+         {
+            config.itemNames = {};
+         }
+         if(config.categoryNames == null)
+         {
+            config.categoryNames = {};
+         }
          return config;
       }
    }
