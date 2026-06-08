@@ -636,7 +636,7 @@ package
          this.initButtonHints();
          this.initDurabilityValue();
          this.initScrollPosition();
-         this.initHideTakeAll();
+         this.initHidePopups();
          this.initDefaultSelectedTab();
          this.initItemProtection();
          this.initUIChanges();
@@ -876,16 +876,18 @@ package
          }
       }
       
-      private function initHideTakeAll() : void
+      private function initHidePopups() : void
       {
          try
          {
             this._parent.HideTakeAllConfirm = Parser.parseBoolean(config.hideTakeAllConfirm,false);
+            this._parent.HideScrapAllConfirm = Parser.parseBoolean(config.hideScrapAllConfirm,false);
+            this._parent.HideScrapBoxConfirm = Parser.parseBoolean(config.hideScrapBoxConfirm,false);
          }
          catch(e:Error)
          {
-            Logger.get().error("Error initHideTakeAll: " + e);
-            ShowHUDMessage("Error initHideTakeAll: " + e,true);
+            Logger.get().error("Error initHidePopups: " + e);
+            ShowHUDMessage("Error initHidePopups: " + e,true);
          }
       }
       

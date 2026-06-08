@@ -52,6 +52,11 @@ package
          this.m_BackgroundDefaultWidth = Background_mc.width;
       }
       
+      public function get State() : uint
+      {
+         return this.m_State;
+      }
+      
       override public function onAddedToStage() : void
       {
          StyleSheet.apply(ComponentList_mc,false,ScrapComponentListStyle);

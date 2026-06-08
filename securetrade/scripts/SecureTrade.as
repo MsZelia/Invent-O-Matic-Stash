@@ -336,6 +336,10 @@ package
       
       private var hideTakeAllConfirm:Boolean = false;
       
+      private var hideScrapAllConfirm:Boolean = false;
+      
+      private var hideScrapBoxConfirm:Boolean = false;
+      
       private var m_IsOpen:Boolean = false;
       
       private var m_PreviousFocus:InteractiveObject;
@@ -665,6 +669,31 @@ package
       public function set HideTakeAllConfirm(value:Boolean) : void
       {
          this.hideTakeAllConfirm = value;
+      }
+      
+      public function set HideScrapAllConfirm(value:Boolean) : void
+      {
+         this.hideScrapAllConfirm = value;
+      }
+      
+      public function set HideScrapBoxConfirm(value:Boolean) : void
+      {
+         this.hideScrapBoxConfirm = value;
+      }
+      
+      public function skipScrapModals() : void
+      {
+         if(this.ModalConfirmScrap_mc.open)
+         {
+            if(this.ModalConfirmScrap_mc.State == 2 && this.hideScrapAllConfirm)
+            {
+               this.onAccept();
+            }
+            if(this.ModalConfirmScrap_mc.State == 3 && this.hideScrapBoxConfirm)
+            {
+               this.onAccept();
+            }
+         }
       }
       
       public function get DefaultVendorItemPrice() : int
@@ -2490,6 +2519,7 @@ package
          this.updateModalActive();
          this.updateButtonHints();
          this.disableInput = true;
+         setTimeout(this.skipScrapModals,50);
       }
       
       private function OnSecureTradeScrapConfirmModalClosed(param1:CustomEvent) : void
