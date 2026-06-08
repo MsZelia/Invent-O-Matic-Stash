@@ -46,6 +46,8 @@ package
       
       public var assignButtons:Vector.<BSButtonHintData>;
       
+      public var scrapButtons:Vector.<BSButtonHintData>;
+      
       public var scrapItemsButton:BSButtonHintData;
       
       public var lootItemsButton:BSButtonHintData;
@@ -474,11 +476,6 @@ package
                this.lootItemsButton.ButtonVisible = Boolean(this.parentClip.CorpseLootMode) && Parser.parseBoolean(config.lootConfig.showButton,DEFAULT_SHOW_BUTTON_STATE);
                end = true;
             }
-            if(this.scrapItemsButton)
-            {
-               this.scrapItemsButton.ButtonVisible = Boolean(this.IsWorkbench) && Parser.parseBoolean(config.scrapConfig.showButton,DEFAULT_SHOW_BUTTON_STATE);
-               end = true;
-            }
             if(this.npcSellItemsButton)
             {
                this.npcSellItemsButton.ButtonVisible = this.MenuMode == SecureTradeShared.MODE_NPCVENDING && Parser.parseBoolean(config.npcSellConfig.showButton,DEFAULT_SHOW_BUTTON_STATE);
@@ -548,6 +545,31 @@ package
                      i++;
                   }
                }
+            }
+            if(this.scrapButtons && this.scrapButtons.length > 0)
+            {
+               button = 0;
+               i = 0;
+               while(i < config.scrapConfig.configs.length)
+               {
+                  if(config.scrapConfig.configs[i].enabled)
+                  {
+                     if(this.scrapButtons[button])
+                     {
+                        if(this.IsWorkbench)
+                        {
+                           this.scrapButtons[button].ButtonVisible = Parser.parseBoolean(config.scrapConfig.configs[i].showButton,DEFAULT_SHOW_BUTTON_STATE) && ItemWorker.isTheSameCharacterName(config.scrapConfig.configs[i]) && ItemWorker.isValidContainerName(config.scrapConfig.configs[i]);
+                        }
+                        else
+                        {
+                           this.scrapButtons[button].ButtonVisible = false;
+                        }
+                     }
+                     button++;
+                  }
+                  i++;
+               }
+               end = true;
             }
             if(this.transferButtons && this.transferButtons.length > 0)
             {
@@ -752,12 +774,22 @@ package
                this.extractButton.ButtonDisabled = false;
                buttons.push(this.extractButton);
             }
-            if(config.scrapConfig && config.scrapConfig.enabled)
+            if(config.scrapConfig && config.scrapConfig.enabled && config.scrapConfig.configs.length > 0)
             {
-               this.scrapItemsButton = new BSButtonHintData(config.scrapConfig.name,Buttons.getButtonKey(InventOmaticConfig.ScrapKeyCode),Buttons.getButtonGamepad(InventOmaticConfig.ScrapKeyCode),Buttons.getButtonGamepad(InventOmaticConfig.ScrapKeyCode),1,this.scrapItemsCallback);
-               this.scrapItemsButton.ButtonVisible = Parser.parseBoolean(config.scrapConfig.showButton,DEFAULT_SHOW_BUTTON_STATE);
-               this.scrapItemsButton.ButtonDisabled = false;
-               buttons.push(this.scrapItemsButton);
+               this.scrapButtons = new Vector.<BSButtonHintData>();
+               indexConfig = 0;
+               while(indexConfig < config.scrapConfig.configs.length)
+               {
+                  if(config.scrapConfig.configs[indexConfig].enabled)
+                  {
+                     button = new BSButtonHintData(config.scrapConfig.configs[indexConfig].name,Buttons.getButtonKey(config.scrapConfig.configs[indexConfig].hotkey),Buttons.getButtonGamepad(config.scrapConfig.configs[indexConfig].hotkey),Buttons.getButtonGamepad(config.scrapConfig.configs[indexConfig].hotkey),1,null);
+                     button.ButtonVisible = ItemWorker.isTheSameCharacterName(config.scrapConfig.configs[indexConfig]) && Parser.parseBoolean(config.scrapConfig.configs[indexConfig].showButton,DEFAULT_SHOW_BUTTON_STATE);
+                     button.ButtonDisabled = false;
+                     this.scrapButtons.push(button);
+                     buttons.push(button);
+                  }
+                  indexConfig++;
+               }
             }
             if(config.lootConfig && config.lootConfig.enabled)
             {
@@ -998,10 +1030,7 @@ package
                return;
             }
             Logger.get().info("Transfer Items Callback! (key " + keyCode + (_shift ? " + shift)" : ")"));
-            setTimeout(function():void
-            {
-               _itemWorker.transferItems(keyCode,_shift);
-            },10);
+            setTimeout(_itemWorker.transferItems,10,keyCode,_shift);
          }
          catch(e:Error)
          {
@@ -1028,7 +1057,7 @@ package
          }
       }
       
-      public function scrapItemsCallback() : void
+      public function scrapItemsCallback(keyCode:uint = 0) : void
       {
          try
          {
@@ -1036,8 +1065,8 @@ package
             {
                return;
             }
-            Logger.get().info("Scrap Items Callback!");
-            setTimeout(this._itemWorker.scrapItems,10);
+            Logger.get().info("Scrap Items Callback! (key " + keyCode + ")");
+            setTimeout(this._itemWorker.scrapItems,10,keyCode);
          }
          catch(e:Error)
          {
@@ -1788,10 +1817,6 @@ package
          {
             this.calculateCatWeightCallback();
          }
-         if(param1.keyCode == InventOmaticConfig.ScrapKeyCode)
-         {
-            this.scrapItemsCallback();
-         }
          if(param1.keyCode == InventOmaticConfig.NpcSellKeyCode)
          {
             if(this.config.npcSellConfig && this.config.npcSellConfig.enabled)
@@ -1812,6 +1837,16 @@ package
             if(this.config.campAssignConfig.configs[indexConfig] && this.config.campAssignConfig.configs[indexConfig].enabled && param1.keyCode == this.config.campAssignConfig.configs[indexConfig].hotkey)
             {
                this.campAssignItemsCallback(param1.keyCode);
+               break;
+            }
+            indexConfig++;
+         }
+         indexConfig = 0;
+         while(indexConfig < this.config.scrapConfig.configs.length)
+         {
+            if(this.config.scrapConfig.configs[indexConfig] && this.config.scrapConfig.configs[indexConfig].enabled && param1.keyCode == this.config.scrapConfig.configs[indexConfig].hotkey)
+            {
+               this.scrapItemsCallback(param1.keyCode);
                break;
             }
             indexConfig++;
