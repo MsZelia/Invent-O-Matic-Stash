@@ -209,7 +209,6 @@ package
          {
             toggleDebugKeyCode = Parser.parseHotkey(config.toggleDebugHotkey,toggleDebugKeyCode);
             extractKeyCode = Parser.parseHotkey(config.extractConfig,extractKeyCode);
-            scrapKeyCode = Parser.parseHotkey(config.scrapConfig,scrapKeyCode);
             lootKeyCode = Parser.parseHotkey(config.lootConfig,lootKeyCode);
             npcSellKeyCode = Parser.parseHotkey(config.npcSellConfig,npcSellKeyCode);
             if(config.protectionConfig)
@@ -219,7 +218,11 @@ package
             buyKeyCode = Parser.parseHotkey(config.buyConfig,buyKeyCode);
             calculateCatWeightKeyCode = Parser.parseHotkey(config.categoryWeightConfig,calculateCatWeightKeyCode);
             config.categoryWeightConfig.hotkey = calculateCatWeightKeyCode;
-            for(var c in config.transferConfig)
+            for(var c in config.scrapConfig.configs)
+            {
+               config.scrapConfig.configs[c].hotkey = Parser.parseHotkey(config.scrapConfig.configs[c],scrapKeyCode);
+            }
+            for(c in config.transferConfig)
             {
                config.transferConfig[c].hotkey = Parser.parseHotkey(config.transferConfig[c],transferKeyCode);
             }
@@ -332,13 +335,54 @@ package
       
       private static function loadScrapConfig(config:*) : *
       {
+         if(!config)
+         {
+            config = {"enabled":false};
+         }
          if(!config.configs)
          {
-            config.configs = new Array(config);
+            config.configs = [].concat(config);
          }
          else if(config.configs.length == 0)
          {
             config.enabled = false;
+         }
+         for(var c in config.configs)
+         {
+            setName(config.configs[c],TITLE_SCRAP);
+            setMaxItems(config.configs[c]);
+            if(config.configs[c].hotkey == null)
+            {
+               config.configs[c].hotkey = config.hotkey;
+            }
+            if(config.configs[c].name == null)
+            {
+               config.configs[c].name = config.name;
+            }
+            if(config.configs[c].debug == null)
+            {
+               config.configs[c].debug = config.debug;
+            }
+            if(config.configs[c].testRun == null)
+            {
+               config.configs[c].testRun = config.testRun;
+            }
+            if(config.configs[c].showButton == null)
+            {
+               config.configs[c].showButton = config.showButton;
+            }
+            if(config.configs[c].showMessage == null)
+            {
+               config.configs[c].showMessage = config.showMessage;
+            }
+            if(config.configs[c].repeat == null)
+            {
+               config.configs[c].repeat = config.repeat;
+            }
+            if(config.configs[c].delay == null)
+            {
+               config.configs[c].delay = config.delay;
+            }
          }
          return config;
       }
