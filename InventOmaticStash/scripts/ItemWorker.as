@@ -1295,7 +1295,7 @@ package
                if(Parser.parseBoolean(config.testRun,true))
                {
                   showTestRun("SCRAP (" + config.name + ")");
-                  return 0;
+                  return MIN_DELAY;
                }
                delay = Math.max(Parser.parsePositiveNumber(config.delay,DEFAULT_DELAY),MIN_DELAY);
                repeat = Parser.parsePositiveNumber(config.repeat,1);
