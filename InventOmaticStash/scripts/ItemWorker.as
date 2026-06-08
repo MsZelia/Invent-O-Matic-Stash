@@ -1232,19 +1232,16 @@ package
          return _amount;
       }
       
-      private function scrap(param1:Object) : void
+      private function scrap(config:Object) : uint
       {
          var i:int;
          var maxItems:int;
          var inventory:Array;
-         var delay:uint = 0;
-         var repeat:uint = 1;
-         var config:Object = param1;
+         var delay:uint;
+         var repeat:uint;
+         var ReturnDelay:uint = 0;
          var scrappedCount:int = 0;
-         var subConfigIndex:int = 0;
-         var end:Boolean = false;
          var countItemsToScrap:Boolean = false;
-         var validConfigs:Array = [];
          _queue = new Vector.<Object>();
          try
          {
@@ -1256,56 +1253,41 @@ package
                {
                   countItemsToScrap = true;
                }
-               subConfigIndex = 0;
-               while(subConfigIndex < config.configs.length)
-               {
-                  if(isValidScrapConfig(subConfigIndex))
-                  {
-                     validConfigs.push(config.configs[subConfigIndex]);
-                  }
-                  subConfigIndex++;
-               }
                i = 0;
-               while(i < inventory.length && !end)
+               while(i < inventory.length)
                {
                   if(inventory[i].scrapAllowed && !inventory[i].isTransferLocked)
                   {
-                     subConfigIndex = 0;
-                     while(subConfigIndex < validConfigs.length)
+                     if(Boolean(config.onlyLegendaries) && inventory[i].isLegendary || !Boolean(config.onlyLegendaries) && !inventory[i].isLegendary)
                      {
-                        if(Boolean(validConfigs[subConfigIndex].onlyLegendaries) && inventory[i].isLegendary || !Boolean(validConfigs[subConfigIndex].onlyLegendaries) && !inventory[i].isLegendary)
+                        if(inventory[i].isLegendary && config.scrapByLegendaryStar != null)
                         {
-                           if(inventory[i].isLegendary && validConfigs[subConfigIndex].scrapByLegendaryStar != null)
+                           if(config.scrapByLegendaryStar.indexOf(inventory[i].numLegendaryStars) == -1)
                            {
-                              if(validConfigs[subConfigIndex].scrapByLegendaryStar.indexOf(inventory[i].numLegendaryStars) == -1)
-                              {
-                                 subConfigIndex++;
-                                 continue;
-                              }
+                              i++;
+                              continue;
                            }
-                           if(shouldScrap(inventory[i],validConfigs[subConfigIndex]))
+                        }
+                        if(shouldScrap(inventory[i],config))
+                        {
+                           if(config.debug)
+                           {
+                              Logger.get().info("Item queued: " + inventory[i].text + " (" + inventory[i].count + ")");
+                           }
+                           _queue.push({
+                              "text":inventory[i].text,
+                              "serverHandleID":inventory[i].serverHandleID,
+                              "count":inventory[i].count
+                           });
+                           if(countItemsToScrap && ++scrappedCount >= maxItems)
                            {
                               if(config.debug)
                               {
-                                 Logger.get().info("Item queued: " + inventory[i].text + " (" + inventory[i].count + ")");
-                              }
-                              _queue.push({
-                                 "text":inventory[i].text,
-                                 "serverHandleID":inventory[i].serverHandleID,
-                                 "count":inventory[i].count
-                              });
-                              if(countItemsToScrap && ++scrappedCount >= maxItems)
-                              {
-                                 end = true;
-                                 if(config.debug)
-                                 {
-                                    Logger.get().info("Scrap maxItems limit reached: " + maxItems);
-                                 }
+                                 Logger.get().info("Scrap maxItems limit reached: " + maxItems);
                               }
                               break;
                            }
                         }
-                        subConfigIndex++;
                      }
                   }
                   i++;
@@ -1313,10 +1295,11 @@ package
                if(Parser.parseBoolean(config.testRun,true))
                {
                   showTestRun("SCRAP (" + config.name + ")");
-                  return;
+                  return 0;
                }
                delay = Math.max(Parser.parsePositiveNumber(config.delay,DEFAULT_DELAY),MIN_DELAY);
                repeat = Parser.parsePositiveNumber(config.repeat,1);
+               ReturnDelay = delay * repeat * _queue.length;
                executeForQueue(scrapQueued,delay,repeat,config.debug,config.showMessage,"Scrapping",config.closeMenu);
             }
          }
@@ -1324,6 +1307,7 @@ package
          {
             Logger.get().errorHandler("Error ItemWorker scrap",e);
          }
+         return ReturnDelay;
       }
       
       private function showTestRun(name:String) : void
@@ -2349,16 +2333,41 @@ package
          }
       }
       
-      public function scrapItems() : void
+      public function scrapItems(keyCode:uint = 0) : void
       {
-         var config:Object = _config.scrapConfig;
-         if(!this.isValidScrapConfig())
+         var config:Object;
+         var hotkeyMatch:Boolean;
+         var execNext:*;
+         var indexConfig:int = 0;
+         var validConfigs:Array = [];
+         while(indexConfig < _config.scrapConfig.configs.length)
          {
-            Logger.get().error("Invalid scrap config: -1");
-            return;
+            config = _config.scrapConfig.configs[indexConfig];
+            hotkeyMatch = keyCode == config.hotkey;
+            if(hotkeyMatch && this.isValidScrapConfig(indexConfig))
+            {
+               Logger.get().info("Valid scrap config: " + config.name);
+               validConfigs.push(config);
+            }
+            indexConfig++;
          }
-         Logger.get().info("Valid scrap config");
-         this.scrap(config);
+         indexConfig = 0;
+         execNext = function():void
+         {
+            if(indexConfig < validConfigs.length)
+            {
+               var delay:uint = 0;
+               var configDelay:uint = 0;
+               var config:Object = validConfigs[indexConfig];
+               var delayStep:uint = Parser.parsePositiveNumber(config.delay);
+               Logger.get().info("Executing scrap (" + delayStep + "ms delay): " + config.name);
+               configDelay = uint(this.scrap(config));
+               delay = configDelay + delayStep;
+               ++indexConfig;
+               setTimeout(execNext,delay);
+            }
+         };
+         execNext();
       }
       
       public function npcSellItems() : void
