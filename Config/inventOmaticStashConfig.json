@@ -8,8 +8,6 @@
 	"showCategoryItemCount": false,
 	"showDurabilityValue": true,
 	"maintainScrollPosition": false,
-	"hideTakeAllConfirm": true,
-	"defaultVendorItemPrice": -1,
 	"hideHeader": true,
 	"hideVignette": true,
 	"notifyLegendaryModLearnedOnScrap": true,
@@ -17,9 +15,26 @@
 	"swapToContainerInventoryHotkey": 0,
 	"hideUnknownGamepadButtonIcons": true,
 	"defaultSelectedTab": "-",
+	
 	"scrapItemCountThresholdPopup": 5,
 	"transferItemCountThresholdPopup": 4,
+	
+	"hideTakeAllConfirm": true,
+	"hideScrapAllConfirm": true,
+	"hideScrapBoxConfirm": true,
 
+	"defaultVendorItemPrice": {
+		"enabled": false,
+		"defaultValue": -1,
+		"itemNames": {
+			"serum": 200,
+			"plan": "x0.5",
+			"recipe": "x0.5"
+		},
+		"categoryNames": {
+			"AMMO": 1
+		}
+	},
 	"additionalColumnsConfig": {
 		"enabled": false,
 		"offsetInventories": 132,
@@ -72,6 +87,7 @@
 			"debug": true,
 			"showButton": true,
 			"showMessage": true,
+			"closeMenu": false,
 			"name": "Lock All",
 			"hotkey": "K",
 			"delay": 50
@@ -299,6 +315,7 @@
 		"hotkey": "B",
 		"showButton": true,
 		"showMessage": "FULL",
+		"closeMenu": false,
 		"maxItems": 50,
 		"delayNpcVendor": 50,
 		"delayCampVendor": 1250,
@@ -326,6 +343,7 @@
 		"enabled": true,
 		"showButton": true,
 		"showMessage": "FULL",
+		"closeMenu": false,
 		"hotkey": "N",
 		"maxItems": 100,
 		"delay": 50,
@@ -362,6 +380,7 @@
 		"debug": false,
 		"showButton": true,
 		"showMessage": false,
+		"closeMenu": false,
 		"hotkey": "F",
 		"maxItems": 100,
 		"delay": 50,
@@ -391,25 +410,28 @@
 		]
 	},
 	"scrapConfig": {
-		"testRun": true,
-		"name": "AutoScrap",
 		"enabled": false,
 		"debug": false,
-		"showButton": true,
-		"showMessage": false,
-		"hotkey": "F",
-		"maxItems": 100,
-		"delay": 50,
 		"configs": [
 			{
 				"README": "READ DESCRIPTION ON NEXUSMODS BEFORE ENABLING MULTIPLE SCRAP CONFIGS",
+				"testRun": false,
 				"enabled": true,
+				"name": "AutoScrap",
+				"showButton": true,
+				"showMessage": false,
+				"closeMenu": false,
+				"hotkey": "F",
+				"maxItems": 100,
+				"delay": 50,
 				"scrapFavorite": false,
 				"scrapEquipped": false,
-				"onlyLegendaries": false,
+				"onlyLegendaries": false, // Scrap only non-legendary items
 				"types": ["WEAPON", "ARMOR"],
 				"matchMode": "CONTAINS",
-				"excluded": ["syringer", "chassis", "helmet", "Zapper", "enclave",
+				"excluded": [
+					"underarmor", "flannel", "fatigues", "suit", "denim", "jumpsuit", "shirt",
+					"syringer", "chassis", "helmet", "Zapper", "enclave",
 					"paddle", "baseball", "pearly", "father winter", "exc",
 					"bloatfly gland", "bloodbug proboscis", "tick blood sac",
 					"stingwing barb", "vocal sac", "hardened mass", "*"],
@@ -420,14 +442,22 @@
 			},
 			{
 				"README": "READ DESCRIPTION ON NEXUSMODS BEFORE ENABLING MULTIPLE SCRAP CONFIGS",
+				"testRun": true,
 				"enabled": false,
+				"name": "LegeScrap",
+				"showButton": true,
+				"showMessage": false,
+				"closeMenu": false,
+				"hotkey": "G",
+				"maxItems": 100,
+				"delay": 350,
 				"scrapFavorite": false,
 				"scrapEquipped": false,
-				"onlyLegendaries": true,
+				"onlyLegendaries": true, // Scrap only legendary items
 				"scrapByLegendaryStar": [1,2,3,4],
 				"matchMode": "CONTAINS",
 				"types": ["WEAPON", "ARMOR"],
-				"excluded": ["unyielding", "overeater", "anti", "blood", "vampire", "quad", "*", "#", "EXAMPLE_GROUP"],
+				"excluded": ["unyielding", "overeater", "anti", "blood", "furious", "vampire", "quad", "zzz", "*", "#", "EXAMPLE_GROUP"],
 				"checkCharacterName": false,
 				"characterName": "none",
 				"checkAccountName": false,
