@@ -2361,7 +2361,7 @@ package
                var config:Object = validConfigs[indexConfig];
                var delayStep:uint = Parser.parsePositiveNumber(config.delay);
                Logger.get().info("Executing scrap (" + delayStep + "ms delay): " + config.name);
-               configDelay = uint(this.scrap(config));
+               configDelay = uint(scrap(config));
                delay = configDelay + delayStep;
                ++indexConfig;
                setTimeout(execNext,delay);
