@@ -2721,18 +2721,18 @@ package
       private function calcMaxQuantity(param1:Boolean = false) : uint
       {
          var _loc7_:int = 0;
-         var _loc2_:Number = Number(this.selectedListEntry.isOffered ? this.selectedListEntry.offerValue : this.selectedListEntry.value);
+         var _loc2_:Number = Number(this.ItemCardContainer_mc.ItemCard_mc.getChildAt(0).Value_tf.text);
          var _loc3_:Number = this.OfferInventory_mc.currency;
          var _loc4_:Number = this.PlayerInventory_mc.currency;
          var _loc5_:Number = this.selectedList == this.PlayerInventory_mc ? _loc3_ : _loc4_;
          var _loc6_:Number = this.selectedListEntry ? Number(this.selectedListEntry.count) : 1;
          if(param1)
          {
-            if(!this.m_OwnsVendor && this.m_MenuMode == MODE_PLAYERVENDING && Boolean(this.selectedListEntry.isOffered))
+            if(!this.m_OwnsVendor && (this.m_MenuMode == MODE_VENDING_MACHINE || this.m_MenuMode == MODE_PLAYERVENDING) && Boolean(this.selectedListEntry.isOffered))
             {
                _loc6_ = Math.min(this.selectedListEntry.count,Math.floor(_loc5_ / this.selectedListEntry.offerValue));
             }
-            else if(!this.m_OwnsVendor && (this.m_MenuMode == MODE_NPCVENDING || this.m_MenuMode == MODE_VENDING_MACHINE))
+            else if(!this.m_OwnsVendor && this.m_MenuMode == MODE_NPCVENDING)
             {
                if(isNaN(_loc2_))
                {
