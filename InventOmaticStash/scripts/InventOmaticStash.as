@@ -4,8 +4,7 @@ package
    import Shared.AS3.Data.*;
    import Shared.AS3.Events.*;
    import Shared.GlobalFunc;
-   import com.adobe.serialization.json.JSONDecoder;
-   import com.adobe.serialization.json.JSONEncoder;
+   import com.adobe.serialization.json.*;
    import extractors.*;
    import flash.display.*;
    import flash.events.*;
@@ -406,6 +405,7 @@ package
       
       private function loadConfig() : void
       {
+         var loaderError:Function;
          var loaderComplete:Function;
          var t1:*;
          var t2:*;
@@ -415,12 +415,18 @@ package
          try
          {
             t1 = getTimer();
+            loaderError = function(e:IOErrorEvent):void
+            {
+               ShowHUDMessage("Error loading config: " + e.text,true);
+               Logger.get().error("Error loading config: " + e.text);
+            };
             loaderComplete = function(param1:Event):void
             {
                var _loc2_:Object;
+               var line:uint;
                try
                {
-                  _loc2_ = new JSONDecoder(loader.data,true).getValue();
+                  _loc2_ = new JSONDecoder(loader.data,false).getValue();
                   t2 = getTimer();
                   Logger.get().debugMode = _loc2_.debug;
                   Logger.get().setPosition(Parser.parseNumber(_loc2_.debugX,0),Parser.parseNumber(_loc2_.debugY,0));
@@ -433,15 +439,22 @@ package
                   }
                   Logger.get().info("Config file is loaded! v" + Version.VERSION + " (" + (t2 - t1) + "ms/init:" + (t3 - t2) + "ms)");
                }
+               catch(e:JSONParseError)
+               {
+                  line = e.text.substr(0,e.location).match(/\n/g).length + 1;
+                  Logger.get().error("Error parsing config: " + e.message + " in line " + line);
+                  ShowHUDMessage("Error parsing config: " + e.message + " in line " + line,true);
+               }
                catch(e:Error)
                {
-                  Logger.get().error("Error initializing config " + e);
-                  ShowHUDMessage("Error initializing config " + e,true);
+                  Logger.get().error("Error initializing config: " + e);
+                  ShowHUDMessage("Error initializing config: " + e,true);
                }
             };
             url = new URLRequest("../inventOmaticStashConfig.json");
             loader = new URLLoader();
             loader.load(url);
+            loader.addEventListener(IOErrorEvent.IO_ERROR,loaderError);
             loader.addEventListener(Event.COMPLETE,loaderComplete);
             timer = new Timer(50);
             timer.addEventListener(TimerEvent.TIMER,timerElapsed);
