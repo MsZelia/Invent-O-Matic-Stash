@@ -191,7 +191,7 @@ package
          while(i < len)
          {
             var element:* = itemNames[i];
-            if(element is String && lowercaseName.indexOf(element.toLowerCase()) != -1)
+            if(element is String && element.length && lowercaseName.indexOf(element.toLowerCase()) != -1)
             {
                return true;
             }
