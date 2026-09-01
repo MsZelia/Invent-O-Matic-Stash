@@ -343,6 +343,10 @@ package
          {
             config.configs = [].concat(config);
          }
+         if(!config.ignoreItemNames)
+         {
+            config.ignoreItemNames = [];
+         }
          else if(config.configs.length == 0)
          {
             config.enabled = false;
@@ -382,6 +386,14 @@ package
             if(config.configs[c].delay == null)
             {
                config.configs[c].delay = config.delay;
+            }
+            if(config.configs[c].ignoreItemNames == null)
+            {
+               config.configs[c].ignoreItemNames = config.ignoreItemNames;
+            }
+            else
+            {
+               config.configs[c].ignoreItemNames = config.configs[c].ignoreItemNames.concat(config.ignoreItemNames);
             }
          }
          return config;

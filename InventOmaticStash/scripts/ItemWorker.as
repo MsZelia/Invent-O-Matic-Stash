@@ -168,6 +168,38 @@ package
          return isMatching;
       }
       
+      private static function isIgnoreItemName(itemName:String, ignoreItemNames:Array) : Boolean
+      {
+         if(!ignoreItemNames || ignoreItemNames.length == 0)
+         {
+            return false;
+         }
+         var itemNames:Array = [];
+         var i:uint = 0;
+         while(i < ignoreItemNames.length)
+         {
+            if(_config.itemNamesGroupConfig[ignoreItemNames[i]] != null)
+            {
+               itemNames = itemNames.concat(_config.itemNamesGroupConfig[ignoreItemNames[i]]);
+            }
+            i++;
+         }
+         itemNames = ignoreItemNames.concat(itemNames);
+         var lowercaseName:String = itemName.toLowerCase();
+         var len:uint = itemNames.length;
+         i = 0;
+         while(i < len)
+         {
+            var element:* = itemNames[i];
+            if(element is String && lowercaseName.indexOf(element.toLowerCase()) != -1)
+            {
+               return true;
+            }
+            i++;
+         }
+         return false;
+      }
+      
       private static function isMatchingTransferItemName(param1:String, config:Object) : Boolean
       {
          var stringToCompare:String = null;
@@ -579,6 +611,14 @@ package
                   }
                   return 0;
                }
+               if(isIgnoreItemName(selectedItem.text,config.ignoreItemNames))
+               {
+                  if(config.debug)
+                  {
+                     Logger.get().error("Not transferring selected: Ignored");
+                  }
+                  return 0;
+               }
                isMatching = isItemMatchingConfig(selectedItem,config);
                if(selectedItem.isLegendary && config.transferLegendaries.indexOf(selectedItem.numLegendaryStars) != -1 || isMatching)
                {
@@ -763,6 +803,10 @@ package
                index++;
             }
             else if(Boolean(sectionConfig.onlyCurrentCategory) && !(item.filterFlag & itemFilter))
+            {
+               index++;
+            }
+            else if(isIgnoreItemName(item.text,sectionConfig.ignoreItemNames))
             {
                index++;
             }
@@ -1256,7 +1300,7 @@ package
                i = 0;
                while(i < inventory.length)
                {
-                  if(inventory[i].scrapAllowed && !inventory[i].isTransferLocked)
+                  if(inventory[i].scrapAllowed && !inventory[i].isTransferLocked && !isIgnoreItemName(inventory[i].text,config.ignoreItemNames))
                   {
                      if(Boolean(config.onlyLegendaries) && inventory[i].isLegendary || !Boolean(config.onlyLegendaries) && !inventory[i].isLegendary)
                      {
@@ -1399,7 +1443,7 @@ package
                i = 0;
                while(i < inventory.length && !end)
                {
-                  if(!inventory[i].isTransferLocked)
+                  if(!inventory[i].isTransferLocked && !isIgnoreItemName(inventory[i].text,config.ignoreItemNames))
                   {
                      subConfigIndex = 0;
                      while(subConfigIndex < validConfigs.length)
@@ -2422,90 +2466,101 @@ package
                i = 0;
                while(i < inventory.length && !endAll)
                {
-                  subConfigIndex = 0;
-                  while(subConfigIndex < validConfigs.length)
+                  if(isIgnoreItemName(inventory[i].text,config.ignoreItemNames))
                   {
-                     if(currencyLeft == 0)
+                     if(config.debug)
                      {
-                        if(config.debug)
-                        {
-                           Logger.get().info("Player has no currency left!");
-                        }
-                        endAll = true;
-                        break;
+                        Logger.get().error("Item ignored: " + inventory[i].text);
                      }
-                     if(countItemsToBuy && amountItemsBought >= config.maxItems)
-                     {
-                        if(config.debug)
-                        {
-                           Logger.get().info("Items queued reached maxItems: " + amountItemsBought);
-                        }
-                        endAll = true;
-                        break;
-                     }
-                     isMatching = isItemMatchingConfig(inventory[i],validConfigs[subConfigIndex]);
-                     if(isMatching)
-                     {
-                        price = uint(inventory[i].isOffered ? inventory[i].offerValue : inventory[i].itemValue);
-                        amount = getAmount(int(validConfigs[subConfigIndex].amount),inventory[i].count);
-                        if(price > 0)
-                        {
-                           amount = Math.min(Math.floor(currencyLeft / price),amount);
-                        }
-                        maxPrice = Parser.parsePositiveNumber(validConfigs[subConfigIndex].maxPrice);
-                        if(price > maxPrice)
-                        {
-                           if(config.debug)
-                           {
-                              Logger.get().error("Not buying item: " + inventory[i].text + ", price (" + price + ") exceeding maxPrice (" + maxPrice + ")");
-                           }
-                        }
-                        else
-                        {
-                           if(amount != 0)
-                           {
-                              currencyLeft -= amount * price;
-                              amountItemsBought++;
-                              if(inventory[i].isOffered)
-                              {
-                                 isNpcVendor = false;
-                                 if(config.debug)
-                                 {
-                                    Logger.get().info("Item queued: " + inventory[i].text + " (" + amount + "/" + inventory[i].count + ") for " + price + " per, total: " + amount * price);
-                                 }
-                                 _queue.push({
-                                    "serverHandleID":inventory[i].serverHandleID,
-                                    "text":inventory[i].text,
-                                    "count":amount,
-                                    "price":price,
-                                    "isNpcVendor":false
-                                 });
-                              }
-                              else
-                              {
-                                 if(config.debug)
-                                 {
-                                    Logger.get().info("Item queued: " + inventory[i].text + " (" + amount + ") at " + price + ", total: " + amount * price);
-                                 }
-                                 _queue.push({
-                                    "serverHandleID":inventory[i].serverHandleID,
-                                    "text":inventory[i].text,
-                                    "count":amount,
-                                    "price":price,
-                                    "isNpcVendor":true
-                                 });
-                              }
-                              break;
-                           }
-                           if(config.debug)
-                           {
-                              Logger.get().error("Not buying item: " + inventory[i].text + ", amount is 0");
-                           }
-                        }
-                     }
-                     subConfigIndex++;
+                     i++;
                   }
-                  i++;
+                  else
+                  {
+                     subConfigIndex = 0;
+                     while(subConfigIndex < validConfigs.length)
+                     {
+                        if(currencyLeft == 0)
+                        {
+                           if(config.debug)
+                           {
+                              Logger.get().info("Player has no currency left!");
+                           }
+                           endAll = true;
+                           break;
+                        }
+                        if(countItemsToBuy && amountItemsBought >= config.maxItems)
+                        {
+                           if(config.debug)
+                           {
+                              Logger.get().info("Items queued reached maxItems: " + amountItemsBought);
+                           }
+                           endAll = true;
+                           break;
+                        }
+                        isMatching = isItemMatchingConfig(inventory[i],validConfigs[subConfigIndex]);
+                        if(isMatching)
+                        {
+                           price = uint(inventory[i].isOffered ? inventory[i].offerValue : inventory[i].itemValue);
+                           amount = getAmount(int(validConfigs[subConfigIndex].amount),inventory[i].count);
+                           if(price > 0)
+                           {
+                              amount = Math.min(Math.floor(currencyLeft / price),amount);
+                           }
+                           maxPrice = Parser.parsePositiveNumber(validConfigs[subConfigIndex].maxPrice);
+                           if(price > maxPrice)
+                           {
+                              if(config.debug)
+                              {
+                                 Logger.get().error("Not buying item: " + inventory[i].text + ", price (" + price + ") exceeding maxPrice (" + maxPrice + ")");
+                              }
+                           }
+                           else
+                           {
+                              if(amount != 0)
+                              {
+                                 currencyLeft -= amount * price;
+                                 amountItemsBought++;
+                                 if(inventory[i].isOffered)
+                                 {
+                                    isNpcVendor = false;
+                                    if(config.debug)
+                                    {
+                                       Logger.get().info("Item queued: " + inventory[i].text + " (" + amount + "/" + inventory[i].count + ") for " + price + " per, total: " + amount * price);
+                                    }
+                                    _queue.push({
+                                       "serverHandleID":inventory[i].serverHandleID,
+                                       "text":inventory[i].text,
+                                       "count":amount,
+                                       "price":price,
+                                       "isNpcVendor":false
+                                    });
+                                 }
+                                 else
+                                 {
+                                    if(config.debug)
+                                    {
+                                       Logger.get().info("Item queued: " + inventory[i].text + " (" + amount + ") at " + price + ", total: " + amount * price);
+                                    }
+                                    _queue.push({
+                                       "serverHandleID":inventory[i].serverHandleID,
+                                       "text":inventory[i].text,
+                                       "count":amount,
+                                       "price":price,
+                                       "isNpcVendor":true
+                                    });
+                                 }
+                                 break;
+                              }
+                              if(config.debug)
+                              {
+                                 Logger.get().error("Not buying item: " + inventory[i].text + ", amount is 0");
+                              }
+                           }
+                        }
+                        subConfigIndex++;
+                     }
+                     i++;
+                  }
                }
                if(Parser.parseBoolean(config.testRun,false))
                {
