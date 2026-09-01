@@ -48,7 +48,8 @@
 	},
 	"itemNamesGroupConfig": {
 		"EXAMPLE_GROUP": ["item 1", "item 2", "...", "xyz"],
-		"ExampleGroup2": ["item 3", "item 4"]
+		"ExampleGroup2": ["item 3", "item 4"],
+		"IGNORED_GROUP": ["item 1", "item 2", "item 3"]
 	},
 	"legendaryModsConfig": {
 		"enabled": true,
@@ -319,6 +320,7 @@
 		"maxItems": 50,
 		"delayNpcVendor": 50,
 		"delayCampVendor": 1250,
+		"ignoreItemNames": ["IGNORED_GROUP", "item 4", "item 5"],
 		"configs": [
 			{
 				"enabled": false,
@@ -347,6 +349,7 @@
 		"hotkey": "N",
 		"maxItems": 100,
 		"delay": 50,
+		"ignoreItemNames": ["IGNORED_GROUP", "item 4", "item 5"],
 		"configs": [
 			{
 				"enabled": false,
@@ -390,6 +393,7 @@
 		"itemNames": ["cap", "bobby pin", "cell", "cartridge",
 			"fuel", ".45", "5.56", "stimpak", "mentats", "psycho", "med-x",
 			"radaway", "rad-x", "priest pack", "pail", "bag", "gift"],
+		"ignoreItemNames": ["IGNORED_GROUP", "item 4", "item 5"],
 		"configs": [
 			{
 				"enabled": true,
@@ -412,6 +416,7 @@
 	"scrapConfig": {
 		"enabled": false,
 		"debug": false,
+		"ignoreItemNames": ["IGNORED_GROUP", "item 4", "item 5"],
 		"configs": [
 			{
 				"README": "READ DESCRIPTION ON NEXUSMODS BEFORE ENABLING MULTIPLE SCRAP CONFIGS",
@@ -483,6 +488,7 @@
 			"weaponTypes": ["RANGED", "MELEE"],
 			"matchMode": "ALL",
 			"itemNames": [""],
+			"ignoreItemNames": ["IGNORED_GROUP", "item 4", "item 5"],
 			"direction": "FROM_CONTAINER"
 		},
 		{
@@ -503,6 +509,7 @@
 			"types": ["ARMOR"],
 			"matchMode": "ALL",
 			"itemNames": [""],
+			"ignoreItemNames": ["IGNORED_GROUP", "item 4", "item 5"],
 			"direction": "FROM_CONTAINER"
 		},
 		{
@@ -518,6 +525,7 @@
 			"types": ["AMMO"],
 			"matchMode": "EXACT",
 			"itemNames": [".45 Round"],
+			"ignoreItemNames": ["IGNORED_GROUP", "item 4", "item 5"],
 			"direction": "FROM_CONTAINER"
 		},
 		{
@@ -533,6 +541,7 @@
 			"types": ["JUNK"],
 			"matchMode": "EXACT",
 			"itemNames": ["Vault Steel Scrap"],
+			"ignoreItemNames": ["IGNORED_GROUP", "item 4", "item 5"],
 			"direction": "FROM_CONTAINER"
 		},
 		{
@@ -549,6 +558,7 @@
 			"types": ["JUNK"],
 			"matchMode": "ALL",
 			"itemNames": [""],
+			"ignoreItemNames": ["IGNORED_GROUP", "item 4", "item 5"],
 			"direction": "FROM_CONTAINER"
 		},
 		{
@@ -564,6 +574,7 @@
 			"types": ["JUNK", "AMMO"],
 			"matchMode": "ALL",
 			"itemNames": [""],
+			"ignoreItemNames": ["IGNORED_GROUP", "item 4", "item 5"],
 			"direction": "FROM_CONTAINER"
 		},
 		{
@@ -605,6 +616,7 @@
 				"Silt Bean Puree",
 				"Glowing Fungus Soup"
 			],
+			"ignoreItemNames": ["IGNORED_GROUP", "item 4", "item 5"],
 			"direction": "FROM_CONTAINER",
 			"checkCharacterName": false,
 			"characterName": "none",
@@ -627,6 +639,7 @@
 			"types": ["NOTES", "HOLO"],
 			"matchMode": "NOT_CONTAINS",
 			"itemNames": ["plan", "recipe", "map", "silo state holotape"],
+			"ignoreItemNames": ["IGNORED_GROUP", "item 4", "item 5"],
 			"direction": "TO_CONTAINER"
 		},
 		{
@@ -644,6 +657,7 @@
 			"types": ["WEAPON"],
 			"matchMode": "CONTAINS",
 			"itemNames": [" grenade", " mine"],
+			"ignoreItemNames": ["IGNORED_GROUP", "item 4", "item 5"],
 			"direction": "TO_CONTAINER"
 		},
 		{
@@ -657,6 +671,7 @@
 			"amount": 1,
 			"matchMode": "EXACT",
 			"itemNames": ["Bloatfly Gland", "Bloodbug Proboscis", "Stingwing Barb", "Tick Blood Sac"],
+			"ignoreItemNames": ["IGNORED_GROUP", "item 4", "item 5"],
 			"direction": "FROM_CONTAINER"
 		}
 	],
