@@ -383,6 +383,7 @@
 		"debug": false,
 		"showButton": true,
 		"showMessage": false,
+		"autoExecute": false,
 		"closeMenu": false,
 		"hotkey": "F",
 		"maxItems": 100,
