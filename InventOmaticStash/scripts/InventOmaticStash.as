@@ -75,6 +75,10 @@ package
       
       private var ContainerOptionsData:*;
       
+      private var isCorpseLootMode:Boolean = false;
+      
+      private var hasAutoExecuted:Boolean = false;
+      
       public function InventOmaticStash()
       {
          this.modHeaders = {};
@@ -225,6 +229,11 @@ package
       
       private function onOtherInvDataUpdate(param1:Event) : void
       {
+         if(Boolean(param1.data.CorpseInventories) && param1.data.CorpseInventories.length > 0)
+         {
+            this.isCorpseLootMode = true;
+            this.checkAutoExecute();
+         }
          CategoryWeight.updateWeightLabels();
       }
       
@@ -486,7 +495,7 @@ package
             }
             if(this.lootItemsButton)
             {
-               this.lootItemsButton.ButtonVisible = Boolean(this.parentClip.CorpseLootMode) && Parser.parseBoolean(config.lootConfig.showButton,DEFAULT_SHOW_BUTTON_STATE);
+               this.lootItemsButton.ButtonVisible = Boolean(this.isCorpseLootMode) && Parser.parseBoolean(config.lootConfig.showButton,DEFAULT_SHOW_BUTTON_STATE);
                end = true;
             }
             if(this.npcSellItemsButton)
@@ -677,6 +686,7 @@ package
          this.initUIChanges();
          CategoryWeight.init(this._parent);
          LegendaryMods.init();
+         this.checkAutoExecute();
          stage.addEventListener(KeyboardEvent.KEY_UP,this.keyUpHandler);
          stage.addEventListener(KeyboardEvent.KEY_DOWN,this.keyDownHandler);
       }
@@ -1000,6 +1010,19 @@ package
          }
       }
       
+      public function checkAutoExecute() : void
+      {
+         if(this.hasAutoExecuted || !this.config || !this.isCorpseLootMode)
+         {
+            return;
+         }
+         this.hasAutoExecuted = true;
+         if(this.config.lootConfig && this.config.lootConfig.enabled && this.config.lootConfig.autoExecute)
+         {
+            this.lootItemsCallback();
+         }
+      }
+      
       public function extractDataCallback() : void
       {
          var extractorToUse:BaseItemExtractor = null;
@@ -1056,7 +1079,7 @@ package
       {
          try
          {
-            if(!this.parentClip.CorpseLootMode)
+            if(!this.isCorpseLootMode)
             {
                return;
             }
