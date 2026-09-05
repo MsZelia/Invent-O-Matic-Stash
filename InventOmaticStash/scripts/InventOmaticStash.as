@@ -1117,7 +1117,7 @@ package
          {
             setTimeout(function():void
             {
-               if(parentClip.MenuMode != SecureTradeShared.MODE_NPCVENDING)
+               if(MenuMode != SecureTradeShared.MODE_NPCVENDING)
                {
                   return;
                }

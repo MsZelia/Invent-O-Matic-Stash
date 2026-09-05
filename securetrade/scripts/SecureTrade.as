@@ -631,26 +631,6 @@ package
          }
       }
       
-      public function get CorpseLootMode() : Boolean
-      {
-         return this.m_CorpseLootMode;
-      }
-      
-      public function get IsWorkbench() : Boolean
-      {
-         return this.m_isWorkbench;
-      }
-      
-      public function get MenuMode() : uint
-      {
-         return this.m_MenuMode;
-      }
-      
-      public function get OwnsVendor() : uint
-      {
-         return this.m_OwnsVendor;
-      }
-      
       public function set maxTabs(value:uint) : void
       {
          this.maxtabs = value;
@@ -717,35 +697,26 @@ package
       
       public function updateModButtons() : void
       {
-         setTimeout(function():void
+         if(modLoader && modLoader.content)
          {
-            if(modLoader && modLoader.content)
-            {
-               modLoader.content.updateButtonHints();
-            }
-         },25);
+            setTimeout(modLoader.content.updateButtonHints,25);
+         }
       }
       
       public function updateModSelectedTab() : void
       {
-         setTimeout(function():void
+         if(modLoader && modLoader.content)
          {
-            if(modLoader && modLoader.content)
-            {
-               modLoader.content.onSelectedTabChanged();
-            }
-         },25);
+            setTimeout(modLoader.content.onSelectedTabChanged,25);
+         }
       }
       
       public function updateModHeaders() : void
       {
-         setTimeout(function():void
+         if(modLoader && modLoader.content)
          {
-            if(modLoader && modLoader.content)
-            {
-               modLoader.content.updateModHeaders();
-            }
-         },25);
+            setTimeout(modLoader.content.updateModHeaders,25);
+         }
       }
       
       public function isItemProtected(item:Object, isSelectionChanged:Boolean = false) : Boolean
