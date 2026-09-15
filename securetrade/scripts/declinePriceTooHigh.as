@@ -2,7 +2,7 @@ package
 {
    import Shared.AS3.BCBasicMenuItem;
    
-   [Embed(source="/_assets/assets.swf", symbol="symbol288")]
+   [Embed(source="/_assets/assets.swf", symbol="symbol289")]
    public dynamic class declinePriceTooHigh extends BCBasicMenuItem
    {
       

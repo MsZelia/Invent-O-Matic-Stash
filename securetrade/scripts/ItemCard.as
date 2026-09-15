@@ -3,7 +3,7 @@ package
    import Shared.AS3.BSUIComponent;
    import flash.events.Event;
    
-   [Embed(source="/_assets/assets.swf", symbol="symbol345")]
+   [Embed(source="/_assets/assets.swf", symbol="symbol346")]
    public class ItemCard extends BSUIComponent
    {
       

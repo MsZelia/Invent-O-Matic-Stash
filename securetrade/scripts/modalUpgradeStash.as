@@ -2,7 +2,7 @@ package
 {
    import Shared.AS3.BCBasicModal;
    
-   [Embed(source="/_assets/assets.swf", symbol="symbol28")]
+   [Embed(source="/_assets/assets.swf", symbol="symbol29")]
    public dynamic class modalUpgradeStash extends BCBasicModal
    {
       

@@ -6,7 +6,7 @@ package
    import flash.text.TextFieldAutoSize;
    import scaleform.gfx.TextFieldEx;
    
-   [Embed(source="/_assets/assets.swf", symbol="symbol30")]
+   [Embed(source="/_assets/assets.swf", symbol="symbol31")]
    public class ScrapComponentListEntry extends BSScrollingListEntry
    {
       

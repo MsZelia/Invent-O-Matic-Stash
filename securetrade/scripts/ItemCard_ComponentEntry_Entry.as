@@ -4,7 +4,7 @@ package
    import flash.display.MovieClip;
    import flash.text.TextLineMetrics;
    
-   [Embed(source="/_assets/assets.swf", symbol="symbol259")]
+   [Embed(source="/_assets/assets.swf", symbol="symbol260")]
    public class ItemCard_ComponentEntry_Entry extends BSScrollingListEntry
    {
       

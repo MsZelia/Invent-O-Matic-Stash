@@ -2,7 +2,7 @@ package secureTrade_fla
 {
    import flash.display.MovieClip;
    
-   [Embed(source="/_assets/assets.swf", symbol="symbol190")]
+   [Embed(source="/_assets/assets.swf", symbol="symbol191")]
    public dynamic class ItemCard_Comparison_73 extends MovieClip
    {
       

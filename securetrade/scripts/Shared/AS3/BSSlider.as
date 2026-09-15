@@ -2,6 +2,7 @@ package Shared.AS3
 {
    import Shared.AS3.Events.CustomEvent;
    import Shared.GlobalFunc;
+   import flash.display.FrameLabel;
    import flash.display.MovieClip;
    import flash.events.Event;
    import flash.events.KeyboardEvent;
@@ -21,6 +22,12 @@ package Shared.AS3
       public static const HANDLE_SIZE_MIN_PERCENT:Number = 0.25;
       
       public static const HANDLE_SIZE_MAX_PERCENT:Number = 0.75;
+      
+      private static const DEFAULT_ANIMATION:* = "Default";
+      
+      private static const HOVER_ANIMATION:* = "Hover";
+      
+      private var m_bHasHoverAnimation:Boolean = false;
       
       public var SliderBackground_mc:MovieClip;
       
@@ -72,6 +79,7 @@ package Shared.AS3
       
       public function BSSlider()
       {
+         var _loc5_:FrameLabel = null;
          super();
          this._fillBaseSizePos = new Rectangle(this.Fill_mc.x,this.Fill_mc.y,this.Fill_mc.width,this.Fill_mc.height);
          this._MarkerBaseSizePos = new Rectangle(this.Marker_mc.x,this.Marker_mc.y,this.Marker_mc.width,this.Marker_mc.height);
@@ -83,7 +91,27 @@ package Shared.AS3
          this._iControllerBumperJumpSize = 1;
          this._iControllerTriggerJumpSize = 3;
          this.Marker_mc.addEventListener(MouseEvent.MOUSE_DOWN,this.onBeginDrag);
+         this.Marker_mc.addEventListener(MouseEvent.MOUSE_OVER,this.onMarkerMouseOver);
+         this.Marker_mc.addEventListener(MouseEvent.MOUSE_OUT,this.onMarkerMouseOut);
          this.Marker_mc.buttonMode = true;
+         var _loc1_:Array = this.Marker_mc.currentLabels;
+         var _loc2_:Boolean = false;
+         var _loc3_:Boolean = false;
+         var _loc4_:int = 0;
+         while(_loc4_ < _loc1_.length)
+         {
+            _loc5_ = _loc1_[_loc4_];
+            if(_loc5_.name == HOVER_ANIMATION)
+            {
+               _loc2_ = true;
+            }
+            else if(_loc5_.name == DEFAULT_ANIMATION)
+            {
+               _loc3_ = true;
+            }
+            _loc4_++;
+         }
+         this.m_bHasHoverAnimation = _loc2_ && _loc3_;
       }
       
       public function set defaultScrollValueJump(param1:uint) : void
@@ -366,6 +394,22 @@ package Shared.AS3
          var _loc2_:Number = this._bVertical ? mouseY : mouseX;
          var _loc3_:uint = _loc2_ / this.sliderLength * (this._iMaxValue - this._iMinValue);
          this.value = _loc3_;
+      }
+      
+      private function onMarkerMouseOver(param1:MouseEvent) : *
+      {
+         if(this.m_bHasHoverAnimation)
+         {
+            this.Marker_mc.gotoAndStop(HOVER_ANIMATION);
+         }
+      }
+      
+      private function onMarkerMouseOut(param1:MouseEvent) : *
+      {
+         if(this.m_bHasHoverAnimation)
+         {
+            this.Marker_mc.gotoAndStop(DEFAULT_ANIMATION);
+         }
       }
       
       public function ProcessUserEvent(param1:String, param2:Boolean) : Boolean

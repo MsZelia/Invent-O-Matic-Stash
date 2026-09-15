@@ -11,7 +11,7 @@ package
    import flash.text.TextFormat;
    import scaleform.gfx.TextFieldEx;
    
-   [Embed(source="/_assets/assets.swf", symbol="symbol183")]
+   [Embed(source="/_assets/assets.swf", symbol="symbol184")]
    public class OfferListEntry extends ItemListEntry
    {
       

@@ -1,10 +1,12 @@
-package
+package secureTrade_fla
 {
-   [Embed(source="/_assets/assets.swf", symbol="symbol220")]
-   public dynamic class ItemCard_StandardEntry extends ItemCard_Entry
+   import flash.display.MovieClip;
+   
+   [Embed(source="/_assets/assets.swf", symbol="symbol12")]
+   public dynamic class Scrollbar_Thumb_44 extends MovieClip
    {
       
-      public function ItemCard_StandardEntry()
+      public function Scrollbar_Thumb_44()
       {
          super();
          addFrameScript(0,this.frame1,1,this.frame2);

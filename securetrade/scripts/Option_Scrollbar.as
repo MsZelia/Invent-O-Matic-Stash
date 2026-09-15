@@ -1,6 +1,7 @@
 package
 {
    import Shared.GlobalFunc;
+   import flash.display.FrameLabel;
    import flash.display.MovieClip;
    import flash.events.Event;
    import flash.events.KeyboardEvent;
@@ -8,13 +9,17 @@ package
    import flash.geom.Rectangle;
    import flash.ui.Keyboard;
    
-   [Embed(source="/_assets/assets.swf", symbol="symbol12")]
+   [Embed(source="/_assets/assets.swf", symbol="symbol13")]
    public class Option_Scrollbar extends MovieClip
    {
       
       public static const VALUE_CHANGE:String = "Option_Scrollbar::VALUE_CHANGE";
       
       public static const VALUE_CHANGE_FAILED:String = "Option_Scrollbar::VALUE_CHANGE_FAILED";
+      
+      private static const DEFAULT_ANIMATION:* = "Default";
+      
+      private static const HOVER_ANIMATION:* = "Hover";
       
       public var Track_mc:MovieClip;
       
@@ -29,6 +34,8 @@ package
       public var RightCatcher_mc:MovieClip;
       
       public var BarCatcher_mc:MovieClip;
+      
+      private var m_bHasHoverAnimation:Boolean = false;
       
       private var fValue:Number;
       
@@ -56,13 +63,34 @@ package
       
       public function Option_Scrollbar()
       {
+         var _loc5_:FrameLabel = null;
          super();
          this.fMinThumbX = this.Track_mc.x;
          this.fMaxThumbX = this.Track_mc.x + this.Track_mc.width - this.Thumb_mc.width;
          addEventListener(MouseEvent.CLICK,this.onClick);
          this.Thumb_mc.addEventListener(MouseEvent.MOUSE_DOWN,this.onThumbMouseDown);
+         this.Thumb_mc.addEventListener(MouseEvent.MOUSE_OVER,this.onThumbMouseOver);
+         this.Thumb_mc.addEventListener(MouseEvent.MOUSE_OUT,this.onThumbMouseOut);
          this.leftBuffer = this.Track_mc.x - this.LeftCatcher_mc.x;
          this.rightBuffer = this.RightCatcher_mc.x + this.RightCatcher_mc.width - this.fMaxThumbX;
+         var _loc1_:Array = this.Thumb_mc.currentLabels;
+         var _loc2_:Boolean = false;
+         var _loc3_:Boolean = false;
+         var _loc4_:int = 0;
+         while(_loc4_ < _loc1_.length)
+         {
+            _loc5_ = _loc1_[_loc4_];
+            if(_loc5_.name == HOVER_ANIMATION)
+            {
+               _loc2_ = true;
+            }
+            else if(_loc5_.name == DEFAULT_ANIMATION)
+            {
+               _loc3_ = true;
+            }
+            _loc4_++;
+         }
+         this.m_bHasHoverAnimation = _loc2_ && _loc3_;
       }
       
       public function get MinValue() : Number
@@ -207,6 +235,16 @@ package
          this.bDragging = true;
          stage.addEventListener(MouseEvent.MOUSE_UP,this.onThumbMouseUp);
          stage.addEventListener(MouseEvent.MOUSE_MOVE,this.onThumbMouseMove);
+      }
+      
+      private function onThumbMouseOver(param1:MouseEvent) : *
+      {
+         this.Thumb_mc.gotoAndStop(HOVER_ANIMATION);
+      }
+      
+      private function onThumbMouseOut(param1:MouseEvent) : *
+      {
+         this.Thumb_mc.gotoAndStop(DEFAULT_ANIMATION);
       }
       
       private function onThumbMouseMove(param1:MouseEvent) : *

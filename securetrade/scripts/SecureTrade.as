@@ -38,7 +38,7 @@ package
    import scaleform.gfx.Extensions;
    import scaleform.gfx.TextFieldEx;
    
-   [Embed(source="/_assets/assets.swf", symbol="symbol365")]
+   [Embed(source="/_assets/assets.swf", symbol="symbol366")]
    public class SecureTrade extends IMenu
    {
       
@@ -3103,7 +3103,7 @@ package
          }
          this.CategoryBar_mc.Finalize();
          this.CategoryBar_mc.SetSelection(this.selectedTab,true,false);
-         if(this.isAmmoStash || this.isScrapStash || this.isAidStash)
+         if(this.isLimitedStorage)
          {
             this.m_SelectedTabForceChange = _loc1_ != this.m_ItemFilters.length;
          }
@@ -3230,7 +3230,7 @@ package
             this.ExitButton.ButtonVisible = true;
             this.ShowHistoryButton.ButtonVisible = this.m_OwnsVendor && !(this.m_MenuMode == MODE_ALLY || this.m_MenuMode == MODE_DISPLAY_CASE || this.m_MenuMode == MODE_FERMENTER || this.m_MenuMode == MODE_FREEZER || this.m_MenuMode == MODE_NPCVENDING || this.m_MenuMode == MODE_PET || this.m_MenuMode == MODE_RECHARGER || this.m_MenuMode == MODE_REFRIGERATOR);
             this.InspectButton.ButtonDisabled = this.selectedList == null || _loc2_ == null;
-            this.LockButton.ButtonVisible = !_loc5_ && (m_IsTransferLockingFeatureEnabled && _loc2_.canBeTransferLocked) && (this.m_MenuMode != MODE_VENDING_MACHINE || !_loc4_ || this.m_OwnsVendor) && (this.m_MenuMode != MODE_NPCVENDING || !_loc4_) && (this.m_MenuMode != MODE_PLAYERVENDING || !_loc4_ && !_loc2_.isOffered) && (this.m_MenuMode != MODE_CONTAINER || !_loc4_ || this.m_isStash || this.m_isCamp || this.isPowerArmor || this.isScrapStash || this.isAmmoStash || this.isAidStash || this.isLootStorage && _loc3_) && (!this.m_CorpseLootMode || !_loc4_);
+            this.LockButton.ButtonVisible = !_loc5_ && (m_IsTransferLockingFeatureEnabled && _loc2_.canBeTransferLocked) && (this.m_MenuMode != MODE_VENDING_MACHINE || !_loc4_ || this.m_OwnsVendor) && (this.m_MenuMode != MODE_NPCVENDING || !_loc4_) && (this.m_MenuMode != MODE_PLAYERVENDING || !_loc4_ && !_loc2_.isOffered) && (this.m_MenuMode != MODE_CONTAINER || !_loc4_ || this.m_isStash || this.m_isCamp || this.isPowerArmor || this.isLimitedStorage || this.isLootStorage && _loc3_) && (!this.m_CorpseLootMode || !_loc4_);
             this.LockButton.ButtonVisible = this.LockButton.ButtonVisible && _loc2_.vendingData.machineType != SecureTradeShared.MACHINE_TYPE_VENDING;
             if(this.LockButton.ButtonVisible)
             {
@@ -3725,7 +3725,7 @@ package
          }
          this.m_PlayerInventoryEmpty = this.PlayerInventory_mc != null && this.IsInventoryEmpty(this.PlayerInventory_mc);
          this.updateButtonHints();
-         if((this.isAmmoStash || this.isScrapStash || this.isAidStash) && this.selectedList == this.PlayerInventory_mc)
+         if(this.isLimitedStorage && this.selectedList == this.PlayerInventory_mc)
          {
             BSUIDataManager.dispatchEvent(new CustomEvent(EVENT_REFRESH_STASH,{}));
          }

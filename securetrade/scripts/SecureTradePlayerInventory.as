@@ -9,7 +9,7 @@ package
    import scaleform.gfx.Extensions;
    import scaleform.gfx.TextFieldEx;
    
-   [Embed(source="/_assets/assets.swf", symbol="symbol332")]
+   [Embed(source="/_assets/assets.swf", symbol="symbol333")]
    public class SecureTradePlayerInventory extends SecureTradeInventory
    {
       

@@ -15,7 +15,7 @@ package Shared.AS3
    import flash.ui.Keyboard;
    import flash.utils.getTimer;
    
-   [Embed(source="/_assets/assets.swf", symbol="symbol17")]
+   [Embed(source="/_assets/assets.swf", symbol="symbol18")]
    public class QuantityMenu extends BSUIComponent
    {
       

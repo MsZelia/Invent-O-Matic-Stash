@@ -2,7 +2,7 @@ package secureTrade_fla
 {
    import flash.display.MovieClip;
    
-   [Embed(source="/_assets/assets.swf", symbol="symbol55")]
+   [Embed(source="/_assets/assets.swf", symbol="symbol56")]
    public dynamic class SetBonusIcon_113 extends MovieClip
    {
       

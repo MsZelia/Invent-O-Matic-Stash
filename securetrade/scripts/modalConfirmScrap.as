@@ -1,6 +1,6 @@
 package
 {
-   [Embed(source="/_assets/assets.swf", symbol="symbol266")]
+   [Embed(source="/_assets/assets.swf", symbol="symbol267")]
    public dynamic class modalConfirmScrap extends SecureTradeScrapConfirmModal
    {
       

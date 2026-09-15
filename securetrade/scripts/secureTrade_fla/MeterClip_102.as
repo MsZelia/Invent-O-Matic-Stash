@@ -2,7 +2,7 @@ package secureTrade_fla
 {
    import flash.display.MovieClip;
    
-   [Embed(source="/_assets/assets.swf", symbol="symbol65")]
+   [Embed(source="/_assets/assets.swf", symbol="symbol66")]
    public dynamic class MeterClip_102 extends MovieClip
    {
       

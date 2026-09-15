@@ -2,7 +2,7 @@ package secureTrade_fla
 {
    import flash.display.MovieClip;
    
-   [Embed(source="/_assets/assets.swf", symbol="symbol172")]
+   [Embed(source="/_assets/assets.swf", symbol="symbol173")]
    public dynamic class ItemLock_Icon_119 extends MovieClip
    {
       

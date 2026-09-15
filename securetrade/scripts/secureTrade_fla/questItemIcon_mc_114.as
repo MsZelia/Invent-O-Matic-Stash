@@ -2,7 +2,7 @@ package secureTrade_fla
 {
    import flash.display.MovieClip;
    
-   [Embed(source="/_assets/assets.swf", symbol="symbol58")]
+   [Embed(source="/_assets/assets.swf", symbol="symbol59")]
    public dynamic class questItemIcon_mc_114 extends MovieClip
    {
       

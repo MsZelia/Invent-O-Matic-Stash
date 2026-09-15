@@ -1,6 +1,6 @@
 package
 {
-   [Embed(source="/_assets/assets.swf", symbol="symbol202")]
+   [Embed(source="/_assets/assets.swf", symbol="symbol203")]
    public class ItemCard_AmmoEntry extends ItemCard_Entry
    {
       

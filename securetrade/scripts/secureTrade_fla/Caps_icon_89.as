@@ -2,7 +2,7 @@ package secureTrade_fla
 {
    import flash.display.MovieClip;
    
-   [Embed(source="/_assets/assets.swf", symbol="symbol217")]
+   [Embed(source="/_assets/assets.swf", symbol="symbol218")]
    public dynamic class Caps_icon_89 extends MovieClip
    {
       

@@ -2,7 +2,7 @@ package secureTrade_fla
 {
    import flash.display.MovieClip;
    
-   [Embed(source="/_assets/assets.swf", symbol="symbol165")]
+   [Embed(source="/_assets/assets.swf", symbol="symbol166")]
    public dynamic class colorConditionMeter_101 extends MovieClip
    {
       
