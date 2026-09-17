@@ -26,6 +26,8 @@ package utils
       
       private static var RED:uint = 16711680;
       
+      private static const MAX_NUMBER_OF_STARS:uint = 4;
+      
       private static var _legendaryModsByDesc:* = null;
       
       private static var _legendaryModsByName:* = null;
@@ -64,7 +66,7 @@ package utils
       
       private static var learnableWeaponPrefix:* = "[Learnable from Weapon]";
       
-      private static var stats:* = [[0,0],[0,0],[0,0],[0,0]];
+      private static var stats:* = [[0,0],[0,0],[0,0],[0,0],[0,0]];
       
       public function LegendaryMods()
       {
@@ -195,10 +197,17 @@ package utils
             {
                var currentMod:* = legendaryModsList[i];
                legendaryModsByName[currentMod.fullName] = currentMod.isLearned;
-               stats[currentMod.stars - 1][1]++;
+               if(currentMod.stars < 1 || currentMod.stars > MAX_NUMBER_OF_STARS)
+               {
+                  Logger.get().error("Invalid number of stars (" + currentMod.stars + ") for mod " + currentMod.fullName);
+               }
+               else
+               {
+                  stats[currentMod.stars - 1][1]++;
+               }
                if(currentMod.isKept || !currentMod.isLearned)
                {
-                  if(!currentMod.isLearned)
+                  if(!currentMod.isLearned && currentMod.stars > 0 && currentMod.stars <= MAX_NUMBER_OF_STARS)
                   {
                      stats[currentMod.stars - 1][0]++;
                   }
@@ -561,7 +570,7 @@ package utils
                format.color = Parser.parseNumber(config.legendaryModsConfig.learnableTextColor,RED);
                prefixes = [learnablePrefix,learnableArmorPrefix,learnablePowerArmorPrefix,learnableWeaponPrefix];
                i = 0;
-               while(i < 4)
+               while(i < prefixes.length)
                {
                   index = int(description_tf.text.indexOf(prefixes[i]));
                   while(index != -1)
@@ -613,9 +622,9 @@ package utils
                   {
                      callback(_legendaryModsFromIni);
                      i = 0;
-                     while(i < 4)
+                     while(i < MAX_NUMBER_OF_STARS)
                      {
-                        Logger.get().info("¬¬¬¬".substr(0,i + 1) + (stats[i][1] - stats[i][0]) + "/" + stats[i][1] + " " + (100 * (stats[i][1] - stats[i][0]) / stats[i][1]).toFixed(0) + "%");
+                        Logger.get().info("¬¬¬¬¬".substr(0,i + 1) + (stats[i][1] - stats[i][0]) + "/" + stats[i][1] + " " + (100 * (stats[i][1] - stats[i][0]) / stats[i][1]).toFixed(0) + "%");
                         i++;
                      }
                   }
