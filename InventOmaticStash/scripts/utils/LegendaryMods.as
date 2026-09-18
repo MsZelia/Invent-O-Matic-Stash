@@ -189,6 +189,7 @@ package utils
          _hasInitializedLearnableLegendaryMods = true;
          loadExistingItemsmodIni(function(legendaryModsList:*):*
          {
+            var invalidLegendaryStars:Array = [];
             var legendaryModsByDesc:* = {};
             var legendaryModsByDescNoStars:* = {};
             var legendaryModsByName:* = {};
@@ -199,6 +200,7 @@ package utils
                legendaryModsByName[currentMod.fullName] = currentMod.isLearned;
                if(currentMod.stars < 1 || currentMod.stars > MAX_NUMBER_OF_STARS)
                {
+                  invalidLegendaryStars.push(currentMod.fullName);
                   Logger.get().error("Invalid number of stars (" + currentMod.stars + ") for mod " + currentMod.fullName);
                }
                else
@@ -317,6 +319,10 @@ package utils
                   }
                }
                i++;
+            }
+            if(invalidLegendaryStars.length > 0)
+            {
+               GlobalFunc.ShowHUDMessage(FILE_LOCATION + " error: " + invalidLegendaryStars.length + " legendary mod" + (invalidLegendaryStars.length > 1 ? "s have" : " has") + " invalid number of stars! " + invalidLegendaryStars.join(", "));
             }
             _legendaryModsByName = legendaryModsByName;
             _legendaryModsByDesc = legendaryModsByDesc;
