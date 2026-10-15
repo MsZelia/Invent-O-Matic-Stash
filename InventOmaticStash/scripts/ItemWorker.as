@@ -120,6 +120,44 @@ package
          return false;
       }
       
+      private static function expandItemGroups(originalNames:Array, includeGroupNames:Boolean) : Array
+      {
+         var groupNames:Object = _config.itemNamesGroupConfig;
+         var itemNames:Array = [];
+         for each (var nameOrNames in originalNames)
+         {
+            // each element in itemNames might be a string or another array of strings (for singleItemPerName)
+            // turn both into arrays of strings to simplify
+            var names: Array;
+            if (nameOrNames is Array)
+            {
+               names = nameOrNames;
+            }
+            else
+            {
+               names = new Array(nameOrNames);
+            }
+            
+            // expand item group names
+            for each (var name in names)
+            {
+               if (groupNames[name] != null)
+               {
+                  itemNames = itemNames.concat(groupNames[name]);
+                  if (includeGroupNames)
+                  {
+                     itemNames.push(name);
+                  }
+               }
+               else
+               {
+                  itemNames.push(name);
+               }
+            }
+         }
+         return itemNames;
+      }
+      
       private static function isMatchingItemName(itemName:String, config:Object) : Boolean
       {
          var stringToCompare:String = null;
@@ -127,18 +165,8 @@ package
          var matchMode:String = String(config.matchMode);
          var INVERSE:Boolean = matchMode === MatchMode.NOT_CONTAINS || matchMode === MatchMode.NOT_EXACT;
          var allMatch:Boolean = true;
-         var itemNames:Array = [];
+         var itemNames:Array = expandItemGroups(config.itemNames, true);
          var i:int = 0;
-         while(i < config.itemNames.length)
-         {
-            if(_config.itemNamesGroupConfig[config.itemNames[i]] != null)
-            {
-               itemNames = itemNames.concat(_config.itemNamesGroupConfig[config.itemNames[i]]);
-            }
-            i++;
-         }
-         itemNames = config.itemNames.concat(itemNames);
-         i = 0;
          while(i < itemNames.length)
          {
             stringToCompare = String(itemNames[i]);
@@ -170,17 +198,8 @@ package
          {
             return false;
          }
-         var itemNames:Array = [];
+         var itemNames:Array = expandItemGroups(ignoreItemNames, true);
          var i:uint = 0;
-         while(i < ignoreItemNames.length)
-         {
-            if(_config.itemNamesGroupConfig[ignoreItemNames[i]] != null)
-            {
-               itemNames = itemNames.concat(_config.itemNamesGroupConfig[ignoreItemNames[i]]);
-            }
-            i++;
-         }
-         itemNames = ignoreItemNames.concat(itemNames);
          var lowercaseName:String = itemName.toLowerCase();
          var len:uint = itemNames.length;
          i = 0;
@@ -203,26 +222,8 @@ package
          var matchMode:String = String(config.matchMode);
          var INVERSE:Boolean = matchMode === MatchMode.NOT_CONTAINS || matchMode === MatchMode.NOT_EXACT;
          var allMatch:Boolean = true;
-         var itemNames:Array = [];
+         var itemNames:Array = expandItemGroups(config.itemNames, false);
          var i:int = 0;
-         while(i < config.itemNames.length)
-         {
-            var j:int = 0;
-            while(j < config.itemNames[i].length)
-            {
-               if(_config.itemNamesGroupConfig[config.itemNames[i][j]] != null)
-               {
-                  itemNames = itemNames.concat(_config.itemNamesGroupConfig[config.itemNames[i][j]]);
-               }
-               else
-               {
-                  itemNames.push(config.itemNames[i][j]);
-               }
-               j++;
-            }
-            i++;
-         }
-         i = 0;
          while(i < itemNames.length)
          {
             stringToCompare = String(itemNames[i]);
@@ -340,17 +341,7 @@ package
             {
                matchMode = config.matchMode;
             }
-            excluded = [];
-            i = 0;
-            while(i < config.excluded.length)
-            {
-               if(_config.itemNamesGroupConfig[config.excluded[i]] != null)
-               {
-                  excluded = excluded.concat(_config.itemNamesGroupConfig[config.excluded[i]]);
-               }
-               i++;
-            }
-            excluded = config.excluded.concat(excluded);
+            excluded = expandItemGroups(config.excluded, true);;
             i = 0;
             while(i < excluded.length)
             {
