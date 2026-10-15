@@ -215,18 +215,16 @@ package
          return false;
       }
       
-      private static function isMatchingTransferItemName(itemName:String, config:Object) : Boolean
+      private static function isMatchingTransferItemName(itemName:String, config:Object, expandedItems:Array) : Boolean
       {
          var stringToCompare:String = null;
          var isMatching:Boolean = false;
          var matchMode:String = String(config.matchMode);
          var INVERSE:Boolean = matchMode === MatchMode.NOT_CONTAINS || matchMode === MatchMode.NOT_EXACT;
          var allMatch:Boolean = true;
-         var itemNames:Array = expandItemGroups(config.itemNames, false);
-         var i:int = 0;
-         while(i < itemNames.length)
+         for each (var name in expandedItems)
          {
-            stringToCompare = String(itemNames[i]);
+            stringToCompare = String(name);
             isMatching = isMatchingString(itemName,stringToCompare,matchMode);
             if(INVERSE)
             {
@@ -240,7 +238,6 @@ package
             {
                return true;
             }
-            i++;
          }
          if(INVERSE)
          {
@@ -382,14 +379,14 @@ package
          return isMatchingType(item,sectionConfig) && isMatchingItemName(itemName,sectionConfig);
       }
       
-      private static function isItemMatchingTransferConfig(item:Object, sectionConfig:Object) : Boolean
+      private static function isItemMatchingTransferConfig(item:Object, sectionConfig:Object, expandedItems:Array) : Boolean
       {
          var itemName: String = String(item.text);
          if(itemName == null || itemName.length < 1 || itemName == "")
          {
             return false;
          }
-         return isMatchingType(item,sectionConfig) && isMatchingTransferItemName(itemName,sectionConfig);
+         return isMatchingType(item,sectionConfig) && isMatchingTransferItemName(itemName,sectionConfig,expandedItems);
       }
       
       public static function isTheSameCharacterName(sectionConfig:Object, debug:Boolean = false) : Boolean
@@ -747,6 +744,11 @@ package
             }
             indexNames++;
          }
+         errorCode = "itemGroupExpand";
+         // preexpand the item name list in the section config. it isn't dependent on individual items so computing it
+         // each time per item is wasteful.
+         // NOTE: might want to just do at config load, since it will only change it the config changes.
+         var expandedItems:Array = expandItemGroups(sectionConfig.itemNames, false);
          errorCode = "loopInv";
          for (var index = 0; index < inventory.length; ++index)
          {
@@ -828,7 +830,7 @@ package
             else
             {
                errorCode = "loopInv mipn " + index;
-               isMatching = isItemMatchingTransferConfig(item,sectionConfig) && isItemMatchingLegendaryConfig(item,sectionConfig) && isItemMatchingArmorGradeConfig(item,sectionConfig);
+               isMatching = isItemMatchingTransferConfig(item,sectionConfig,expandedItems) && isItemMatchingLegendaryConfig(item,sectionConfig) && isItemMatchingArmorGradeConfig(item,sectionConfig);
                if(isMatching)
                {
                   newMatches[0][0].push(item);
