@@ -28,8 +28,6 @@ package
       
       public static const CLOSE_MENU_DELAY:uint = 1000;
       
-      private static var matchingID:int = -1;
-      
       private var secureTrade:Object;
       
       private var _queue:Vector.<Object> = new Vector.<Object>();
@@ -155,7 +153,6 @@ package
             }
             else if(isMatching)
             {
-               matchingID = i;
                return true;
             }
             i++;
@@ -240,7 +237,6 @@ package
             }
             else if(isMatching)
             {
-               matchingID = i;
                return true;
             }
             i++;
@@ -363,13 +359,11 @@ package
                {
                   if(matches)
                   {
-                     matchingID = i;
                      return true;
                   }
                }
                else if(matches)
                {
-                  matchingID = i;
                   return false;
                }
                i++;
@@ -1081,7 +1075,6 @@ package
             errorCode = "max";
             maxItems = int(config.maxItems);
             singleItemPerName = Boolean(config.singleItemPerName);
-            matchingID = -1;
             if(maxItems > 0)
             {
                countItemsToTransfer = true;
