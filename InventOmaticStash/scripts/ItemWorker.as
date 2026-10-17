@@ -750,64 +750,63 @@ package
          // NOTE: might want to just do at config load, since it will only change it the config changes.
          var expandedItems:Array = expandItemGroups(sectionConfig.itemNames, false);
          errorCode = "loopInv";
-         for (var index = 0; index < inventory.length; ++index)
+         var index:int = 0;
+         while(index < inventory.length)
          {
             errorCode = "loopInv " + index;
             item = inventory[index];
             errorCode = "loopInv " + index + " check1";
             if(!Boolean(sectionConfig.transferLocked) && item.isTransferLocked)
             {
-               continue;
+               index++;
             }
-            if(!Boolean(sectionConfig.transferFavorite) && item.favorite)
+            else if(!Boolean(sectionConfig.transferFavorite) && item.favorite)
             {
-               continue;
+               index++;
             }
-            if(!Boolean(sectionConfig.transferEquipped) && item.equipState == 1)
+            else if(!Boolean(sectionConfig.transferEquipped) && item.equipState == 1)
             {
-               continue;
+               index++;
             }
-            if(!Boolean(sectionConfig.transferAssigned) && item.vendingData && item.vendingData.machineType != 0)
+            else if(!Boolean(sectionConfig.transferAssigned) && item.vendingData && item.vendingData.machineType != 0)
             {
-               continue;
+               index++;
             }
-            if(item.filterFlag & 0x0400 && Boolean(sectionConfig.onlyKnownPlans) && !item.isLearnedRecipe)
+            else if(item.filterFlag & 0x0400 && Boolean(sectionConfig.onlyKnownPlans) && !item.isLearnedRecipe)
             {
-               continue;
+               index++;
             }
-            if(item.filterFlag & 0x0400 && Boolean(sectionConfig.onlyUnknownPlans) && item.isLearnedRecipe)
+            else if(item.filterFlag & 0x0400 && Boolean(sectionConfig.onlyUnknownPlans) && item.isLearnedRecipe)
             {
-               continue;
+               index++;
             }
-            if(item.filterFlag & 4 && sectionConfig.weaponTypes is Array && sectionConfig.weaponTypes.length > 0 && sectionConfig.weaponTypes.indexOf(WeaponTypes.getWeaponType(item)) == -1)
+            else if(item.filterFlag & 4 && sectionConfig.weaponTypes is Array && sectionConfig.weaponTypes.length > 0 && sectionConfig.weaponTypes.indexOf(WeaponTypes.getWeaponType(item)) == -1)
             {
-               continue;
+               index++;
             }
-            if(Boolean(sectionConfig.onlyCurrentCategory) && !(item.filterFlag & itemFilter))
+            else if(Boolean(sectionConfig.onlyCurrentCategory) && !(item.filterFlag & itemFilter))
             {
-               continue;
+               index++;
             }
-            if(isIgnoreItemName(item.text,sectionConfig.ignoreItemNames))
+            else if(isIgnoreItemName(item.text,sectionConfig.ignoreItemNames))
             {
-               continue;
+               index++;
             }
-            
-            if(transferTaggedForSearch && item.taggedForSearch)
-            {
-               newMatches[0][0].push(item);
-               continue;
-            }
-            
-            if(isLoot && !sectionConfig.checkLegendaryEffects && item.isLegendary && sectionConfig.transferLegendaries.length > 0 && sectionConfig.transferLegendaries.indexOf(item.numLegendaryStars) != -1)
+            else if(transferTaggedForSearch && item.taggedForSearch)
             {
                newMatches[0][0].push(item);
-               continue;
+               index++;
             }
-            if(!isLoot && !sectionConfig.checkLegendaryEffects && sectionConfig.transferLegendaries.length > 0 && sectionConfig.transferLegendaries.indexOf(item.numLegendaryStars) == -1)
+            else if(isLoot && !sectionConfig.checkLegendaryEffects && item.isLegendary && sectionConfig.transferLegendaries.length > 0 && sectionConfig.transferLegendaries.indexOf(item.numLegendaryStars) != -1)
             {
-               continue;
+               newMatches[0][0].push(item);
+               index++;
             }
-            if(sectionConfig.singleItemPerName)
+            else if(!isLoot && !sectionConfig.checkLegendaryEffects && sectionConfig.transferLegendaries.length > 0 && sectionConfig.transferLegendaries.indexOf(item.numLegendaryStars) == -1)
+            {
+               index++;
+            }
+            else if(sectionConfig.singleItemPerName)
             {
                indexNames = 0;
                while(indexNames < sectionConfig.itemNames.length)
@@ -826,6 +825,7 @@ package
                   }
                   indexNames++;
                }
+               index++;
             }
             else
             {
@@ -835,6 +835,7 @@ package
                {
                   newMatches[0][0].push(item);
                }
+               index++;
             }
          }
          return newMatches;
