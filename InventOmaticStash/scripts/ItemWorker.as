@@ -124,27 +124,22 @@ package
       {
          var groupNames:Object = _config.itemNamesGroupConfig;
          var itemNames:Array = [];
-         for each (var nameOrNames in originalNames)
+         for each(var nameOrNames in originalNames)
          {
-            // each element in itemNames might be a string or another array of strings (for singleItemPerName)
-            // turn both into arrays of strings to simplify
-            var names: Array;
-            if (nameOrNames is Array)
+            if(nameOrNames is Array)
             {
-               names = nameOrNames;
+               var names:Array = nameOrNames;
             }
             else
             {
                names = new Array(nameOrNames);
             }
-            
-            // expand item group names
-            for each (var name in names)
+            for each(var name in names)
             {
-               if (groupNames[name] != null)
+               if(groupNames[name] != null)
                {
                   itemNames = itemNames.concat(groupNames[name]);
-                  if (includeGroupNames)
+                  if(includeGroupNames)
                   {
                      itemNames.push(name);
                   }
@@ -165,7 +160,7 @@ package
          var matchMode:String = String(config.matchMode);
          var INVERSE:Boolean = matchMode === MatchMode.NOT_CONTAINS || matchMode === MatchMode.NOT_EXACT;
          var allMatch:Boolean = true;
-         var itemNames:Array = expandItemGroups(config.itemNames, true);
+         var itemNames:Array = expandItemGroups(config.itemNames,true);
          var i:int = 0;
          while(i < itemNames.length)
          {
@@ -198,7 +193,7 @@ package
          {
             return false;
          }
-         var itemNames:Array = expandItemGroups(ignoreItemNames, true);
+         var itemNames:Array = expandItemGroups(ignoreItemNames,true);
          var i:uint = 0;
          var lowercaseName:String = itemName.toLowerCase();
          var len:uint = itemNames.length;
@@ -222,7 +217,7 @@ package
          var matchMode:String = String(config.matchMode);
          var INVERSE:Boolean = matchMode === MatchMode.NOT_CONTAINS || matchMode === MatchMode.NOT_EXACT;
          var allMatch:Boolean = true;
-         for each (var name in expandedItems)
+         for each(var name in expandedItems)
          {
             stringToCompare = String(name);
             isMatching = isMatchingString(itemName,stringToCompare,matchMode);
@@ -338,7 +333,7 @@ package
             {
                matchMode = config.matchMode;
             }
-            excluded = expandItemGroups(config.excluded, true);;
+            excluded = expandItemGroups(config.excluded,true);
             i = 0;
             while(i < excluded.length)
             {
@@ -371,7 +366,7 @@ package
       
       private static function isItemMatchingConfig(item:Object, sectionConfig:Object) : Boolean
       {
-         var itemName: String = String(item.text);
+         var itemName:String = String(item.text);
          if(itemName == null || itemName.length < 1 || itemName == "")
          {
             return false;
@@ -381,7 +376,7 @@ package
       
       private static function isItemMatchingTransferConfig(item:Object, sectionConfig:Object, expandedItems:Array) : Boolean
       {
-         var itemName: String = String(item.text);
+         var itemName:String = String(item.text);
          if(itemName == null || itemName.length < 1 || itemName == "")
          {
             return false;
@@ -745,10 +740,7 @@ package
             indexNames++;
          }
          errorCode = "itemGroupExpand";
-         // preexpand the item name list in the section config. it isn't dependent on individual items so computing it
-         // each time per item is wasteful.
-         // NOTE: might want to just do at config load, since it will only change it the config changes.
-         var expandedItems:Array = expandItemGroups(sectionConfig.itemNames, false);
+         var expandedItems:Array = expandItemGroups(sectionConfig.itemNames,false);
          errorCode = "loopInv";
          var index:int = 0;
          while(index < inventory.length)
