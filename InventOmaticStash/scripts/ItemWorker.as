@@ -28,8 +28,6 @@ package
       
       public static const CLOSE_MENU_DELAY:uint = 1000;
       
-      private static var matchingID:int = -1;
-      
       private var secureTrade:Object;
       
       private var _queue:Vector.<Object> = new Vector.<Object>();
@@ -122,26 +120,53 @@ package
          return false;
       }
       
-      private static function isMatchingItemName(param1:String, config:Object) : Boolean
+      private static function expandItemGroups(originalNames:Array, includeGroupNames:Boolean) : Array
+      {
+         var groupNames:Object = _config.itemNamesGroupConfig;
+         var itemNames:Array = [];
+         for each (var nameOrNames in originalNames)
+         {
+            // each element in itemNames might be a string or another array of strings (for singleItemPerName)
+            // turn both into arrays of strings to simplify
+            var names: Array;
+            if (nameOrNames is Array)
+            {
+               names = nameOrNames;
+            }
+            else
+            {
+               names = new Array(nameOrNames);
+            }
+            
+            // expand item group names
+            for each (var name in names)
+            {
+               if (groupNames[name] != null)
+               {
+                  itemNames = itemNames.concat(groupNames[name]);
+                  if (includeGroupNames)
+                  {
+                     itemNames.push(name);
+                  }
+               }
+               else
+               {
+                  itemNames.push(name);
+               }
+            }
+         }
+         return itemNames;
+      }
+      
+      private static function isMatchingItemName(itemName:String, config:Object) : Boolean
       {
          var stringToCompare:String = null;
          var isMatching:Boolean = false;
          var matchMode:String = String(config.matchMode);
-         var itemName:String = param1;
          var INVERSE:Boolean = matchMode === MatchMode.NOT_CONTAINS || matchMode === MatchMode.NOT_EXACT;
          var allMatch:Boolean = true;
-         var itemNames:Array = [];
+         var itemNames:Array = expandItemGroups(config.itemNames, true);
          var i:int = 0;
-         while(i < config.itemNames.length)
-         {
-            if(_config.itemNamesGroupConfig[config.itemNames[i]] != null)
-            {
-               itemNames = itemNames.concat(_config.itemNamesGroupConfig[config.itemNames[i]]);
-            }
-            i++;
-         }
-         itemNames = config.itemNames.concat(itemNames);
-         i = 0;
          while(i < itemNames.length)
          {
             stringToCompare = String(itemNames[i]);
@@ -156,7 +181,6 @@ package
             }
             else if(isMatching)
             {
-               matchingID = i;
                return true;
             }
             i++;
@@ -174,17 +198,8 @@ package
          {
             return false;
          }
-         var itemNames:Array = [];
+         var itemNames:Array = expandItemGroups(ignoreItemNames, true);
          var i:uint = 0;
-         while(i < ignoreItemNames.length)
-         {
-            if(_config.itemNamesGroupConfig[ignoreItemNames[i]] != null)
-            {
-               itemNames = itemNames.concat(_config.itemNamesGroupConfig[ignoreItemNames[i]]);
-            }
-            i++;
-         }
-         itemNames = ignoreItemNames.concat(itemNames);
          var lowercaseName:String = itemName.toLowerCase();
          var len:uint = itemNames.length;
          i = 0;
@@ -200,37 +215,16 @@ package
          return false;
       }
       
-      private static function isMatchingTransferItemName(param1:String, config:Object) : Boolean
+      private static function isMatchingTransferItemName(itemName:String, config:Object, expandedItems:Array) : Boolean
       {
          var stringToCompare:String = null;
          var isMatching:Boolean = false;
          var matchMode:String = String(config.matchMode);
-         var itemName:String = param1;
          var INVERSE:Boolean = matchMode === MatchMode.NOT_CONTAINS || matchMode === MatchMode.NOT_EXACT;
          var allMatch:Boolean = true;
-         var itemNames:Array = [];
-         var i:int = 0;
-         while(i < config.itemNames.length)
+         for each (var name in expandedItems)
          {
-            var j:int = 0;
-            while(j < config.itemNames[i].length)
-            {
-               if(_config.itemNamesGroupConfig[config.itemNames[i][j]] != null)
-               {
-                  itemNames = itemNames.concat(_config.itemNamesGroupConfig[config.itemNames[i][j]]);
-               }
-               else
-               {
-                  itemNames.push(config.itemNames[i][j]);
-               }
-               j++;
-            }
-            i++;
-         }
-         i = 0;
-         while(i < itemNames.length)
-         {
-            stringToCompare = String(itemNames[i]);
+            stringToCompare = String(name);
             isMatching = isMatchingString(itemName,stringToCompare,matchMode);
             if(INVERSE)
             {
@@ -242,10 +236,8 @@ package
             }
             else if(isMatching)
             {
-               matchingID = i;
                return true;
             }
-            i++;
          }
          if(INVERSE)
          {
@@ -254,10 +246,8 @@ package
          return isMatching;
       }
       
-      private static function isMatchingType(param1:Object, param2:Object) : Boolean
+      private static function isMatchingType(item:Object, config:Object) : Boolean
       {
-         var item:Object = param1;
-         var config:Object = param2;
          var types:Array = config.types;
          var matchingFilterFlags:Array = [];
          var i:int = 0;
@@ -348,17 +338,7 @@ package
             {
                matchMode = config.matchMode;
             }
-            excluded = [];
-            i = 0;
-            while(i < config.excluded.length)
-            {
-               if(_config.itemNamesGroupConfig[config.excluded[i]] != null)
-               {
-                  excluded = excluded.concat(_config.itemNamesGroupConfig[config.excluded[i]]);
-               }
-               i++;
-            }
-            excluded = config.excluded.concat(excluded);
+            excluded = expandItemGroups(config.excluded, true);;
             i = 0;
             while(i < excluded.length)
             {
@@ -367,13 +347,11 @@ package
                {
                   if(matches)
                   {
-                     matchingID = i;
                      return true;
                   }
                }
                else if(matches)
                {
-                  matchingID = i;
                   return false;
                }
                i++;
@@ -391,24 +369,24 @@ package
          return false;
       }
       
-      private static function isItemMatchingConfig(param1:Object, param2:Object) : Boolean
+      private static function isItemMatchingConfig(item:Object, sectionConfig:Object) : Boolean
       {
-         param3 = String(param1.text);
-         if(param3 == null || param3.length < 1 || param3 == "")
+         var itemName: String = String(item.text);
+         if(itemName == null || itemName.length < 1 || itemName == "")
          {
             return false;
          }
-         return isMatchingType(param1,param2) && isMatchingItemName(param3,param2);
+         return isMatchingType(item,sectionConfig) && isMatchingItemName(itemName,sectionConfig);
       }
       
-      private static function isItemMatchingTransferConfig(param1:Object, param2:Object) : Boolean
+      private static function isItemMatchingTransferConfig(item:Object, sectionConfig:Object, expandedItems:Array) : Boolean
       {
-         param3 = String(param1.text);
-         if(param3 == null || param3.length < 1 || param3 == "")
+         var itemName: String = String(item.text);
+         if(itemName == null || itemName.length < 1 || itemName == "")
          {
             return false;
          }
-         return isMatchingType(param1,param2) && isMatchingTransferItemName(param3,param2);
+         return isMatchingType(item,sectionConfig) && isMatchingTransferItemName(itemName,sectionConfig,expandedItems);
       }
       
       public static function isTheSameCharacterName(sectionConfig:Object, debug:Boolean = false) : Boolean
@@ -742,7 +720,6 @@ package
       
       private function findMatches(inventory:Array, sectionConfig:Object, isLoot:Boolean = false) : Array
       {
-         var index:int = 0;
          var indexNames:int = 0;
          var indexNamesAlts:int = 0;
          var item:Object = null;
@@ -767,8 +744,13 @@ package
             }
             indexNames++;
          }
+         errorCode = "itemGroupExpand";
+         // preexpand the item name list in the section config. it isn't dependent on individual items so computing it
+         // each time per item is wasteful.
+         // NOTE: might want to just do at config load, since it will only change it the config changes.
+         var expandedItems:Array = expandItemGroups(sectionConfig.itemNames, false);
          errorCode = "loopInv";
-         index = 0;
+         var index:int = 0;
          while(index < inventory.length)
          {
             errorCode = "loopInv " + index;
@@ -810,54 +792,48 @@ package
             {
                index++;
             }
-            else
+            else if(transferTaggedForSearch && item.taggedForSearch)
             {
-               if(transferTaggedForSearch && item.taggedForSearch)
+               newMatches[0][0].push(item);
+               index++;
+            }
+            else if(isLoot && !sectionConfig.checkLegendaryEffects && item.isLegendary && sectionConfig.transferLegendaries.length > 0 && sectionConfig.transferLegendaries.indexOf(item.numLegendaryStars) != -1)
+            {
+               newMatches[0][0].push(item);
+               index++;
+            }
+            else if(!isLoot && !sectionConfig.checkLegendaryEffects && sectionConfig.transferLegendaries.length > 0 && sectionConfig.transferLegendaries.indexOf(item.numLegendaryStars) == -1)
+            {
+               index++;
+            }
+            else if(sectionConfig.singleItemPerName)
+            {
+               indexNames = 0;
+               while(indexNames < sectionConfig.itemNames.length)
                {
-                  newMatches[0][0].push(item);
-               }
-               else
-               {
-                  if(isLoot && !sectionConfig.checkLegendaryEffects && item.isLegendary && sectionConfig.transferLegendaries.length > 0 && sectionConfig.transferLegendaries.indexOf(item.numLegendaryStars) != -1)
+                  errorCode = "loopInv sipn " + index + " check2 " + indexNames;
+                  indexNamesAlts = 0;
+                  while(indexNamesAlts < sectionConfig.itemNames[indexNames].length)
                   {
-                     newMatches[0][0].push(item);
-                     index++;
-                     continue;
-                  }
-                  if(!isLoot && !sectionConfig.checkLegendaryEffects && sectionConfig.transferLegendaries.length > 0 && sectionConfig.transferLegendaries.indexOf(item.numLegendaryStars) == -1)
-                  {
-                     index++;
-                     continue;
-                  }
-                  if(sectionConfig.singleItemPerName)
-                  {
-                     indexNames = 0;
-                     while(indexNames < sectionConfig.itemNames.length)
-                     {
-                        errorCode = "loopInv sipn " + index + " check2 " + indexNames;
-                        indexNamesAlts = 0;
-                        while(indexNamesAlts < sectionConfig.itemNames[indexNames].length)
-                        {
-                           errorCode = "loopInv sipn " + index + " check2 " + indexNames + " " + indexNamesAlts;
-                           isMatching = isMatchingType(item,sectionConfig) && isMatchingString(item.text,sectionConfig.itemNames[indexNames][indexNamesAlts],sectionConfig.matchMode);
-                           if(isMatching)
-                           {
-                              newMatches[indexNames][indexNamesAlts].push(item);
-                           }
-                           indexNamesAlts++;
-                        }
-                        indexNames++;
-                     }
-                  }
-                  else
-                  {
-                     errorCode = "loopInv mipn " + index;
-                     isMatching = isItemMatchingTransferConfig(item,sectionConfig) && isItemMatchingLegendaryConfig(item,sectionConfig) && isItemMatchingArmorGradeConfig(item,sectionConfig);
+                     errorCode = "loopInv sipn " + index + " check2 " + indexNames + " " + indexNamesAlts;
+                     isMatching = isMatchingType(item,sectionConfig) && isMatchingString(item.text,sectionConfig.itemNames[indexNames][indexNamesAlts],sectionConfig.matchMode);
                      if(isMatching)
                      {
-                        newMatches[0][0].push(item);
+                        newMatches[indexNames][indexNamesAlts].push(item);
                      }
+                     indexNamesAlts++;
                   }
+                  indexNames++;
+               }
+               index++;
+            }
+            else
+            {
+               errorCode = "loopInv mipn " + index;
+               isMatching = isItemMatchingTransferConfig(item,sectionConfig,expandedItems) && isItemMatchingLegendaryConfig(item,sectionConfig) && isItemMatchingArmorGradeConfig(item,sectionConfig);
+               if(isMatching)
+               {
+                  newMatches[0][0].push(item);
                }
                index++;
             }
@@ -1056,15 +1032,13 @@ package
          return false;
       }
       
-      private function transfer(param1:Array, param2:Boolean, param3:Object, isLoot:Boolean = false) : uint
+      private function transfer(inventory:Array, fromContainer:Boolean, config:Object, isLoot:Boolean = false) : uint
       {
          var item:Object;
          var itemInDestination:Object;
          var filtered:Array;
          errorCode = "init";
          var ReturnDelay:uint = 0;
-         var fromContainer:Boolean = param2;
-         var config:Object = param3;
          var i:int = 0;
          var j:int = 0;
          var k:int = 0;
@@ -1078,146 +1052,145 @@ package
          var invertDestination:Boolean = false;
          var singleItemPerName:Boolean = false;
          var countItemsToTransfer:Boolean = false;
-         var inventory:Array = param1;
          _queue = new Vector.<Object>();
          var destinationMap:* = null;
-         if(inventory && inventory.length > 0)
+         if(!(inventory && inventory.length > 0))
          {
-            try
+            return ReturnDelay;
+         }
+         try
+         {
+            errorCode = "prep";
+            config.itemNames = prepTransferAlts(config);
+            errorCode = "filter";
+            filtered = findMatches(inventory,config,isLoot);
+            errorCode = "amount";
+            amount = Parser.parseNumber(config.amount,0);
+            errorCode = "max";
+            maxItems = int(config.maxItems);
+            singleItemPerName = Boolean(config.singleItemPerName);
+            if(maxItems > 0)
             {
-               errorCode = "prep";
-               config.itemNames = prepTransferAlts(config);
-               errorCode = "filter";
-               filtered = findMatches(inventory,config,isLoot);
-               errorCode = "amount";
-               amount = Parser.parseNumber(config.amount,0);
-               errorCode = "max";
-               maxItems = int(config.maxItems);
-               singleItemPerName = Boolean(config.singleItemPerName);
-               matchingID = -1;
-               if(maxItems > 0)
+               countItemsToTransfer = true;
+            }
+            i = 0;
+            amountStacksTransferred = 0;
+            while(i < filtered.length)
+            {
+               amountItemsTransferred = 0;
+               j = 0;
+               while(!end && j < filtered[i].length)
                {
-                  countItemsToTransfer = true;
-               }
-               i = 0;
-               amountStacksTransferred = 0;
-               while(i < filtered.length)
-               {
-                  amountItemsTransferred = 0;
-                  j = 0;
-                  while(!end && j < filtered[i].length)
+                  k = 0;
+                  while(k < filtered[i][j].length)
                   {
-                     k = 0;
-                     while(k < filtered[i][j].length)
+                     errorCode = "item " + i + " " + j + " " + k;
+                     item = filtered[i][j][k];
+                     errorCode = "item amount " + i + " " + j + " " + k;
+                     amount = getAmount(int(config.amount),item.count,singleItemPerName ? amountItemsTransferred : 0);
+                     invertDestination = false;
+                     itemInDestination = null;
+                     if(config.exactAmountInDestination)
                      {
-                        errorCode = "item " + i + " " + j + " " + k;
-                        item = filtered[i][j][k];
-                        errorCode = "item amount " + i + " " + j + " " + k;
-                        amount = getAmount(int(config.amount),item.count,singleItemPerName ? amountItemsTransferred : 0);
-                        invertDestination = false;
-                        itemInDestination = null;
-                        if(config.exactAmountInDestination)
+                        if(destinationMap == null)
                         {
-                           if(destinationMap == null)
-                           {
-                              destinationMap = getDestinationMap(inventory);
-                           }
-                           itemInDestination = destinationMap[item.text];
-                           if(itemInDestination != null)
-                           {
-                              if(itemInDestination.count > config.amount)
-                              {
-                                 if(config.debug)
-                                 {
-                                    Logger.get().info("exactAmountInDestination: direction inverted for " + item.text);
-                                 }
-                                 invertDestination = true;
-                                 amount = itemInDestination.count - config.amount;
-                              }
-                              else
-                              {
-                                 amount = Math.min(amount,config.amount - itemInDestination.count);
-                              }
-                           }
-                           else if(config.debug)
-                           {
-                              Logger.get().info("exactAmountInDestination: no item in destination " + item.text);
-                           }
+                           destinationMap = getDestinationMap(inventory);
                         }
-                        if(amount != 0)
+                        itemInDestination = destinationMap[item.text];
+                        if(itemInDestination != null)
                         {
-                           errorCode = "item amount != 0 " + i + " " + j + " " + k;
-                           amountStacksTransferred++;
-                           if(countItemsToTransfer && amountStacksTransferred > maxItems)
+                           if(itemInDestination.count > config.amount)
                            {
-                              i = int.MAX_VALUE - 1;
-                              end = true;
-                              break;
-                           }
-                           if(config.debug)
-                           {
-                              Logger.get().info("Item queued: " + item.text + " (" + amount + "/" + item.count + ")");
-                           }
-                           errorCode = "item amount != 0 push " + i + " " + j + " " + k;
-                           if(invertDestination)
-                           {
-                              _queue.push({
-                                 "text":item.text,
-                                 "serverHandleID":itemInDestination.serverHandleID,
-                                 "containerID":itemInDestination.containerID,
-                                 "count":amount,
-                                 "fromContainer":!fromContainer
-                              });
+                              if(config.debug)
+                              {
+                                 Logger.get().info("exactAmountInDestination: direction inverted for " + item.text);
+                              }
+                              invertDestination = true;
+                              amount = itemInDestination.count - config.amount;
                            }
                            else
                            {
-                              _queue.push({
-                                 "text":item.text,
-                                 "serverHandleID":item.serverHandleID,
-                                 "containerID":item.containerID,
-                                 "count":amount,
-                                 "fromContainer":fromContainer
-                              });
-                           }
-                           amountItemsTransferred += amount;
-                           if(config.amount > 0 && amountItemsTransferred >= config.amount)
-                           {
-                              if(singleItemPerName)
-                              {
-                                 j = int.MAX_VALUE - 1;
-                                 break;
-                              }
+                              amount = Math.min(amount,config.amount - itemInDestination.count);
                            }
                         }
-                        k++;
+                        else if(config.debug)
+                        {
+                           Logger.get().info("exactAmountInDestination: no item in destination " + item.text);
+                        }
                      }
-                     j++;
+                     if(amount != 0)
+                     {
+                        errorCode = "item amount != 0 " + i + " " + j + " " + k;
+                        amountStacksTransferred++;
+                        if(countItemsToTransfer && amountStacksTransferred > maxItems)
+                        {
+                           i = int.MAX_VALUE - 1;
+                           end = true;
+                           break;
+                        }
+                        if(config.debug)
+                        {
+                           Logger.get().info("Item queued: " + item.text + " (" + amount + "/" + item.count + ")");
+                        }
+                        errorCode = "item amount != 0 push " + i + " " + j + " " + k;
+                        if(invertDestination)
+                        {
+                           _queue.push({
+                              "text":item.text,
+                              "serverHandleID":itemInDestination.serverHandleID,
+                              "containerID":itemInDestination.containerID,
+                              "count":amount,
+                              "fromContainer":!fromContainer
+                           });
+                        }
+                        else
+                        {
+                           _queue.push({
+                              "text":item.text,
+                              "serverHandleID":item.serverHandleID,
+                              "containerID":item.containerID,
+                              "count":amount,
+                              "fromContainer":fromContainer
+                           });
+                        }
+                        amountItemsTransferred += amount;
+                        if(config.amount > 0 && amountItemsTransferred >= config.amount)
+                        {
+                           if(singleItemPerName)
+                           {
+                              j = int.MAX_VALUE - 1;
+                              break;
+                           }
+                        }
+                     }
+                     k++;
                   }
-                  i++;
+                  j++;
                }
-               errorCode = "max check";
-               if(countItemsToTransfer && amountStacksTransferred >= maxItems)
-               {
-                  if(config.debug)
-                  {
-                     Logger.get().info("Transfer maxItems limit reached: " + maxItems);
-                  }
-               }
-               errorCode = "test";
-               if(Parser.parseBoolean(config.testRun,false))
-               {
-                  showTestRun("TRANSFER (" + config.name + ")");
-                  return 0;
-               }
-               delay = Math.max(Parser.parsePositiveNumber(config.delay,DEFAULT_DELAY),MIN_DELAY);
-               repeat = Parser.parsePositiveNumber(config.repeat,1);
-               ReturnDelay = delay * repeat * _queue.length;
-               executeForQueue(transferQueued,delay,repeat,config.debug,config.showMessage,"Transferring",config.closeMenu);
+               i++;
             }
-            catch(e:Error)
+            errorCode = "max check";
+            if(countItemsToTransfer && amountStacksTransferred >= maxItems)
             {
-               Logger.get().errorHandler("Error ItemWorker transfer " + errorCode,e);
+               if(config.debug)
+               {
+                  Logger.get().info("Transfer maxItems limit reached: " + maxItems);
+               }
             }
+            errorCode = "test";
+            if(Parser.parseBoolean(config.testRun,false))
+            {
+               showTestRun("TRANSFER (" + config.name + ")");
+               return 0;
+            }
+            delay = Math.max(Parser.parsePositiveNumber(config.delay,DEFAULT_DELAY),MIN_DELAY);
+            repeat = Parser.parsePositiveNumber(config.repeat,1);
+            ReturnDelay = delay * repeat * _queue.length;
+            executeForQueue(transferQueued,delay,repeat,config.debug,config.showMessage,"Transferring",config.closeMenu);
+         }
+         catch(e:Error)
+         {
+            Logger.get().errorHandler("Error ItemWorker transfer " + errorCode,e);
          }
          return ReturnDelay;
       }
@@ -2349,7 +2322,6 @@ package
                var delayStep:uint = Parser.parsePositiveNumber(config.delay);
                Logger.get().info("Executing transfer (" + delayStep + "ms delay): " + config.name);
                var direction:String = String(config.direction);
-               var hotkeyMatch:Boolean = keyCode == config.hotkey;
                if(isSelectedItemTransfer(config))
                {
                   configDelay = transferSelected(config);
