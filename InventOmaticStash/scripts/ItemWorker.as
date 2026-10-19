@@ -120,39 +120,6 @@ package
          return false;
       }
       
-      private static function expandItemGroups(originalNames:Array, includeGroupNames:Boolean) : Array
-      {
-         var groupNames:Object = _config.itemNamesGroupConfig;
-         var itemNames:Array = [];
-         for each(var nameOrNames in originalNames)
-         {
-            if(nameOrNames is Array)
-            {
-               var names:Array = nameOrNames;
-            }
-            else
-            {
-               names = new Array(nameOrNames);
-            }
-            for each(var name in names)
-            {
-               if(groupNames[name] != null)
-               {
-                  itemNames = itemNames.concat(groupNames[name]);
-                  if(includeGroupNames)
-                  {
-                     itemNames.push(name);
-                  }
-               }
-               else
-               {
-                  itemNames.push(name);
-               }
-            }
-         }
-         return itemNames;
-      }
-      
       private static function isMatchingItemName(itemName:String, config:Object) : Boolean
       {
          var stringToCompare:String = null;
@@ -160,7 +127,7 @@ package
          var matchMode:String = String(config.matchMode);
          var INVERSE:Boolean = matchMode === MatchMode.NOT_CONTAINS || matchMode === MatchMode.NOT_EXACT;
          var allMatch:Boolean = true;
-         var itemNames:Array = expandItemGroups(config.itemNames,true);
+         var itemNames:Array = config.itemNames;
          var i:int = 0;
          while(i < itemNames.length)
          {
@@ -193,14 +160,12 @@ package
          {
             return false;
          }
-         var itemNames:Array = expandItemGroups(ignoreItemNames,true);
          var i:uint = 0;
-         var lowercaseName:String = itemName.toLowerCase();
-         var len:uint = itemNames.length;
-         i = 0;
+         var lowercaseName:String = ignoreItemNames.toLowerCase();
+         var len:uint = ignoreItemNames.length;
          while(i < len)
          {
-            var element:* = itemNames[i];
+            var element:* = ignoreItemNames[i];
             if(element is String && element.length && lowercaseName.indexOf(element.toLowerCase()) != -1)
             {
                return true;
@@ -210,14 +175,14 @@ package
          return false;
       }
       
-      private static function isMatchingTransferItemName(itemName:String, config:Object, expandedItems:Array) : Boolean
+      private static function isMatchingTransferItemName(itemName:String, config:Object) : Boolean
       {
          var stringToCompare:String = null;
          var isMatching:Boolean = false;
          var matchMode:String = String(config.matchMode);
          var INVERSE:Boolean = matchMode === MatchMode.NOT_CONTAINS || matchMode === MatchMode.NOT_EXACT;
          var allMatch:Boolean = true;
-         for each(var name in expandedItems)
+         for each(var name in config.itemNames)
          {
             stringToCompare = String(name);
             isMatching = isMatchingString(itemName,stringToCompare,matchMode);
@@ -333,11 +298,10 @@ package
             {
                matchMode = config.matchMode;
             }
-            excluded = expandItemGroups(config.excluded,true);
             i = 0;
-            while(i < excluded.length)
+            while(i < config.excluded.length)
             {
-               matches = isMatchingString(item.text,excluded[i],matchMode);
+               matches = isMatchingString(item.text,config.excluded[i],matchMode);
                if(INVERSE)
                {
                   if(matches)
@@ -374,14 +338,14 @@ package
          return isMatchingType(item,sectionConfig) && isMatchingItemName(itemName,sectionConfig);
       }
       
-      private static function isItemMatchingTransferConfig(item:Object, sectionConfig:Object, expandedItems:Array) : Boolean
+      private static function isItemMatchingTransferConfig(item:Object, sectionConfig:Object) : Boolean
       {
          var itemName:String = String(item.text);
          if(itemName == null || itemName.length < 1 || itemName == "")
          {
             return false;
          }
-         return isMatchingType(item,sectionConfig) && isMatchingTransferItemName(itemName,sectionConfig,expandedItems);
+         return isMatchingType(item,sectionConfig) && isMatchingTransferItemName(itemName,sectionConfig);
       }
       
       public static function isTheSameCharacterName(sectionConfig:Object, debug:Boolean = false) : Boolean
@@ -739,8 +703,6 @@ package
             }
             indexNames++;
          }
-         errorCode = "itemGroupExpand";
-         var expandedItems:Array = expandItemGroups(sectionConfig.itemNames,false);
          errorCode = "loopInv";
          var index:int = 0;
          while(index < inventory.length)
@@ -822,7 +784,7 @@ package
             else
             {
                errorCode = "loopInv mipn " + index;
-               isMatching = isItemMatchingTransferConfig(item,sectionConfig,expandedItems) && isItemMatchingLegendaryConfig(item,sectionConfig) && isItemMatchingArmorGradeConfig(item,sectionConfig);
+               isMatching = isItemMatchingTransferConfig(item,sectionConfig) && isItemMatchingLegendaryConfig(item,sectionConfig) && isItemMatchingArmorGradeConfig(item,sectionConfig);
                if(isMatching)
                {
                   newMatches[0][0].push(item);

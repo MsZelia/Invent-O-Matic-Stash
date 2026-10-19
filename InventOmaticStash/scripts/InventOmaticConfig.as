@@ -129,6 +129,9 @@ package
       public static function init(jsonObject:*) : Object
       {
          var config:* = jsonObject;
+         config.itemNamesGroupConfig = loadItemNamesGroupConfig(config.itemNamesGroupConfig);
+         var itemGroups:Object = config.itemNamesGroupConfig;
+         
          if(!config.extractConfig)
          {
             config.extractConfig = loadDefaultExtractConfig(config);
@@ -140,13 +143,13 @@ package
          }
          if(config.scrapConfig)
          {
-            config.scrapConfig = loadScrapConfig(config.scrapConfig);
+            config.scrapConfig = loadScrapConfig(itemGroups, config.scrapConfig);
             setName(config.scrapConfig,TITLE_SCRAP);
             setMaxItems(config.scrapConfig);
          }
          if(config.transferConfig)
          {
-            config.transferConfig = loadTransferConfig(config.transferConfig);
+            config.transferConfig = loadTransferConfig(itemGroups, config.transferConfig);
          }
          else
          {
@@ -156,17 +159,17 @@ package
          {
             setName(config.lootConfig,TITLE_LOOT);
             setMaxItems(config.lootConfig);
-            config.lootConfig = loadLootConfig(config.lootConfig);
+            config.lootConfig = loadLootConfig(itemGroups, config.lootConfig);
          }
          if(config.npcSellConfig)
          {
-            config.npcSellConfig = loadNpcSellConfig(config.npcSellConfig);
+            config.npcSellConfig = loadNpcSellConfig(itemGroups, config.npcSellConfig);
             setName(config.npcSellConfig,TITLE_NPC_SELL);
             setMaxItems(config.npcSellConfig);
          }
          if(config.campAssignConfig)
          {
-            config.campAssignConfig = loadAssignConfig(config.campAssignConfig);
+            config.campAssignConfig = loadAssignConfig(itemGroups, config.campAssignConfig);
          }
          else
          {
@@ -179,6 +182,11 @@ package
          {
             setName(config.buyConfig,TITLE_BUY);
             setMaxItems(config.buyConfig);
+            config.buyConfig.ignoreItemNames = ExpandItemGroups(itemGroups, config.buyConfig.ignoreItemNames || []);
+            for each(var c in config.buyConfig.configs)
+            {
+               c.itemNames = ExpandItemGroups(itemGroups, c.itemNames || []);
+            }
          }
          if(config.protectionConfig)
          {
@@ -195,7 +203,6 @@ package
             config.localizationConfig = {};
          }
          config.categoryWeightConfig = loadCategoryWeightConfig(config.categoryWeightConfig);
-         config.itemNamesGroupConfig = loadItemNamesGroupConfig(config.itemNamesGroupConfig);
          config.additionalColumnsConfig = loadAdditionalColumnsConfig(config.additionalColumnsConfig);
          config.defaultVendorItemPrice = loadDefaultVendorItemPriceConfig(config.defaultVendorItemPrice);
          initHotkeys(config);
@@ -248,6 +255,34 @@ package
          config.maxItems = Parser.parsePositiveNumber(config.maxItems);
       }
       
+      public static function ExpandItemGroups(itemGroups: Object, originalNames:Array) : Array
+      {
+         var itemNames:Array = [];
+         for each(var nameOrNames in originalNames)
+         {
+            if(nameOrNames is Array)
+            {
+               var names:Array = nameOrNames;
+            }
+            else
+            {
+               names = new Array(nameOrNames);
+            }
+            for each(var name in names)
+            {
+               if(itemGroups[name] != null)
+               {
+                  itemNames = itemNames.concat(itemGroups[name]);
+               }
+               else
+               {
+                  itemNames.push(name);
+               }
+            }
+         }
+         return itemNames;
+      }
+      
       private static function loadDefaultExtractConfig(config:*) : *
       {
          var cnf:* = {};
@@ -286,7 +321,7 @@ package
          return cnf;
       }
       
-      private static function loadTransferConfig(config:*) : *
+      private static function loadTransferConfig(itemGroups:Object, config:*) : *
       {
          if(!(config is Array))
          {
@@ -297,11 +332,13 @@ package
             setName(config[c],TITLE_TRANSFER);
             config[c].name = config[c].name.replace(_ID,c);
             setMaxItems(config[c]);
+            config[c].itemNames = ExpandItemGroups(itemGroups, config[c].itemNames);
+            config[c].ignoreItemNames = ExpandItemGroups(itemGroups, config[c].ignoreItemNames || []);
          }
          return config;
       }
       
-      private static function loadAssignConfig(config:*) : *
+      private static function loadAssignConfig(itemGroups:Object, config:*) : *
       {
          if(!config.configs || !(config.configs is Array))
          {
@@ -316,11 +353,19 @@ package
             }
             setName(config.configs[c],TITLE_ASSIGN);
             config.configs[c].name = config.configs[c].name.replace(_AMOUNT,AMOUNT).replace(AMOUNT,config.configs[c].amount);
+            
+            if (config.configs[c].configs != null)
+            {
+               for each(var subconfig in config.configs[c].configs)
+               {
+                  subconfig.itemNames = ExpandItemGroups(itemGroups, subconfig.itemNames || []);
+               }
+            }
          }
          return config;
       }
       
-      private static function loadNpcSellConfig(config:*) : *
+      private static function loadNpcSellConfig(itemGroups:Object, config:*) : *
       {
          if(!config.configs)
          {
@@ -330,10 +375,15 @@ package
          {
             config.enabled = false;
          }
+         config.ignoreItemNames = ExpandItemGroups(itemGroups, config.ignoreItemNames || []);
+         for each(var c in config)
+         {
+            c.itemNames = ExpandItemGroups(itemGroups, c.itemNames || []);
+         }
          return config;
       }
       
-      private static function loadScrapConfig(config:*) : *
+      private static function loadScrapConfig(itemGroups:Object, config:*) : *
       {
          if(!config)
          {
@@ -351,6 +401,7 @@ package
          {
             config.enabled = false;
          }
+         config.ignoreItemNames = ExpandItemGroups(itemGroups, config.ignoreItemNames);
          for(var c in config.configs)
          {
             setName(config.configs[c],TITLE_SCRAP);
@@ -387,6 +438,7 @@ package
             {
                config.configs[c].delay = config.delay;
             }
+            config.configs[c].excluded = ExpandItemGroups(itemGroups, config.configs[c].excluded || []);
             if(config.configs[c].ignoreItemNames == null)
             {
                config.configs[c].ignoreItemNames = config.ignoreItemNames;
@@ -399,11 +451,17 @@ package
          return config;
       }
       
-      private static function loadLootConfig(config:*) : *
+      private static function loadLootConfig(itemGroups:Object, config:*) : *
       {
          if(!config.configs)
          {
             config.configs = [];
+         }
+         config.itemNames = ExpandItemGroups(itemGroups, config.itemNames || []);
+         config.ignoreItemNames = ExpandItemGroups(itemGroups, config.ignoreItemNames || []);
+         for each(var c in config.configs)
+         {
+            c.itemNames = ExpandItemGroups(itemGroups, c.itemNames || []);
          }
          return config;
       }
