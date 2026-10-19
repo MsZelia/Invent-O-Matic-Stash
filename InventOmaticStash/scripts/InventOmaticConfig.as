@@ -190,6 +190,18 @@ package
          }
          if(config.protectionConfig)
          {
+            if(config.protectionConfig.saleProtection)
+            {
+               config.protectionConfig.saleProtection.itemNames = ExpandItemGroups(itemGroups, config.protectionConfig.saleProtection.itemNames || []);
+            }
+            if(config.protectionConfig.scrapProtection)
+            {
+               config.protectionConfig.scrapProtection.itemNames = ExpandItemGroups(itemGroups, config.protectionConfig.scrapProtection.itemNames || []);
+            }
+            if(config.protectionConfig.transferProtection)
+            {
+               config.protectionConfig.transferProtection.itemNames = ExpandItemGroups(itemGroups, config.protectionConfig.transferProtection.itemNames || []);
+            }
             if(config.protectionConfig.transferProtection && config.protectionConfig.transferProtection.disableForContainers)
             {
                for(c in config.protectionConfig.transferProtection.disableForContainers)
@@ -376,7 +388,7 @@ package
             config.enabled = false;
          }
          config.ignoreItemNames = ExpandItemGroups(itemGroups, config.ignoreItemNames || []);
-         for each(var c in config)
+         for each(var c in config.configs)
          {
             c.itemNames = ExpandItemGroups(itemGroups, c.itemNames || []);
          }
