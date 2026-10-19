@@ -49,7 +49,29 @@
 	"itemNamesGroupConfig": {
 		"EXAMPLE_GROUP": ["item 1", "item 2", "...", "xyz"],
 		"ExampleGroup2": ["item 3", "item 4"],
-		"IGNORED_GROUP": ["item 1", "item 2", "item 3"]
+		"IGNORED_GROUP": ["item 1", "item 2", "item 3"],
+		"UNIQUE_LEGENDARIES": [
+			"Acceptable Overkill", "All Rise", "Anchorage Ace", "Black Diamond", "Blue Ridge Branding Iron",
+			"Boiling Point", "BoomStick", "Bunker Buster", "Burning Love", "Camden Whacker", "Cauterizer",
+			"Circuit Breaker", "Civil Unrest", "Cold Shoulder", "Commander's Charge", "Cosmic Knife",
+			"Crowd Control", "Crushing Blow", "Cryptid Jawbone Knife", "Cultist Piercer", "Cursed Broadsider",
+			"Cursed Rolling Pin", "Cursed Sickle", "Cursed Harpoon Gun", "Cursed Pickaxe", "Cursed Shovel",
+			"Daisycutter", "Disorderly Conduct", "Doctor's Orders", "Drill Fist", "Elder's Mark",
+			"Face Breaker", "Final Word", "Flatliner", "Foundation's Vengeance", "Grand Finale",
+			"Gunther's Big Iron", "Head Hunter", "Holy Fire", "Ice Breaker", "Kingfisher", "Lawbringer",
+			"Lickety-Split", "Longshot", "Love Tap", "Luca Switchblade", "Meadow Breeze Sprayer",
+			"Mechanic's Best Friend", "Medical Malpractice", "Meteorite Sword", "Mind Over Matter",
+			"Minty Breather", "Molerat Bat", "Nailer", "Night Light", "Nuka-Launcher", "Oathbreaker",
+			"Ogua Gauntlet", "Old Guard", "Overkill", "Perfect Storm", "Piercing Love", "Pirate Punch",
+			"Prototype ABX03", "Pyrolyzer", "Red Terror", "Relic Reaper", "Resolute Veteran",
+			"Resolve Breaker", "Salt of the Earth", "Shattered Grounds", "Slug Buster", "Sole Survivor",
+			"Somerset Special", "Super Slasher", "Super Stimpike", "The Action Hero", "The Debilitator",
+			"The Fact Finder", "The Farmhand", "The Fixer", "The Guarantee", "The Gutter", "The Kabloom",
+			"The Peacemaker", "The Pipe", "The Quick Fix", "The V.A.T.S. Unknown", "Ticket to Revenge",
+			"Tone Death", "Ultracite Terror Sword", "Unstoppable Monster", "V63 Shock Baton", "V63-BERTHA",
+			"V63-HELGA", "V63-OLGA", "V63-Z Custom", "Valkyrie", "Western Spirit", "Whacker Smacker",
+			"Whistle in the Dark", "Xerxo's Gamma Gun"
+		]
 	},
 	"legendaryModsConfig": {
 		"enabled": true,
@@ -386,14 +408,20 @@
 		"autoExecute": false,
 		"closeMenu": false,
 		"hotkey": "F",
-		"maxItems": 100,
+		"maxItems": 0,
 		"delay": 50,
 		"transferLegendaries": [1,2,3,4,5],
 		"transferTaggedForSearch": true,
 		"matchMode": "CONTAINS",
-		"itemNames": ["cap", "bobby pin", "cell", "cartridge",
-			"fuel", ".45", "5.56", "stimpak", "mentats", "psycho", "med-x",
-			"radaway", "rad-x", "priest pack", "pail", "bag", "gift"],
+		"itemNames": [
+			"legendary module", "kit", "wanted poster", "mystery",
+			"priest pack", "pail", "bag", "gift", "phantom pack", 
+			"plan: ", "recipe: ", "title: ", "serum", "boy",
+			"cap", "treasury note", "bobby pin",
+			"cell", "cartridge", "fuel", ".45", "5.56",
+			"stimpak", "mentats", "buff", "psycho", "fury", "med-x",
+			"calmex", "day tripper", "daddy", "radaway", "rad-x", "x-cell"
+		],
 		"ignoreItemNames": ["IGNORED_GROUP", "item 4", "item 5"],
 		"configs": [
 			{
@@ -417,7 +445,7 @@
 	"scrapConfig": {
 		"enabled": false,
 		"debug": false,
-		"ignoreItemNames": ["IGNORED_GROUP", "item 4", "item 5"],
+		"ignoreItemNames": ["UNIQUE_LEGENDARIES", "IGNORED_GROUP", "item 4", "item 5"],
 		"configs": [
 			{
 				"README": "READ DESCRIPTION ON NEXUSMODS BEFORE ENABLING MULTIPLE SCRAP CONFIGS",
