@@ -87,20 +87,9 @@ package utils
          if(config.named && config.itemNames && config.itemNames.length > 0 && config.matchMode)
          {
             var i:int = 0;
-            var itemNames:Array = [];
             while(i < config.itemNames.length)
             {
-               if(InventOmaticConfig.get().itemNamesGroupConfig[config.itemNames[i]] != null)
-               {
-                  itemNames = itemNames.concat(InventOmaticConfig.get().itemNamesGroupConfig[config.itemNames[i]]);
-               }
-               i++;
-            }
-            itemNames = config.itemNames.concat(itemNames);
-            i = 0;
-            while(i < itemNames.length)
-            {
-               if(ItemWorker.isMatchingString(item.text,itemNames[i],config.matchMode))
+               if(ItemWorker.isMatchingString(item.text,config.itemNames[i],config.matchMode))
                {
                   _protectionReason = NAMED;
                   itemProtection[item.serverHandleID] = NAMED;
