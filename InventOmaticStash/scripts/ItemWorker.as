@@ -309,6 +309,10 @@ package
          {
             return false;
          }
+         if(item.hasUniqueEffect && !Boolean(config.scrapUniques))
+         {
+            return false;
+         }
          if(item.favorite && !Boolean(config.scrapFavorite))
          {
             return false;

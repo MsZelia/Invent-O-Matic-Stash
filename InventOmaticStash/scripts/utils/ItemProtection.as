@@ -9,6 +9,8 @@ package utils
       
       public static const EQUIPPED:String = "Equipped";
       
+      public static const UNIQUE:String = "Unique";
+      
       public static const NAMED:String = "Named";
       
       public static const MAX_CURRENCY:String = "Max Currency";
@@ -73,6 +75,12 @@ package utils
          {
             _protectionReason = itemProtection[item.serverHandleID];
             return itemProtection[item.serverHandleID];
+         }
+         if(config.unique && item.hasUniqueEffect)
+         {
+            _protectionReason = UNIQUE;
+            itemProtection[item.serverHandleID] = UNIQUE;
+            return true;
          }
          if(config.equipped && item.equipState == 1)
          {
