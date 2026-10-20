@@ -161,8 +161,9 @@ package
             return false;
          }
          var i:uint = 0;
-         var lowercaseName:String = ignoreItemNames.toLowerCase();
+         var lowercaseName:String = itemName.toLowerCase();
          var len:uint = ignoreItemNames.length;
+         i = 0;
          while(i < len)
          {
             var element:* = ignoreItemNames[i];
@@ -262,7 +263,6 @@ package
       
       private static function shouldScrap(param1:Object, param2:Object) : Boolean
       {
-         var excluded:Array;
          var allMatch:Boolean;
          var matchMode:*;
          var INVERSE:Boolean = false;

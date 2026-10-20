@@ -131,7 +131,6 @@ package
          var config:* = jsonObject;
          config.itemNamesGroupConfig = loadItemNamesGroupConfig(config.itemNamesGroupConfig);
          var itemGroups:Object = config.itemNamesGroupConfig;
-         
          if(!config.extractConfig)
          {
             config.extractConfig = loadDefaultExtractConfig(config);
@@ -143,13 +142,13 @@ package
          }
          if(config.scrapConfig)
          {
-            config.scrapConfig = loadScrapConfig(itemGroups, config.scrapConfig);
+            config.scrapConfig = loadScrapConfig(itemGroups,config.scrapConfig);
             setName(config.scrapConfig,TITLE_SCRAP);
             setMaxItems(config.scrapConfig);
          }
          if(config.transferConfig)
          {
-            config.transferConfig = loadTransferConfig(itemGroups, config.transferConfig);
+            config.transferConfig = loadTransferConfig(itemGroups,config.transferConfig);
          }
          else
          {
@@ -159,17 +158,17 @@ package
          {
             setName(config.lootConfig,TITLE_LOOT);
             setMaxItems(config.lootConfig);
-            config.lootConfig = loadLootConfig(itemGroups, config.lootConfig);
+            config.lootConfig = loadLootConfig(itemGroups,config.lootConfig);
          }
          if(config.npcSellConfig)
          {
-            config.npcSellConfig = loadNpcSellConfig(itemGroups, config.npcSellConfig);
+            config.npcSellConfig = loadNpcSellConfig(itemGroups,config.npcSellConfig);
             setName(config.npcSellConfig,TITLE_NPC_SELL);
             setMaxItems(config.npcSellConfig);
          }
          if(config.campAssignConfig)
          {
-            config.campAssignConfig = loadAssignConfig(itemGroups, config.campAssignConfig);
+            config.campAssignConfig = loadAssignConfig(itemGroups,config.campAssignConfig);
          }
          else
          {
@@ -182,25 +181,25 @@ package
          {
             setName(config.buyConfig,TITLE_BUY);
             setMaxItems(config.buyConfig);
-            config.buyConfig.ignoreItemNames = expandItemGroups(itemGroups, config.buyConfig.ignoreItemNames || []);
+            config.buyConfig.ignoreItemNames = expandItemGroups(itemGroups,config.buyConfig.ignoreItemNames || []);
             for each(var c in config.buyConfig.configs)
             {
-               c.itemNames = expandItemGroups(itemGroups, c.itemNames || []);
+               c.itemNames = expandItemGroups(itemGroups,c.itemNames || []);
             }
          }
          if(config.protectionConfig)
          {
             if(config.protectionConfig.saleProtection)
             {
-               config.protectionConfig.saleProtection.itemNames = expandItemGroups(itemGroups, config.protectionConfig.saleProtection.itemNames || []);
+               config.protectionConfig.saleProtection.itemNames = expandItemGroups(itemGroups,config.protectionConfig.saleProtection.itemNames || []);
             }
             if(config.protectionConfig.scrapProtection)
             {
-               config.protectionConfig.scrapProtection.itemNames = expandItemGroups(itemGroups, config.protectionConfig.scrapProtection.itemNames || []);
+               config.protectionConfig.scrapProtection.itemNames = expandItemGroups(itemGroups,config.protectionConfig.scrapProtection.itemNames || []);
             }
             if(config.protectionConfig.transferProtection)
             {
-               config.protectionConfig.transferProtection.itemNames = expandItemGroups(itemGroups, config.protectionConfig.transferProtection.itemNames || []);
+               config.protectionConfig.transferProtection.itemNames = expandItemGroups(itemGroups,config.protectionConfig.transferProtection.itemNames || []);
             }
             if(config.protectionConfig.transferProtection && config.protectionConfig.transferProtection.disableForContainers)
             {
@@ -267,7 +266,7 @@ package
          config.maxItems = Parser.parsePositiveNumber(config.maxItems);
       }
       
-      private static function expandItemGroups(itemGroups: Object, originalNames:Array) : Array
+      private static function expandItemGroups(itemGroups:Object, originalNames:Array) : Array
       {
          var itemNames:Array = [];
          for each(var nameOrNames in originalNames)
@@ -344,8 +343,8 @@ package
             setName(config[c],TITLE_TRANSFER);
             config[c].name = config[c].name.replace(_ID,c);
             setMaxItems(config[c]);
-            config[c].itemNames = expandItemGroups(itemGroups, config[c].itemNames);
-            config[c].ignoreItemNames = expandItemGroups(itemGroups, config[c].ignoreItemNames || []);
+            config[c].itemNames = expandItemGroups(itemGroups,config[c].itemNames);
+            config[c].ignoreItemNames = expandItemGroups(itemGroups,config[c].ignoreItemNames || []);
          }
          return config;
       }
@@ -365,12 +364,11 @@ package
             }
             setName(config.configs[c],TITLE_ASSIGN);
             config.configs[c].name = config.configs[c].name.replace(_AMOUNT,AMOUNT).replace(AMOUNT,config.configs[c].amount);
-            
-            if (config.configs[c].configs != null)
+            if(config.configs[c].configs != null)
             {
                for each(var subconfig in config.configs[c].configs)
                {
-                  subconfig.itemNames = expandItemGroups(itemGroups, subconfig.itemNames || []);
+                  subconfig.itemNames = expandItemGroups(itemGroups,subconfig.itemNames || []);
                }
             }
          }
@@ -387,10 +385,10 @@ package
          {
             config.enabled = false;
          }
-         config.ignoreItemNames = expandItemGroups(itemGroups, config.ignoreItemNames || []);
+         config.ignoreItemNames = expandItemGroups(itemGroups,config.ignoreItemNames || []);
          for each(var c in config.configs)
          {
-            c.itemNames = expandItemGroups(itemGroups, c.itemNames || []);
+            c.itemNames = expandItemGroups(itemGroups,c.itemNames || []);
          }
          return config;
       }
@@ -405,15 +403,15 @@ package
          {
             config.configs = [].concat(config);
          }
-         if(!config.ignoreItemNames)
-         {
-            config.ignoreItemNames = [];
-         }
          else if(config.configs.length == 0)
          {
             config.enabled = false;
          }
-         config.ignoreItemNames = expandItemGroups(itemGroups, config.ignoreItemNames);
+         if(!config.ignoreItemNames)
+         {
+            config.ignoreItemNames = [];
+         }
+         config.ignoreItemNames = expandItemGroups(itemGroups,config.ignoreItemNames);
          for(var c in config.configs)
          {
             setName(config.configs[c],TITLE_SCRAP);
@@ -450,7 +448,7 @@ package
             {
                config.configs[c].delay = config.delay;
             }
-            config.configs[c].excluded = expandItemGroups(itemGroups, config.configs[c].excluded || []);
+            config.configs[c].excluded = expandItemGroups(itemGroups,config.configs[c].excluded || []);
             if(config.configs[c].ignoreItemNames == null)
             {
                config.configs[c].ignoreItemNames = config.ignoreItemNames;
@@ -469,11 +467,11 @@ package
          {
             config.configs = [];
          }
-         config.itemNames = expandItemGroups(itemGroups, config.itemNames || []);
-         config.ignoreItemNames = expandItemGroups(itemGroups, config.ignoreItemNames || []);
+         config.itemNames = expandItemGroups(itemGroups,config.itemNames || []);
+         config.ignoreItemNames = expandItemGroups(itemGroups,config.ignoreItemNames || []);
          for each(var c in config.configs)
          {
-            c.itemNames = expandItemGroups(itemGroups, c.itemNames || []);
+            c.itemNames = expandItemGroups(itemGroups,c.itemNames || []);
          }
          return config;
       }
