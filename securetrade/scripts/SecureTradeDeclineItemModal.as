@@ -7,7 +7,7 @@ package
    import flash.events.KeyboardEvent;
    import flash.ui.Keyboard;
    
-   [Embed(source="/_assets/assets.swf", symbol="symbol299")]
+   [Embed(source="/_assets/assets.swf", symbol="symbol301")]
    public class SecureTradeDeclineItemModal extends BCBasicMenu
    {
       

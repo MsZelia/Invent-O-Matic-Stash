@@ -27,7 +27,7 @@ package Shared.AS3.Events
       
       internal var _uiPlatform:uint = 4294967295;
       
-      internal var _bIsGen9:Boolean = false;
+      internal var _bPS3Switch:Boolean = false;
       
       internal var _uiController:uint = 4294967295;
       
@@ -37,7 +37,7 @@ package Shared.AS3.Events
       {
          super(PLATFORM_CHANGE,true,true);
          this.uiPlatform = param1;
-         this.bIsGen9 = param2;
+         this.bPS3Switch = param2;
          this.uiController = param3;
          this.uiKeyboard = param4;
       }
@@ -52,19 +52,14 @@ package Shared.AS3.Events
          this._uiPlatform = param1;
       }
       
-      public function get bIsGen9() : *
-      {
-         return this._bIsGen9;
-      }
-      
-      public function set bIsGen9(param1:Boolean) : *
-      {
-         this._bIsGen9 = param1;
-      }
-      
       public function get bPS3Switch() : *
       {
-         return this._bIsGen9;
+         return this._bPS3Switch;
+      }
+      
+      public function set bPS3Switch(param1:Boolean) : *
+      {
+         this._bPS3Switch = param1;
       }
       
       public function get uiController() : *
@@ -89,7 +84,7 @@ package Shared.AS3.Events
       
       override public function clone() : Event
       {
-         return new PlatformChangeEvent(this.uiPlatform,this.bIsGen9,this.uiController,this.uiKeyboard);
+         return new PlatformChangeEvent(this.uiPlatform,this.bPS3Switch,this.uiController,this.uiKeyboard);
       }
    }
 }

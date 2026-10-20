@@ -7,7 +7,7 @@ package Shared.AS3
    import flash.text.TextField;
    import flash.utils.getDefinitionByName;
    
-   [Embed(source="/_assets/assets.swf", symbol="symbol322")]
+   [Embed(source="/_assets/assets.swf", symbol="symbol324")]
    public class LabelSelector extends BSUIComponent
    {
       

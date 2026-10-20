@@ -38,7 +38,7 @@ package
    import scaleform.gfx.Extensions;
    import scaleform.gfx.TextFieldEx;
    
-   [Embed(source="/_assets/assets.swf", symbol="symbol366")]
+   [Embed(source="/_assets/assets.swf", symbol="symbol368")]
    public class SecureTrade extends IMenu
    {
       
@@ -1612,7 +1612,7 @@ package
             {
                if(param1[_loc5_].text == "DESC")
                {
-                  var desc:* = this.getLegendaryItemDescription(param1[_loc5_].value);
+                  var desc:* = this.getLegendaryItemDescription(param1[_loc5_].value.replace(/\r\n/g,"\n"));
                   GlobalFunc.SetText(this.ItemCardContainer_mc.Background_mc.Description_mc.Description_tf,desc);
                   this.formatLegendaryItemDescription(this.ItemCardContainer_mc.Background_mc.Description_mc.Description_tf);
                   TextFieldEx.setVerticalAlign(this.ItemCardContainer_mc.Background_mc.Description_mc.Description_tf,TextFieldEx.VALIGN_BOTTOM);

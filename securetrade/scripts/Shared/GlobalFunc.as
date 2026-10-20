@@ -290,9 +290,9 @@ package Shared
       
       public static const REWARD_TYPE_ENUM_PLAYER_TITLE:* = 39;
       
-      public static const CUSTOM_TITLE_DELIMITER:* = "<";
+      public static const PLAYER_TITLE_DELIMITER:* = "|";
       
-      public static const CUSTOM_TITLE_DIVIDER:* = " |";
+      public static const PLAYER_TITLE_DIVIDER:* = " |";
       
       private static const ButtonMappingToFontKey:Object = {
          "Xenon_A":"A",
@@ -364,11 +364,6 @@ package Shared
          "PSN_L2_Alt":"y"
       };
       
-      private static const ButtonMappingToFontKeyGen9:Object = {
-         "PSN_Select":"}",
-         "PSN_Start":"|"
-      };
-      
       public static const IMAGE_FRAME_MAP:Object = {
          "a":1,
          "b":2,
@@ -396,16 +391,16 @@ package Shared
          "x":24,
          "y":25,
          "z":26,
-         0:1,
-         1:2,
-         2:3,
-         3:4,
-         4:5,
-         5:6,
-         6:7,
-         7:8,
-         8:9,
-         9:10
+         "0":1,
+         "1":2,
+         "2":3,
+         "3":4,
+         "4":5,
+         "5":6,
+         "6":7,
+         "7":8,
+         "8":9,
+         "9":10
       };
       
       public function GlobalFunc()
@@ -413,18 +408,14 @@ package Shared
          super();
       }
       
-      public static function GetButtonFontKey(param1:String, param2:Boolean = false) : String
+      public static function GetButtonFontKey(param1:String) : String
       {
-         var _loc3_:String = "";
-         if(param2 && Boolean(ButtonMappingToFontKeyGen9.hasOwnProperty(param1)))
+         var _loc2_:String = "";
+         if(ButtonMappingToFontKey.hasOwnProperty(param1))
          {
-            _loc3_ = ButtonMappingToFontKeyGen9[param1];
+            _loc2_ = ButtonMappingToFontKey[param1];
          }
-         else if(ButtonMappingToFontKey.hasOwnProperty(param1))
-         {
-            _loc3_ = ButtonMappingToFontKey[param1];
-         }
-         return _loc3_;
+         return _loc2_;
       }
       
       public static function CloneObject(param1:Object) : *
@@ -435,47 +426,40 @@ package Shared
          return _loc2_.readObject();
       }
       
-      public static function GenerateNameAndTitle(param1:String) : String
+      public static function GeneratePlayerNameAndTitle(param1:String) : String
       {
-         var _loc5_:uint = 0;
+         var _loc4_:uint = 0;
          var _loc2_:String = "";
-         var _loc3_:Array = param1.split(CUSTOM_TITLE_DELIMITER);
+         var _loc3_:Array = param1.split(PLAYER_TITLE_DELIMITER);
          _loc2_ = _loc3_[0];
-         var _loc4_:Boolean = _loc3_.length > 2 ? !(_loc3_[1] == "" && _loc3_[2] == "") : _loc3_.length > 1 && _loc3_[1] != "";
-         if(_loc4_)
+         if(_loc3_.length > 1)
          {
-            _loc2_ += CUSTOM_TITLE_DIVIDER;
-            _loc5_ = 1;
-            while(_loc5_ < _loc3_.length)
+            _loc2_ += PLAYER_TITLE_DIVIDER;
+            _loc4_ = 1;
+            while(_loc4_ < _loc3_.length)
             {
-               _loc2_ += " " + _loc3_[_loc5_];
-               _loc5_++;
+               _loc2_ += " " + _loc3_[_loc4_];
+               _loc4_++;
             }
          }
          return _loc2_;
       }
       
-      public static function GenerateName(param1:String) : String
+      public static function GeneratePlayerName(param1:String) : String
       {
-         return param1.split(CUSTOM_TITLE_DELIMITER)[0];
+         return param1.split(PLAYER_TITLE_DELIMITER)[0];
       }
       
       public static function HasPlayerTitle(param1:String) : Boolean
       {
-         return param1.indexOf(CUSTOM_TITLE_DELIMITER) > -1;
+         return param1.indexOf(PLAYER_TITLE_DELIMITER) > -1;
       }
       
-      public static function HasCampTitle(param1:String) : Boolean
-      {
-         var _loc2_:Array = param1.split(CUSTOM_TITLE_DELIMITER);
-         return _loc2_.length > 2 && !(_loc2_[1] == "" && _loc2_[2] == "");
-      }
-      
-      public static function GenerateTitle(param1:String) : String
+      public static function GeneratePlayerTitle(param1:String) : String
       {
          var _loc4_:uint = 0;
          var _loc2_:String = "";
-         var _loc3_:Array = param1.split(CUSTOM_TITLE_DELIMITER);
+         var _loc3_:Array = param1.split(PLAYER_TITLE_DELIMITER);
          if(_loc3_.length > 1)
          {
             _loc2_ = _loc3_[1];
@@ -492,10 +476,10 @@ package Shared
          return _loc2_;
       }
       
-      public static function GenerateNameAndTitleArray(param1:String) : Array
+      public static function GeneratePlayerNameAndTitleArray(param1:String) : Array
       {
          var _loc5_:uint = 0;
-         var _loc2_:Array = param1.split(CUSTOM_TITLE_DELIMITER);
+         var _loc2_:Array = param1.split(PLAYER_TITLE_DELIMITER);
          var _loc3_:String = "";
          if(_loc2_.length > 1)
          {
@@ -917,7 +901,7 @@ package Shared
       {
          TextField.prototype.SetText = function(param1:String, param2:Boolean = false, param3:Boolean = false):*
          {
-            var _loc5_:Number = NaN;
+            var _loc5_:Number = Number(NaN);
             var _loc6_:Boolean = false;
             if(!param1 || param1 == "")
             {
@@ -989,7 +973,7 @@ package Shared
       public static function SetText(param1:TextField, param2:String, param3:Boolean = false, param4:Boolean = false, param5:* = false) : *
       {
          var _loc6_:TextFormat = null;
-         var _loc7_:Number = NaN;
+         var _loc7_:Number = Number(NaN);
          var _loc8_:Boolean = false;
          if(!param2 || param2 == "")
          {
@@ -1014,16 +998,9 @@ package Shared
          {
             param1.text = param2;
          }
-         if(param5)
+         if(param5 && param1.text.length > MAX_TRUNCATED_TEXT_LENGTH)
          {
-            if(param1.textWidth > param1.width)
-            {
-               GlobalFunc.TruncateSingleLineText(param1);
-            }
-            else if(param1.multiline)
-            {
-               GlobalFunc.SetTruncatedMultilineText(param1,param2,param4);
-            }
+            param1.text = param1.text.slice(0,MAX_TRUNCATED_TEXT_LENGTH - 3) + "...";
          }
       }
       
@@ -1403,7 +1380,7 @@ package Shared
       
       public static function getTextfieldSize(param1:TextField, param2:Boolean = true) : *
       {
-         var _loc3_:Number = NaN;
+         var _loc3_:Number = Number(NaN);
          var _loc4_:uint = 0;
          if(param1.multiline)
          {
@@ -1454,8 +1431,8 @@ package Shared
       
       public static function arrangeItems(param1:Array, param2:Boolean, param3:uint = 0, param4:Number = 0, param5:Boolean = false, param6:Number = 0) : Number
       {
-         var _loc9_:Number = NaN;
-         var _loc10_:Number = NaN;
+         var _loc9_:Number = Number(NaN);
+         var _loc10_:Number = Number(NaN);
          var _loc11_:uint = 0;
          var _loc12_:Object = null;
          var _loc13_:Array = null;
@@ -1568,13 +1545,12 @@ package Shared
          return result;
       }
       
-      public static function ReceiveFFEvent(param1:Object, param2:String, param3:Object) : Boolean
+      public static function ReceiveFFEvent(param1:Object, param2:String, param3:*) : Boolean
       {
          var obj:Object = null;
-         var i:String = null;
          var aDataObject:Object = param1;
          var asEventString:String = param2;
-         var aOutObject:Object = param3;
+         var aOutObject:* = param3;
          var result:Boolean = false;
          try
          {
@@ -1585,10 +1561,7 @@ package Shared
                   if(obj.eventName == asEventString)
                   {
                      result = true;
-                     for(i in obj)
-                     {
-                        aOutObject[i] = obj[i];
-                     }
+                     aOutObject = obj;
                      break;
                   }
                }

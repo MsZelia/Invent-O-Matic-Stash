@@ -2,7 +2,7 @@ package
 {
    import Shared.AS3.BCBasicMenuItem;
    
-   [Embed(source="/_assets/assets.swf", symbol="symbol281")]
+   [Embed(source="/_assets/assets.swf", symbol="symbol283")]
    public dynamic class declineDontWantType extends BCBasicMenuItem
    {
       

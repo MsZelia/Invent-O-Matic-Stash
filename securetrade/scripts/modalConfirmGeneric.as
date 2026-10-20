@@ -2,7 +2,7 @@ package
 {
    import Shared.AS3.BCBasicModal;
    
-   [Embed(source="/_assets/assets.swf", symbol="symbol316")]
+   [Embed(source="/_assets/assets.swf", symbol="symbol318")]
    public dynamic class modalConfirmGeneric extends BCBasicModal
    {
       

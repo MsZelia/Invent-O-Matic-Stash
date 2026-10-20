@@ -3,10 +3,10 @@ package secureTrade_fla
    import flash.display.MovieClip;
    
    [Embed(source="/_assets/assets.swf", symbol="symbol173")]
-   public dynamic class ItemLock_Icon_119 extends MovieClip
+   public dynamic class ItemLock_Icon_120 extends MovieClip
    {
       
-      public function ItemLock_Icon_119()
+      public function ItemLock_Icon_120()
       {
          super();
          addFrameScript(0,this.frame1,1,this.frame2);

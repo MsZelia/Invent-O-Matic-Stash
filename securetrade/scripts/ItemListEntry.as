@@ -35,7 +35,7 @@ package
       {
          var _loc9_:Object = null;
          super.SetEntryText(param1,param2);
-         var _loc3_:* = GlobalFunc.BuildLegendaryStarsGlyphString(param1);
+         var _loc3_:* = GlobalFunc.BuildStarsGlyphString(param1);
          var _loc4_:int = 0;
          if(param1.barterCount != undefined)
          {

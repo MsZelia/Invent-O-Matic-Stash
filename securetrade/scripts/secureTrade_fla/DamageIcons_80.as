@@ -2,7 +2,7 @@ package secureTrade_fla
 {
    import flash.display.MovieClip;
    
-   [Embed(source="/_assets/assets.swf", symbol="symbol236")]
+   [Embed(source="/_assets/assets.swf", symbol="symbol238")]
    public dynamic class DamageIcons_80 extends MovieClip
    {
       

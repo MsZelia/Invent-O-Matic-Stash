@@ -19,7 +19,7 @@ package Shared.AS3
       
       private var _uiPlatform:uint;
       
-      private var _bIsGen9:Boolean;
+      private var _bPS3Switch:Boolean;
       
       private var _uiController:uint;
       
@@ -49,7 +49,7 @@ package Shared.AS3
       {
          super();
          this._uiPlatform = PlatformChangeEvent.PLATFORM_INVALID;
-         this._bIsGen9 = false;
+         this._bPS3Switch = false;
          this._bRestoreLostFocus = false;
          this._bNuclearWinterMode = false;
          GlobalFunc.MaintainTextFormat();
@@ -61,9 +61,9 @@ package Shared.AS3
          return this._uiPlatform;
       }
       
-      public function get bIsGen9() : Boolean
+      public function get bPS3Switch() : Boolean
       {
-         return this._bIsGen9;
+         return this._bPS3Switch;
       }
       
       public function get uiController() : uint
@@ -115,7 +115,7 @@ package Shared.AS3
       {
          if(this.uiPlatform != PlatformChangeEvent.PLATFORM_INVALID)
          {
-            (param1 as PlatformRequestEvent).RespondToRequest(this.uiPlatform,this.bIsGen9,this.uiController,this.uiKeyboard);
+            (param1 as PlatformRequestEvent).RespondToRequest(this.uiPlatform,this.bPS3Switch,this.uiController,this.uiKeyboard);
          }
       }
       
@@ -167,10 +167,10 @@ package Shared.AS3
       public function SetPlatform(param1:uint, param2:Boolean, param3:uint, param4:uint) : *
       {
          this._uiPlatform = param1;
-         this._bIsGen9 = param2;
+         this._bPS3Switch = this.bPS3Switch;
          this._uiController = param3;
          this._uiKeyboard = param4;
-         dispatchEvent(new PlatformChangeEvent(this.uiPlatform,this.bIsGen9,this.uiController,this.uiKeyboard));
+         dispatchEvent(new PlatformChangeEvent(this.uiPlatform,this.bPS3Switch,this.uiController,this.uiKeyboard));
       }
       
       public function SetNuclearWinterMode(param1:Boolean) : *
