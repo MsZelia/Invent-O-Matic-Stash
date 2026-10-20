@@ -1,5 +1,6 @@
 package
 {
+   import flash.utils.ByteArray;
    import utils.CampAssignContainer;
    import utils.Parser;
    
@@ -21,6 +22,8 @@ package
       private static const TITLE_SCRAP:String = "AutoScrap";
       
       private static const TITLE_TRANSFER:String = "Trans_" + _ID;
+      
+      private static const TITLE_TRANSFER_SUBCONFIG:String = "Subconfig_" + _ID;
       
       private static const TITLE_LOOT:String = "AutoLoot";
       
@@ -332,21 +335,82 @@ package
          return cnf;
       }
       
+      private static function deepCopy(o:Object) : Object
+      {
+         var copier:ByteArray = new ByteArray();
+         copier.writeObject(o);
+         copier.position = 0;
+         return copier.readObject();
+      }
+      
       private static function loadTransferConfig(itemGroups:Object, config:*) : *
       {
          if(!(config is Array))
          {
             config = [].concat(config);
          }
-         for(var c in config)
+         var expandedConfigs:Array = [];
+         for(var i in config)
          {
-            setName(config[c],TITLE_TRANSFER);
-            config[c].name = config[c].name.replace(_ID,c);
-            setMaxItems(config[c]);
-            config[c].itemNames = expandItemGroups(itemGroups,config[c].itemNames);
-            config[c].ignoreItemNames = expandItemGroups(itemGroups,config[c].ignoreItemNames || []);
+            var c:Object = config[i];
+            setName(c,TITLE_TRANSFER);
+            c.name = c.name.replace(_ID,i);
+            setMaxItems(c);
+            if(c.subconfigs != null && c.itemNames != null)
+            {
+               throw new Error("Transfer config " + c.name + ": Only one of itemNames or subconfigs allowed.");
+            }
+            if(c.subconfigs == null && c.itemNames != null)
+            {
+               c.ignoreItemNames = expandItemGroups(itemGroups,c.ignoreItemNames || []);
+               c.itemNames = expandItemGroups(itemGroups,c.itemNames);
+               expandedConfigs.push(c);
+            }
+            else if(c.subconfigs != null && c.itemNames == null)
+            {
+               if(c.singleItemPerName)
+               {
+                  throw new Error("Transfer config " + c.name + ": singleItemPerName=true is not valid for configs with subconfigs");
+               }
+               if(c.repeat != null)
+               {
+                  throw new Error("Transfer config " + c.name + ": repeats are not valid for configs with subconfigs");
+               }
+               var first:Boolean = false;
+               var j:int = 0;
+               for each(var s in c.subconfigs)
+               {
+                  var expanded:Object = deepCopy(c);
+                  if(!first)
+                  {
+                     first = true;
+                     expanded.showButton = c.showButton;
+                  }
+                  else
+                  {
+                     expanded.showButton = false;
+                     setName(s,TITLE_TRANSFER_SUBCONFIG);
+                     expanded.name = c.name + "_" + s.name.replace(_ID,j);
+                  }
+                  expanded.enabled = s.enabled != null ? s.enabled : c.enabled;
+                  expanded.debug = s.debug != null ? s.debug : c.debug;
+                  expanded.testRun = s.testRun != null ? s.testRun : c.testRun;
+                  
+                  expanded.amount = s.amount;
+                  expanded.exactAmountInDestination = s.exactAmountInDestination;
+                  expanded.types = s.types;
+                  expanded.weaponTypes = s.weaponTypes;
+                  expanded.matchMode = s.matchMode;
+                  expanded.itemNames = expandItemGroups(itemGroups,s.itemNames || []);
+                  expanded.ignoreItemNames = expandItemGroups(itemGroups,s.ignoreItemNames || []);
+                  expanded.direction = s.direction;
+                  
+                  expandedConfigs.push(expanded);
+                  j += 1;
+               }
+            }
          }
-         return config;
+         return expandedConfigs;
       }
       
       private static function loadAssignConfig(itemGroups:Object, config:*) : *
