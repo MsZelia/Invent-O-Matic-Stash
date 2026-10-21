@@ -1,5 +1,6 @@
 package
 {
+   import Shared.GlobalFunc;
    import flash.utils.ByteArray;
    import utils.CampAssignContainer;
    import utils.Parser;
@@ -335,14 +336,6 @@ package
          return cnf;
       }
       
-      private static function deepCopy(o:Object) : Object
-      {
-         var copier:ByteArray = new ByteArray();
-         copier.writeObject(o);
-         copier.position = 0;
-         return copier.readObject();
-      }
-      
       private static function loadTransferConfig(itemGroups:Object, config:*) : *
       {
          if(!(config is Array))
@@ -380,7 +373,7 @@ package
                var j:int = 0;
                for each(var s in c.subconfigs)
                {
-                  var expanded:Object = deepCopy(c);
+                  var expanded:Object = GlobalFunc.CloneObject(c);
                   if(!first)
                   {
                      first = true;
