@@ -704,14 +704,14 @@
 			// Subconfigs are run in the order they're defined in the file.
 			//
 			// Each subconfig can contain:
+			// 	amount (required)
+			// 	itemNames (required)
+			// 	direction (required)
 			// 	name
-			// 	amount
 			// 	types
 			// 	weaponTypes
 			// 	matchMode
 			// 	ignoreItemNames
-			// 	itemNames
-			// 	direction
 			// 	exactAmountInDestination
 			//
 			// Subconfigs can also set: enabled, debug, testRun

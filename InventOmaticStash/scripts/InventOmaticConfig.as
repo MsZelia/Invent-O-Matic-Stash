@@ -3,6 +3,7 @@ package
    import Shared.GlobalFunc;
    import flash.utils.ByteArray;
    import utils.CampAssignContainer;
+   import utils.Logger;
    import utils.Parser;
    
    public class InventOmaticConfig
@@ -351,24 +352,17 @@ package
             setMaxItems(c);
             if(c.subconfigs != null && c.itemNames != null)
             {
-               throw new Error("Transfer config " + c.name + ": Only one of itemNames or subconfigs allowed.");
+               Logger.get().error("Transfer config " + c.name + ": Only one of itemNames or subconfigs allowed.");
             }
-            if(c.subconfigs == null && c.itemNames != null)
+            else if(c.subconfigs == null && c.itemNames != null)
             {
                c.ignoreItemNames = expandItemGroups(itemGroups,c.ignoreItemNames || []);
                c.itemNames = expandItemGroups(itemGroups,c.itemNames);
+               c.wasSubconfig = false;
                expandedConfigs.push(c);
             }
             else if(c.subconfigs != null && c.itemNames == null)
             {
-               if(c.singleItemPerName)
-               {
-                  throw new Error("Transfer config " + c.name + ": singleItemPerName=true is not valid for configs with subconfigs");
-               }
-               if(c.repeat != null)
-               {
-                  throw new Error("Transfer config " + c.name + ": repeats are not valid for configs with subconfigs");
-               }
                var first:Boolean = false;
                var j:int = 0;
                for each(var s in c.subconfigs)
@@ -388,7 +382,6 @@ package
                   expanded.enabled = s.enabled != null ? s.enabled : c.enabled;
                   expanded.debug = s.debug != null ? s.debug : c.debug;
                   expanded.testRun = s.testRun != null ? s.testRun : c.testRun;
-                  
                   expanded.amount = s.amount;
                   expanded.exactAmountInDestination = s.exactAmountInDestination;
                   expanded.types = s.types;
@@ -397,7 +390,7 @@ package
                   expanded.itemNames = expandItemGroups(itemGroups,s.itemNames || []);
                   expanded.ignoreItemNames = expandItemGroups(itemGroups,s.ignoreItemNames || []);
                   expanded.direction = s.direction;
-                  
+                  expanded.wasSubconfig = true;
                   expandedConfigs.push(expanded);
                   j += 1;
                }
