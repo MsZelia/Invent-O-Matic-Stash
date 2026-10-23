@@ -707,20 +707,21 @@
 			// 	amount (required)
 			// 	itemNames (required)
 			// 	direction (required)
+			// 	enabled
+			// 	debug
+			// 	testRun
 			// 	name
-			//  checkAccountName
-			//  accountName
-			//  checkContainerName
-			//  containerName
+			// 	checkAccountName
+			// 	accountName
+			// 	checkContainerName
+			// 	containerName
 			// 	types
 			// 	weaponTypes
 			// 	matchMode
 			// 	ignoreItemNames
 			// 	exactAmountInDestination
 			//
-			// Subconfigs can also set: enabled, debug, testRun
-			// If not set, they're copied from the parent.
-			// All other fields are copied from the parent.
+			// The values of 'enabled', 'debug', and 'testRun' are copied from the parent if they're not set.
 			// Subconfigs do not support: singleItemPerName or repeat.
 			"subconfigs": [
 				{
