@@ -708,6 +708,10 @@
 			// 	itemNames (required)
 			// 	direction (required)
 			// 	name
+			//  checkAccountName
+			//  accountName
+			//  checkContainerName
+			//  containerName
 			// 	types
 			// 	weaponTypes
 			// 	matchMode

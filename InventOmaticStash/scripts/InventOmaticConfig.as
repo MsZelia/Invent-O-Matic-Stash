@@ -387,6 +387,10 @@ package
                   expanded.types = s.types;
                   expanded.weaponTypes = s.weaponTypes;
                   expanded.matchMode = s.matchMode;
+                  expanded.checkAccountName = s.checkAccountName;
+                  expanded.accountName = s.accountName;
+                  expanded.checkContainerName = s.checkContainerName;
+                  expanded.containerName = s.containerName;
                   expanded.itemNames = expandItemGroups(itemGroups,s.itemNames || []);
                   expanded.ignoreItemNames = expandItemGroups(itemGroups,s.ignoreItemNames || []);
                   expanded.direction = s.direction;
