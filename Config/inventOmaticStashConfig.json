@@ -713,6 +713,8 @@
 			// 	name
 			// 	checkAccountName
 			// 	accountName
+			// 	checkCharacterName
+			// 	characterName
 			// 	checkContainerName
 			// 	containerName
 			// 	types
