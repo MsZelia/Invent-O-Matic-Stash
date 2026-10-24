@@ -389,6 +389,8 @@ package
                   expanded.matchMode = s.matchMode;
                   expanded.checkAccountName = s.checkAccountName;
                   expanded.accountName = s.accountName;
+                  expanded.checkCharacterName = s.checkCharacterName;
+                  expanded.characterName = s.characterName;
                   expanded.checkContainerName = s.checkContainerName;
                   expanded.containerName = s.containerName;
                   expanded.itemNames = expandItemGroups(itemGroups,s.itemNames || []);
