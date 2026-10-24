@@ -685,6 +685,72 @@
 			"itemNames": ["Bloatfly Gland", "Bloodbug Proboscis", "Stingwing Barb", "Tick Blood Sac"],
 			"ignoreItemNames": ["IGNORED_GROUP", "item 4", "item 5"],
 			"direction": "FROM_CONTAINER"
+		},
+		{
+			"testRun": false,
+			"name": "Transfer subconfig example",
+			"enabled": false,
+			"debug": false,
+			"showButton": true,
+			"showMessage": false,
+			"hotkey": "4",
+			"delay": 50,
+			"transferEquipped": false,
+			"transferFavorite": false,
+			// Subconfigs let you combine different transfer configs and map them to the same hotkey without
+			// having to copy all the boilerplate for a transfer config in your file. One use case is if you want to
+			// transfer different kinds of items with the same hotkey but each at different amounts. It's almost like
+			// a macro.
+			// Subconfigs are run in the order they're defined in the file.
+			//
+			// Each subconfig can contain:
+			// 	amount (required)
+			// 	itemNames (required)
+			// 	direction (required)
+			// 	enabled
+			// 	debug
+			// 	testRun
+			// 	name
+			// 	checkAccountName
+			// 	accountName
+			// 	checkCharacterName
+			// 	characterName
+			// 	checkContainerName
+			// 	containerName
+			// 	types
+			// 	weaponTypes
+			// 	matchMode
+			// 	ignoreItemNames
+			// 	exactAmountInDestination
+			//
+			// The values of 'enabled', 'debug', and 'testRun' are copied from the parent if they're not set.
+			// Subconfigs do not support: singleItemPerName or repeat.
+			"subconfigs": [
+				{
+					"enabled": false,
+					"amount": 5,
+					"types": ["AID"],
+					"matchMode": "CONTAINS",
+					"itemNames": ["Stimpak"],
+					"direction": "FROM_CONTAINER"
+				},
+				{
+					"amount": 5,
+					"types": ["WEAPONS"],
+					"matchMode": "CONTAINS",
+					"itemNames": ["Nuka Quantum Grenade"],
+					"ignoreItemNames": ["IGNORED_GROUP", "item 4"],
+					"direction": "FROM_CONTAINER"
+					
+				},
+				{
+					"amount": 0,
+					"types": ["AMMO"],
+					"matchMode": "ALL",
+					"itemNames": [""],
+					"direction": "TO_CONTAINER"
+				}
+			]
 		}
 	],
 	"extractConfig": {

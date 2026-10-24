@@ -2012,11 +2012,32 @@ package
       
       private function isValidTransferConfig(config:Object, debug:Boolean = false) : Boolean
       {
-         if(config && config.enabled && config.itemNames && config.itemNames.length > 0 && (Boolean(config.direction) || config.onlyHighlightedItem))
+         if(config == null || !config.enabled)
          {
-            return isTheSameCharacterName(config,debug && config.debug) && isValidContainerName(config,debug && config.debug);
+            return false;
          }
-         return false;
+         if(config.itemNames == null || config.itemNames.length == 0)
+         {
+            return false;
+         }
+         if(config.direction == null && !config.onlyHighlightedItem)
+         {
+            return false;
+         }
+         if(config.wasSubconfig)
+         {
+            if(config.singleItemPerName)
+            {
+               Logger.get().error("Transfer config " + config.name + ": singleItemPerName=true is not valid for configs with subconfigs");
+               return false;
+            }
+            if(config.repeat != null)
+            {
+               Logger.get().error("Transfer config " + config.name + ": repeats are not valid for configs with subconfigs");
+               return false;
+            }
+         }
+         return isTheSameCharacterName(config,debug && config.debug) && isValidContainerName(config,debug && config.debug);
       }
       
       private function isValidScrapConfig(indexConfig:int = -1) : Boolean
