@@ -790,7 +790,7 @@ package
             {
                Buttons.HideUnknownGamepadButtonIcons = true;
             }
-            if(config.extractConfig && config.extractConfig.enabled)
+            if(config.extractConfig && config.extractConfig.enabled && this.isSFEDefined())
             {
                this.extractButton = new BSButtonHintData(config.extractConfig.name,Buttons.getButtonKey(InventOmaticConfig.ExtractKeyCode),Buttons.getButtonGamepad(InventOmaticConfig.ExtractKeyCode),Buttons.getButtonGamepad(InventOmaticConfig.ExtractKeyCode),1,this.extractDataCallback);
                this.extractButton.ButtonVisible = Parser.parseBoolean(config.extractConfig.showButton,DEFAULT_SHOW_BUTTON_STATE);

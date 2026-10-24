@@ -3,7 +3,7 @@ package
    public class Version
    {
       
-      public static const VERSION:Number = 2.87;
+      public static const VERSION:Number = 2.88;
       
       public static const LOADER:Number = VERSION;
       

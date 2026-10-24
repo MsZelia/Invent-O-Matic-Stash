@@ -1,7 +1,6 @@
 package
 {
    import Shared.GlobalFunc;
-   import flash.utils.ByteArray;
    import utils.CampAssignContainer;
    import utils.Logger;
    import utils.Parser;
