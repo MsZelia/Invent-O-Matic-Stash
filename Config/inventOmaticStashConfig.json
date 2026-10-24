@@ -693,7 +693,7 @@
 			"debug": false,
 			"showButton": true,
 			"showMessage": false,
-			"hotKey": "4",
+			"hotkey": "4",
 			"delay": 50,
 			"transferEquipped": false,
 			"transferFavorite": false,
