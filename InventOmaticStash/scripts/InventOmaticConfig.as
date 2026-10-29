@@ -60,7 +60,7 @@ package
       
       private static var swapToContainerInventoryHotkey:uint = 0;
       
-      private static var testRunOverrideHotkey:uint = 0;
+      private static var testRunOverrideHotkey:uint = 17;
       
       private static var cancelCloseMenuHotkey:uint = 0;
       
@@ -234,6 +234,7 @@ package
          config.categoryWeightConfig = loadCategoryWeightConfig(config.categoryWeightConfig);
          config.additionalColumnsConfig = loadAdditionalColumnsConfig(config.additionalColumnsConfig);
          config.defaultVendorItemPrice = loadDefaultVendorItemPriceConfig(config.defaultVendorItemPrice);
+         config.testRunOverride = loadTestRunOverrideConfig(config.testRunOverride);
          initHotkeys(config);
          _config = config;
          return _config;
@@ -268,7 +269,7 @@ package
             }
             swapToPlayerInventoryHotkey = Parser.parseHotkey(config.swapToPlayerInventoryHotkey,0);
             swapToContainerInventoryHotkey = Parser.parseHotkey(config.swapToContainerInventoryHotkey,0);
-            testRunOverrideHotkey = Parser.parseHotkey(config.testRunOverrideHotkey,0);
+            testRunOverrideHotkey = Parser.parseHotkey(config.testRunOverride,testRunOverrideHotkey);
             cancelCloseMenuHotkey = Parser.parseHotkey(config.cancelCloseMenuHotkey,0);
          }
       }
@@ -612,6 +613,27 @@ package
          {
             config.categoryNames = {};
          }
+         return config;
+      }
+      
+      private static function loadTestRunOverrideConfig(config:*) : *
+      {
+         if(config == null)
+         {
+            config = {};
+         }
+         config.enabled = Parser.parseBoolean(config.enabled,false);
+         config.hotkey = config.hotkey != null ? config.hotkey : "CTRL";
+         config.showText = Parser.parseBoolean(config.showText,true);
+         config.x = Parser.parseNumber(config.x,0);
+         config.y = Parser.parseNumber(config.y,0);
+         config.textSize = Parser.parsePositiveNumber(config.textSize,18);
+         config.textFont = config.textFont != null ? config.textFont : "$MAIN_Font_Bold";
+         config.textAlign = config.textAlign != null ? config.textAlign.toLowerCase() : "left";
+         config.textDisabled = config.textDisabled != null ? config.textDisabled : "Hold {hotkey}) TestRun";
+         config.textEnabled = config.textEnabled != null ? config.textEnabled : "TestRun Override ON";
+         config.colorDisabled = Parser.parsePositiveNumber(config.colorDisabled,GlobalFunc.COLOR_TEXT_BODY);
+         config.colorEnabled = Parser.parsePositiveNumber(config.colorEnabled,GlobalFunc.COLOR_TEXT_HEADER);
          return config;
       }
    }

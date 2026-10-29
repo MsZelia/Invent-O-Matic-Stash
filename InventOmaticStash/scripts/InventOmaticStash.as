@@ -1021,23 +1021,27 @@ package
          var font:TextFormat;
          try
          {
+            if(this.testRunTextfield)
+            {
+               return;
+            }
             tf = new TextField();
-            tf.x = 0;
-            tf.y = 0;
-            tf.width = 600;
+            tf.x = config.testRunOverride.x;
+            tf.y = config.testRunOverride.y;
+            tf.width = 0;
             tf.height = 50;
             TextFieldEx.setTextAutoSize(tf,TextFieldEx.TEXTAUTOSZ_SHRINK);
-            tf.autoSize = "left";
+            tf.autoSize = config.testRunOverride.textAlign;
             tf.wordWrap = false;
             tf.selectable = false;
             tf.mouseWheelEnabled = false;
-            font = new TextFormat("$MAIN_Font_Bold",18,16777215);
-            font.align = "left";
+            font = new TextFormat(config.testRunOverride.textFont,config.testRunOverride.textSize,config.testRunOverride.colorDisabled);
+            font.align = config.testRunOverride.textAlign;
             tf.defaultTextFormat = font;
             tf.setTextFormat(font);
             tf.filters = [new DropShadowFilter(2,45,0,1,1,1,1,BitmapFilterQuality.HIGH)];
             tf.alpha = 0.6;
-            tf.visible = true;
+            tf.visible = Boolean(config.testRunOverride.enabled) && Boolean(config.testRunOverride.showText);
             addChild(tf);
             this.testRunTextfield = tf;
             this.updateTestRunTextfield();
@@ -1050,21 +1054,26 @@ package
       
       private function updateTestRunTextfield() : void
       {
+         if(!config.testRunOverride.enabled || !config.testRunOverride.showText)
+         {
+            return;
+         }
          if(!this.testRunTextfield)
          {
             this.initTestRunTextfield();
+            return;
          }
          if(InventOmaticConfig.TestRunOverrideHotkey != 0)
          {
             if(ItemWorker.OverrideTestRun)
             {
-               this.testRunTextfield.textColor = 65280;
-               this.testRunTextfield.text = "TestRun Override ON";
+               this.testRunTextfield.textColor = config.testRunOverride.colorEnabled;
+               this.testRunTextfield.text = config.testRunOverride.textEnabled.replace("{hotkey}",Buttons.getButtonKey(InventOmaticConfig.TestRunOverrideHotkey));
             }
             else
             {
-               this.testRunTextfield.textColor = 16777215;
-               this.testRunTextfield.text = "Hold " + Buttons.getButtonKey(InventOmaticConfig.TestRunOverrideHotkey) + ") TestRun";
+               this.testRunTextfield.textColor = config.testRunOverride.colorDisabled;
+               this.testRunTextfield.text = config.testRunOverride.textDisabled.replace("{hotkey}",Buttons.getButtonKey(InventOmaticConfig.TestRunOverrideHotkey));
             }
          }
       }
@@ -1386,7 +1395,7 @@ package
             }
             if(event.keyCode == InventOmaticConfig.TestRunOverrideHotkey)
             {
-               if(!ItemWorker.OverrideTestRun)
+               if(config.testRunOverride.enabled && !ItemWorker.OverrideTestRun)
                {
                   Logger.get().info("OverrideTestRun: true");
                   ItemWorker.OverrideTestRun = true;
@@ -1927,7 +1936,7 @@ package
          }
          if(event.keyCode == InventOmaticConfig.TestRunOverrideHotkey)
          {
-            if(ItemWorker.OverrideTestRun)
+            if(config.testRunOverride.enabled && ItemWorker.OverrideTestRun)
             {
                Logger.get().info("OverrideTestRun: false");
                ItemWorker.OverrideTestRun = false;
