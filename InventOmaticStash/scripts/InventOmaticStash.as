@@ -103,16 +103,16 @@ package
          }
       }
       
-      private static function toString(param1:Object) : String
+      private static function toString(data:Object) : String
       {
-         return new JSONEncoder(param1).getString();
+         return new JSONEncoder(data).getString();
       }
       
-      public static function ShowHUDMessage(param1:String, param2:Boolean = false) : void
+      public static function ShowHUDMessage(message:String, dbg:Boolean = false) : void
       {
-         if(Logger.DEBUG_MODE || param2)
+         if(Logger.DEBUG_MODE || dbg)
          {
-            GlobalFunc.ShowHUDMessage("[" + FULL_MOD_NAME + "] " + param1);
+            GlobalFunc.ShowHUDMessage("[" + FULL_MOD_NAME + "] " + message);
          }
       }
       
@@ -169,19 +169,19 @@ package
          return true;
       }
       
-      public function log(param1:String) : void
+      public function log(data:String) : void
       {
-         Logger.get().info(param1);
+         Logger.get().info(data);
       }
       
-      public function logEvent(param1:Object) : void
+      public function logEvent(data:Object) : void
       {
          Logger.get().info("logEvent");
-         Logger.get().info(toString(param1));
-         Logger.get().info(param1.type);
+         Logger.get().info(toString(data));
+         Logger.get().info(data.type);
       }
       
-      private function addedToStageHandler(param1:Event) : void
+      private function addedToStageHandler(event:Event) : void
       {
          var movieRoot:*;
          try
@@ -221,15 +221,15 @@ package
          return this._parent.__SFCodeObj != null && this._parent.__SFCodeObj.call != null;
       }
       
-      private function onCharacterInfoDataUpdate(param1:Event) : void
+      private function onCharacterInfoDataUpdate(event:Event) : void
       {
          setTimeout(updateVendorCurrencyTextField,10);
          CategoryWeight.updateWeightLabels();
       }
       
-      private function onOtherInvDataUpdate(param1:Event) : void
+      private function onOtherInvDataUpdate(event:Event) : void
       {
-         if(Boolean(param1.data.CorpseInventories) && param1.data.CorpseInventories.length > 0)
+         if(Boolean(event.data.CorpseInventories) && event.data.CorpseInventories.length > 0)
          {
             this.isCorpseLootMode = true;
             this.checkAutoExecute();
@@ -237,14 +237,14 @@ package
          CategoryWeight.updateWeightLabels();
       }
       
-      private function onHUDMessageProviderUpdate(param1:Event) : void
+      private function onHUDMessageProviderUpdate(event:Event) : void
       {
          var i:int = 0;
-         while(i < param1.data.messages.length)
+         while(i < event.data.messages.length)
          {
-            if(param1.data.messages[i].messageText.indexOf("¬") != -1 && CRAFTING_ITEM_UNLOCKED_REGEX.test(param1.data.messages[i].messageText))
+            if(event.data.messages[i].messageText.indexOf("¬") != -1 && CRAFTING_ITEM_UNLOCKED_REGEX.test(event.data.messages[i].messageText))
             {
-               var legendaryModName:String = param1.data.messages[i].messageText.replace(CRAFTING_ITEM_UNLOCKED_REGEX,"");
+               var legendaryModName:String = event.data.messages[i].messageText.replace(CRAFTING_ITEM_UNLOCKED_REGEX,"");
                if(legendaryModName.charAt(legendaryModName.length - 1) == ".")
                {
                   legendaryModName = legendaryModName.substr(0,legendaryModName.length - 1);
@@ -252,7 +252,7 @@ package
                if(config != null && Boolean(config.notifyLegendaryModLearnedOnScrap))
                {
                   Logger.get().debugMode = true;
-                  Logger.get().info(param1.data.messages[i].messageText);
+                  Logger.get().info(event.data.messages[i].messageText);
                }
                if(LegendaryMods.allCharsLegendaryMods)
                {
@@ -429,17 +429,17 @@ package
                ShowHUDMessage("Error loading config: " + e.text,true);
                Logger.get().error("Error loading config: " + e.text);
             };
-            loaderComplete = function(param1:Event):void
+            loaderComplete = function(event:Event):void
             {
-               var _loc2_:Object;
+               var jsonData:Object;
                var line:uint;
                try
                {
-                  _loc2_ = new JSONDecoder(loader.data,false).getValue();
+                  jsonData = new JSONDecoder(loader.data,false).getValue();
                   t2 = getTimer();
-                  Logger.get().debugMode = _loc2_.debug;
-                  Logger.get().setPosition(Parser.parseNumber(_loc2_.debugX,0),Parser.parseNumber(_loc2_.debugY,0));
-                  InventOmaticConfig.init(_loc2_);
+                  Logger.get().debugMode = jsonData.debug;
+                  Logger.get().setPosition(Parser.parseNumber(jsonData.debugX,0),Parser.parseNumber(jsonData.debugY,0));
+                  InventOmaticConfig.init(jsonData);
                   init();
                   t3 = getTimer();
                   if(!config.hideLoadMessage)
@@ -1313,9 +1313,9 @@ package
          }
       }
       
-      private function keyDownHandler(param1:KeyboardEvent) : void
+      private function keyDownHandler(event:KeyboardEvent) : void
       {
-         if(param1.keyCode == Keyboard.SHIFT)
+         if(event.keyCode == Keyboard.SHIFT)
          {
             _shift = true;
          }
@@ -1323,20 +1323,20 @@ package
          {
             if(this.config.debugKeys)
             {
-               Logger.get().info("KeyDown: " + param1.keyCode + "(" + Buttons.getButtonKey(param1.keyCode) + "), shift: " + _shift);
+               Logger.get().info("KeyDown: " + event.keyCode + "(" + Buttons.getButtonKey(event.keyCode) + "), shift: " + _shift);
             }
             if(InventOmaticConfig.SwapToPlayerInventoryHotkey != InventOmaticConfig.SwapToContainerInventoryHotkey)
             {
-               if(InventOmaticConfig.SwapToPlayerInventoryHotkey != 0 && param1.keyCode == InventOmaticConfig.SwapToPlayerInventoryHotkey)
+               if(InventOmaticConfig.SwapToPlayerInventoryHotkey != 0 && event.keyCode == InventOmaticConfig.SwapToPlayerInventoryHotkey)
                {
                   this.parentClip.onSwapInventoryPlayer();
                }
-               else if(InventOmaticConfig.SwapToContainerInventoryHotkey != 0 && param1.keyCode == InventOmaticConfig.SwapToContainerInventoryHotkey)
+               else if(InventOmaticConfig.SwapToContainerInventoryHotkey != 0 && event.keyCode == InventOmaticConfig.SwapToContainerInventoryHotkey)
                {
                   this.parentClip.onSwapInventoryContainer();
                }
             }
-            else if(InventOmaticConfig.SwapToPlayerInventoryHotkey != 0 && param1.keyCode == InventOmaticConfig.SwapToPlayerInventoryHotkey)
+            else if(InventOmaticConfig.SwapToPlayerInventoryHotkey != 0 && event.keyCode == InventOmaticConfig.SwapToPlayerInventoryHotkey)
             {
                if(this.parentClip.selectedList == this.parentClip.OfferInventory_mc)
                {
@@ -1686,7 +1686,7 @@ package
          return trimmedObj;
       }
       
-      private function keyUpHandler(param1:KeyboardEvent) : void
+      private function keyUpHandler(event:KeyboardEvent) : void
       {
          var apiData:*;
          var data:String;
@@ -1700,15 +1700,15 @@ package
          var hexB64:String;
          var keys:Array;
          var output:String;
-         if(param1.keyCode == Keyboard.SHIFT)
+         if(event.keyCode == Keyboard.SHIFT)
          {
             _shift = false;
          }
          if(this.config && this.config.debugKeys)
          {
-            Logger.get().info("KeyUp: " + param1.keyCode + "(" + Buttons.getButtonKey(param1.keyCode) + "), shift: " + _shift);
+            Logger.get().info("KeyUp: " + event.keyCode + "(" + Buttons.getButtonKey(event.keyCode) + "), shift: " + _shift);
          }
-         if(param1.keyCode == Keyboard.F6)
+         if(event.keyCode == Keyboard.F6)
          {
             if(this.config.down != null)
             {
@@ -1722,7 +1722,7 @@ package
                Logger.get().info("serverHandleID: " + this.parentClip.selectedListEntry.serverHandleID + " + offset: " + _offset + " = " + (this.parentClip.selectedListEntry.serverHandleID + _offset));
             }
          }
-         else if(param1.keyCode == Keyboard.F7)
+         else if(event.keyCode == Keyboard.F7)
          {
             if(this.config.up != null)
             {
@@ -1736,7 +1736,7 @@ package
                Logger.get().info("serverHandleID: " + this.parentClip.selectedListEntry.serverHandleID + " + offset: " + _offset + " = " + (this.parentClip.selectedListEntry.serverHandleID + _offset));
             }
          }
-         else if(param1.keyCode == Keyboard.F8)
+         else if(event.keyCode == Keyboard.F8)
          {
             Logger.get().info("F8");
             if(config.testMethod != null)
@@ -1810,12 +1810,12 @@ package
                }
             }
          }
-         else if(param1.keyCode == Keyboard.F9)
+         else if(event.keyCode == Keyboard.F9)
          {
             selectedItem = new JSONEncoder(this.parentClip.selectedListEntry).getString();
             Logger.get().info(selectedItem);
          }
-         else if(param1.keyCode == Keyboard.F10)
+         else if(event.keyCode == Keyboard.F10)
          {
             if(this.config.testEvent != null && this.config.testEventData != null)
             {
@@ -1835,7 +1835,7 @@ package
                BSUIDataManager.dispatchEvent(new CustomEvent(this.config.testEvent,this.config.testEventData));
             }
          }
-         else if(param1.keyCode == Keyboard.F12)
+         else if(event.keyCode == Keyboard.F12)
          {
             if(config.testMethod != null)
             {
@@ -1849,18 +1849,18 @@ package
          {
             return;
          }
-         if(param1.keyCode == InventOmaticConfig.CalculateCatWeightKeyCode)
+         if(event.keyCode == InventOmaticConfig.CalculateCatWeightKeyCode)
          {
             this.calculateCatWeightCallback();
          }
-         if(param1.keyCode == InventOmaticConfig.NpcSellKeyCode)
+         if(event.keyCode == InventOmaticConfig.NpcSellKeyCode)
          {
             if(this.config.npcSellConfig && this.config.npcSellConfig.enabled)
             {
                this.npcSellItemsCallback();
             }
          }
-         if(param1.keyCode == InventOmaticConfig.BuyKeyCode)
+         if(event.keyCode == InventOmaticConfig.BuyKeyCode)
          {
             if(this.config.buyConfig && this.config.buyConfig.enabled)
             {
@@ -1870,9 +1870,9 @@ package
          indexConfig = 0;
          while(indexConfig < this.config.campAssignConfig.configs.length)
          {
-            if(this.config.campAssignConfig.configs[indexConfig] && this.config.campAssignConfig.configs[indexConfig].enabled && param1.keyCode == this.config.campAssignConfig.configs[indexConfig].hotkey)
+            if(this.config.campAssignConfig.configs[indexConfig] && this.config.campAssignConfig.configs[indexConfig].enabled && event.keyCode == this.config.campAssignConfig.configs[indexConfig].hotkey)
             {
-               this.campAssignItemsCallback(param1.keyCode);
+               this.campAssignItemsCallback(event.keyCode);
                break;
             }
             indexConfig++;
@@ -1880,9 +1880,9 @@ package
          indexConfig = 0;
          while(indexConfig < this.config.scrapConfig.configs.length)
          {
-            if(this.config.scrapConfig.configs[indexConfig] && this.config.scrapConfig.configs[indexConfig].enabled && param1.keyCode == this.config.scrapConfig.configs[indexConfig].hotkey)
+            if(this.config.scrapConfig.configs[indexConfig] && this.config.scrapConfig.configs[indexConfig].enabled && event.keyCode == this.config.scrapConfig.configs[indexConfig].hotkey)
             {
-               this.scrapItemsCallback(param1.keyCode);
+               this.scrapItemsCallback(event.keyCode);
                break;
             }
             indexConfig++;
@@ -1890,29 +1890,29 @@ package
          indexConfig = 0;
          while(indexConfig < this.config.transferConfig.length)
          {
-            if(this.config.transferConfig[indexConfig] && this.config.transferConfig[indexConfig].enabled && param1.keyCode == this.config.transferConfig[indexConfig].hotkey)
+            if(this.config.transferConfig[indexConfig] && this.config.transferConfig[indexConfig].enabled && event.keyCode == this.config.transferConfig[indexConfig].hotkey)
             {
-               this.transferItemsCallback(param1.keyCode);
+               this.transferItemsCallback(event.keyCode);
                break;
             }
             indexConfig++;
          }
-         if(param1.keyCode == InventOmaticConfig.LootKeyCode)
+         if(event.keyCode == InventOmaticConfig.LootKeyCode)
          {
             if(this.config.lootConfig && this.config.lootConfig.enabled)
             {
                this.lootItemsCallback();
             }
          }
-         if(param1.keyCode == InventOmaticConfig.ExtractKeyCode)
+         if(event.keyCode == InventOmaticConfig.ExtractKeyCode)
          {
             this.extractDataCallback();
          }
-         if(param1.keyCode == InventOmaticConfig.LockAllKeyCode)
+         if(event.keyCode == InventOmaticConfig.LockAllKeyCode)
          {
             this.lockItemsCallback();
          }
-         if(param1.keyCode == InventOmaticConfig.ToggleDebugKeyCode)
+         if(event.keyCode == InventOmaticConfig.ToggleDebugKeyCode)
          {
             Logger.get().debugMode = !Logger.DEBUG_MODE;
          }

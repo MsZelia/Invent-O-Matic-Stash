@@ -278,15 +278,15 @@ package
             if(nameOrNames is Array)
             {
                var resolvedChoices:Array = [];
-               for each(var n:String in nameOrNames)
+               for each(var n in nameOrNames)
                {
-                  resolvedChoices = resolvedChoices.concat(itemGroups[n] ?? [n]);
+                  resolvedChoices = resolvedChoices.concat(itemGroups[n] != null ? itemGroups[n] : [n]);
                }
                itemNames.push(resolvedChoices);
             }
             else
             {
-               itemNames = itemNames.concat(itemGroups[nameOrNames] ?? [nameOrNames]);
+               itemNames = itemNames.concat(itemGroups[nameOrNames] != null ? itemGroups[nameOrNames] : [nameOrNames]);
             }
          }
          return itemNames;
