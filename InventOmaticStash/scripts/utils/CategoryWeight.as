@@ -27,11 +27,11 @@ package utils
          super();
       }
       
-      public static function init(param1:Object) : void
+      public static function init(parent:Object) : void
       {
          if(config.categoryWeightConfig && config.categoryWeightConfig.enabled)
          {
-            secureTrade = param1;
+            secureTrade = parent;
             GameApiDataExtractor.subscribeInventoryItemCardData(onInventoryItemCardDataUpdate);
             secureTrade.OfferInventory_mc.OfferWeight_tf.width = config.categoryWeightConfig.weightLabelWidth;
             secureTrade.PlayerInventory_mc.PlayerWeight_tf.width = config.categoryWeightConfig.weightLabelWidth;
@@ -220,23 +220,10 @@ package utils
          return delay + DEFAULT_DELAY;
       }
       
-      private static function clone(param1:Object) : Object
+      private static function onInventoryItemCardDataUpdate(event:FromClientDataEvent) : void
       {
-         try
-         {
-            return GlobalFunc.CloneObject(param1);
-         }
-         catch(e:Error)
-         {
-            Logger.get().error("Error cloning object: " + e);
-         }
-         return {};
-      }
-      
-      private static function onInventoryItemCardDataUpdate(param1:FromClientDataEvent) : void
-      {
-         var _loc2_:Object = param1.data;
-         itemCardEntries[_loc2_.serverHandleID] = clone(_loc2_);
+         var data:Object = event.data;
+         itemCardEntries[data.serverHandleID] = GlobalFunc.CloneObject(data);
       }
    }
 }

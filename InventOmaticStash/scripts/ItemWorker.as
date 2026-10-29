@@ -42,9 +42,9 @@ package
       
       private var selectItemCardsQueue:Object = {};
       
-      public function ItemWorker(param1:Object)
+      public function ItemWorker(parent:Object)
       {
-         this.secureTrade = param1;
+         this.secureTrade = parent;
          super();
       }
       
@@ -96,21 +96,18 @@ package
          return overrideTestRun;
       }
       
-      private static function toString(param1:Object) : String
+      private static function toString(data:Object) : String
       {
-         return new JSONEncoder(param1).getString();
+         return new JSONEncoder(data).getString();
       }
       
-      private static function ShowMessage(param1:String) : void
+      private static function ShowMessage(message:String) : void
       {
-         GlobalFunc.ShowHUDMessage("[" + InventOmaticStash.FULL_MOD_NAME + "] " + param1);
+         GlobalFunc.ShowHUDMessage("[" + InventOmaticStash.FULL_MOD_NAME + "] " + message);
       }
       
-      public static function isMatchingString(param1:String, param2:String, param3:String) : Boolean
+      public static function isMatchingString(itemName:String, stringToCompare:String, matchMode:String) : Boolean
       {
-         var itemName:String = param1;
-         var stringToCompare:String = param2;
-         var matchMode:String = param3;
          try
          {
             if(matchMode === MatchMode.ALL)
@@ -259,10 +256,8 @@ package
          return false;
       }
       
-      private static function isValidTypeToScrap(param1:Object, param2:Object) : Boolean
+      private static function isValidTypeToScrap(item:Object, config:Object) : Boolean
       {
-         var item:Object = param1;
-         var config:Object = param2;
          var types:Array = config.types;
          var matchingFilterFlags:Array = [];
          var i:int = 0;
@@ -285,13 +280,11 @@ package
          return false;
       }
       
-      private static function shouldScrap(param1:Object, param2:Object) : Boolean
+      private static function shouldScrap(item:Object, config:Object) : Boolean
       {
          var allMatch:Boolean;
          var matchMode:*;
          var INVERSE:Boolean = false;
-         var item:Object = param1;
-         var config:Object = param2;
          var matches:Boolean = false;
          var i:int = 0;
          if(!isValidTypeToScrap(item,config))
@@ -1339,14 +1332,13 @@ package
          ++_queueIndex;
       }
       
-      private function npcSell(param1:Object) : void
+      private function npcSell(config:Object) : void
       {
          var itemValue:Number;
          var vendorCurrency:Number;
          var playerCurrency:Number;
          var playerCurrencyMax:Number;
          var inventory:Array;
-         var config:Object = param1;
          var end:Boolean = false;
          var countItemsToSell:Boolean = false;
          var i:int = 0;
@@ -1508,11 +1500,6 @@ package
          }
          GameApiDataExtractor.sellItem(_queue[_queueIndex]);
          ++_queueIndex;
-      }
-      
-      private function performContainerWeightCheck(param1:Object, param2:uint, param3:Object) : Boolean
-      {
-         return Boolean(param1.isWeightless) || param3.carryWeightMax <= 0 || param3.carryWeightCurrent + param1.weight * param2 <= param3.carryWeightMax;
       }
       
       private function campAssign(validConfigs:Array) : void

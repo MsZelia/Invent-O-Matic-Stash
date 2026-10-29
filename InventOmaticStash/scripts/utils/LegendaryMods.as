@@ -92,9 +92,9 @@ package utils
          }
       }
       
-      private static function toString(param1:Object) : String
+      private static function toString(data:Object) : String
       {
-         return new JSONEncoder(param1).getString();
+         return new JSONEncoder(data).getString();
       }
       
       private static function get config() : Object
@@ -614,7 +614,7 @@ package utils
          var loader:URLLoader = null;
          try
          {
-            loaderComplete = function(param1:Event):void
+            loaderComplete = function(event:Event):void
             {
                var i:int;
                try
@@ -647,9 +647,9 @@ package utils
                   }
                }
             };
-            onIOError = function(param1:Event):void
+            onIOError = function(event:Event):void
             {
-               Logger.get().error("Error loading legendary mods file: " + param1.text);
+               Logger.get().error("Error loading legendary mods file: " + event.text);
             };
             url = new URLRequest(FILE_LOCATION);
             loader = new URLLoader();

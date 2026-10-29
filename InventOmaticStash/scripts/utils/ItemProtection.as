@@ -26,9 +26,9 @@ package utils
          super();
       }
       
-      public static function init(param1:Object) : void
+      public static function init(parent:Object) : void
       {
-         secureTrade = param1;
+         secureTrade = parent;
       }
       
       public static function get ProtectionReason() : String
