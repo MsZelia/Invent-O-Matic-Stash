@@ -8,12 +8,14 @@ package
    import extractors.*;
    import flash.display.*;
    import flash.events.*;
+   import flash.filters.*;
    import flash.net.URLLoader;
    import flash.net.URLRequest;
    import flash.text.*;
    import flash.ui.Keyboard;
    import flash.utils.*;
    import mx.utils.*;
+   import scaleform.gfx.*;
    import utils.*;
    
    public class InventOmaticStash extends MovieClip
@@ -26,6 +28,8 @@ package
       private const CRAFTING_ITEM_UNLOCKED_REGEX:* = /(Crafting item unlocked: |Objet de fabrication débloqué : |Objeto de creación desbloqueado: |Herstellungsgegenstand freigeschaltet: |Oggetto creabile sbloccato: |Odblokowujesz nową rzecz do tworzenia: |Item de criação desbloqueado: |Открыт предмет для изготовления: |クラフトアイテムを解除：|제작 아이템 잠금 해제: |已解锁的物品制作：|道具製作已解鎖：)/;
       
       public var debugLogger:TextField;
+      
+      public var testRunTextfield:TextField = null;
       
       private var _itemExtractor:ItemExtractor;
       
@@ -684,6 +688,7 @@ package
          this.initDefaultSelectedTab();
          this.initItemProtection();
          this.initUIChanges();
+         this.initTestRunTextfield();
          CategoryWeight.init(this._parent);
          LegendaryMods.init();
          this.checkAutoExecute();
@@ -1010,6 +1015,60 @@ package
          }
       }
       
+      private function initTestRunTextfield() : void
+      {
+         var tf:TextField;
+         var font:TextFormat;
+         try
+         {
+            tf = new TextField();
+            tf.x = 0;
+            tf.y = 0;
+            tf.width = 600;
+            tf.height = 50;
+            TextFieldEx.setTextAutoSize(tf,TextFieldEx.TEXTAUTOSZ_SHRINK);
+            tf.autoSize = "left";
+            tf.wordWrap = false;
+            tf.selectable = false;
+            tf.mouseWheelEnabled = false;
+            font = new TextFormat("$MAIN_Font_Bold",18,16777215);
+            font.align = "left";
+            tf.defaultTextFormat = font;
+            tf.setTextFormat(font);
+            tf.filters = [new DropShadowFilter(2,45,0,1,1,1,1,BitmapFilterQuality.HIGH)];
+            tf.alpha = 0.6;
+            tf.visible = true;
+            addChild(tf);
+            this.testRunTextfield = tf;
+            this.updateTestRunTextfield();
+         }
+         catch(e:*)
+         {
+            Logger.get().error("Error initTestRunTextfield " + e);
+         }
+      }
+      
+      private function updateTestRunTextfield() : void
+      {
+         if(!this.testRunTextfield)
+         {
+            this.initTestRunTextfield();
+         }
+         if(InventOmaticConfig.TestRunOverrideHotkey != 0)
+         {
+            if(ItemWorker.OverrideTestRun)
+            {
+               this.testRunTextfield.textColor = 65280;
+               this.testRunTextfield.text = "TestRun Override ON";
+            }
+            else
+            {
+               this.testRunTextfield.textColor = 16777215;
+               this.testRunTextfield.text = "Hold " + Buttons.getButtonKey(InventOmaticConfig.TestRunOverrideHotkey) + ") TestRun";
+            }
+         }
+      }
+      
       public function checkAutoExecute() : void
       {
          if(this.hasAutoExecuted || !this.config || !this.isCorpseLootMode)
@@ -1325,13 +1384,14 @@ package
             {
                Logger.get().info("KeyDown: " + event.keyCode + "(" + Buttons.getButtonKey(event.keyCode) + "), shift: " + _shift);
             }
-            if(event.keyCode == InventOmaticConfig.TestRunHoldHotkey)
+            if(event.keyCode == InventOmaticConfig.TestRunOverrideHotkey)
             {
                if(!ItemWorker.OverrideTestRun)
                {
                   Logger.get().info("OverrideTestRun: true");
+                  ItemWorker.OverrideTestRun = true;
+                  updateTestRunTextfield();
                }
-               ItemWorker.OverrideTestRun = true;
             }
             if(event.keyCode == InventOmaticConfig.CancelCloseMenuHotkey)
             {
@@ -1865,13 +1925,14 @@ package
          {
             return;
          }
-         if(event.keyCode == InventOmaticConfig.TestRunHoldHotkey)
+         if(event.keyCode == InventOmaticConfig.TestRunOverrideHotkey)
          {
             if(ItemWorker.OverrideTestRun)
             {
                Logger.get().info("OverrideTestRun: false");
+               ItemWorker.OverrideTestRun = false;
+               updateTestRunTextfield();
             }
-            ItemWorker.OverrideTestRun = false;
          }
          if(event.keyCode == InventOmaticConfig.CancelCloseMenuHotkey)
          {

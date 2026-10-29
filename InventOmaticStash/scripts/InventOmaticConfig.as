@@ -60,7 +60,7 @@ package
       
       private static var swapToContainerInventoryHotkey:uint = 0;
       
-      private static var testRunHoldHotkey:uint = 0;
+      private static var testRunOverrideHotkey:uint = 0;
       
       private static var cancelCloseMenuHotkey:uint = 0;
       
@@ -134,9 +134,9 @@ package
          return swapToContainerInventoryHotkey;
       }
       
-      public static function get TestRunHoldHotkey() : uint
+      public static function get TestRunOverrideHotkey() : uint
       {
-         return testRunHoldHotkey;
+         return testRunOverrideHotkey;
       }
       
       public static function get CancelCloseMenuHotkey() : uint
@@ -268,7 +268,7 @@ package
             }
             swapToPlayerInventoryHotkey = Parser.parseHotkey(config.swapToPlayerInventoryHotkey,0);
             swapToContainerInventoryHotkey = Parser.parseHotkey(config.swapToContainerInventoryHotkey,0);
-            testRunHoldHotkey = Parser.parseHotkey(config.testRunHoldHotkey,0);
+            testRunOverrideHotkey = Parser.parseHotkey(config.testRunOverrideHotkey,0);
             cancelCloseMenuHotkey = Parser.parseHotkey(config.cancelCloseMenuHotkey,0);
          }
       }
