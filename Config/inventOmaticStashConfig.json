@@ -23,6 +23,21 @@
 	"hideScrapAllConfirm": true,
 	"hideScrapBoxConfirm": true,
 
+	"cancelCloseMenuHotkey": "ALT",
+	"testRunOverride": {
+		"enabled": true,
+		"hotkey": "CTRL",
+		"showText": true,
+		"x": 0,
+		"y": 0,
+		"textSize": 18,
+		"textFont": "$MAIN_Font_Bold",
+		"textAlign": "left",
+		"textDisabled": "Hold {hotkey}) TestRun",
+		"textEnabled": "TestRun Override ON",
+		"colorDisabled": "0xffffcb",
+		"colorEnabled": "0xf5cb5b",
+	},
 	"defaultVendorItemPrice": {
 		"enabled": false,
 		"defaultValue": -1,
