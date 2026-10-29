@@ -18,6 +18,10 @@ package
       
       private static var errorCode:String;
       
+      private static var overrideCancelCloseMenu:Boolean = false;
+      
+      private static var overrideTestRun:Boolean = false;
+      
       public static const DIRECTION_TO_CONTAINER:String = "TO_CONTAINER";
       
       public static const DIRECTION_FROM_CONTAINER:String = "FROM_CONTAINER";
@@ -70,6 +74,26 @@ package
             characterName = GameApiDataExtractor.getCharacterInfoData().name;
          }
          return characterName;
+      }
+      
+      public static function set OverrideCancelCloseMenu(value:Boolean) : void
+      {
+         overrideCancelCloseMenu = value;
+      }
+      
+      public static function get OverrideCancelCloseMenu() : Boolean
+      {
+         return overrideCancelCloseMenu;
+      }
+      
+      public static function set OverrideTestRun(value:Boolean) : void
+      {
+         overrideTestRun = value;
+      }
+      
+      public static function get OverrideTestRun() : Boolean
+      {
+         return overrideTestRun;
       }
       
       private static function toString(param1:Object) : String
@@ -592,7 +616,7 @@ package
             {
                Logger.get().error("Not transferring selected: Invalid config/No selected item");
             }
-            if(Parser.parseBoolean(config.testRun,false))
+            if(overrideTestRun || Parser.parseBoolean(config.testRun,false))
             {
                showTestRun("TRANSFER (" + config.name + ")");
                return 0;
@@ -1136,7 +1160,7 @@ package
                }
             }
             errorCode = "test";
-            if(Parser.parseBoolean(config.testRun,false))
+            if(overrideTestRun || Parser.parseBoolean(config.testRun,false))
             {
                showTestRun("TRANSFER (" + config.name + ")");
                return 0;
@@ -1267,7 +1291,7 @@ package
                   }
                   i++;
                }
-               if(Parser.parseBoolean(config.testRun,true))
+               if(overrideTestRun || Parser.parseBoolean(config.testRun,true))
                {
                   showTestRun("SCRAP (" + config.name + ")");
                   return MIN_DELAY;
@@ -1456,7 +1480,7 @@ package
                   }
                   i++;
                }
-               if(Parser.parseBoolean(config.testRun,false))
+               if(overrideTestRun || Parser.parseBoolean(config.testRun,false))
                {
                   showTestRun("SELL (" + config.name + ")");
                   return;
@@ -1981,7 +2005,7 @@ package
                   }
                   i++;
                }
-               if(Parser.parseBoolean(lockConfig.testRun,true))
+               if(overrideTestRun || Parser.parseBoolean(lockConfig.testRun,true))
                {
                   showTestRun("LOCK (" + lockConfig.name + ")");
                   return;
@@ -2513,7 +2537,7 @@ package
                      i++;
                   }
                }
-               if(Parser.parseBoolean(config.testRun,false))
+               if(overrideTestRun || Parser.parseBoolean(config.testRun,false))
                {
                   showTestRun("BUY (" + config.name + ")");
                   return;
@@ -2593,10 +2617,14 @@ package
             }
             loop++;
          }
-         if(closeMenu)
+         if(closeMenu && !overrideCancelCloseMenu)
          {
             setTimeout(function(debug:Boolean):void
             {
+               if(overrideCancelCloseMenu)
+               {
+                  return;
+               }
                if(debug)
                {
                   Logger.get().info("Closing menu...");

@@ -1325,6 +1325,22 @@ package
             {
                Logger.get().info("KeyDown: " + event.keyCode + "(" + Buttons.getButtonKey(event.keyCode) + "), shift: " + _shift);
             }
+            if(event.keyCode == InventOmaticConfig.TestRunHoldHotkey)
+            {
+               if(!ItemWorker.OverrideTestRun)
+               {
+                  Logger.get().info("OverrideTestRun: true");
+               }
+               ItemWorker.OverrideTestRun = true;
+            }
+            if(event.keyCode == InventOmaticConfig.CancelCloseMenuHotkey)
+            {
+               if(!ItemWorker.OverrideCancelCloseMenu)
+               {
+                  Logger.get().info("OverrideCancelCloseMenu: true");
+               }
+               ItemWorker.OverrideCancelCloseMenu = true;
+            }
             if(InventOmaticConfig.SwapToPlayerInventoryHotkey != InventOmaticConfig.SwapToContainerInventoryHotkey)
             {
                if(InventOmaticConfig.SwapToPlayerInventoryHotkey != 0 && event.keyCode == InventOmaticConfig.SwapToPlayerInventoryHotkey)
@@ -1848,6 +1864,22 @@ package
          if(this.parentClip.modalActive)
          {
             return;
+         }
+         if(event.keyCode == InventOmaticConfig.TestRunHoldHotkey)
+         {
+            if(ItemWorker.OverrideTestRun)
+            {
+               Logger.get().info("OverrideTestRun: false");
+            }
+            ItemWorker.OverrideTestRun = false;
+         }
+         if(event.keyCode == InventOmaticConfig.CancelCloseMenuHotkey)
+         {
+            if(ItemWorker.OverrideCancelCloseMenu)
+            {
+               Logger.get().info("OverrideCancelCloseMenu: false");
+            }
+            ItemWorker.OverrideCancelCloseMenu = false;
          }
          if(event.keyCode == InventOmaticConfig.CalculateCatWeightKeyCode)
          {

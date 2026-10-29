@@ -60,6 +60,10 @@ package
       
       private static var swapToContainerInventoryHotkey:uint = 0;
       
+      private static var testRunHoldHotkey:uint = 0;
+      
+      private static var cancelCloseMenuHotkey:uint = 0;
+      
       public function InventOmaticConfig()
       {
          super();
@@ -128,6 +132,16 @@ package
       public static function get SwapToContainerInventoryHotkey() : uint
       {
          return swapToContainerInventoryHotkey;
+      }
+      
+      public static function get TestRunHoldHotkey() : uint
+      {
+         return testRunHoldHotkey;
+      }
+      
+      public static function get CancelCloseMenuHotkey() : uint
+      {
+         return cancelCloseMenuHotkey;
       }
       
       public static function init(jsonObject:*) : Object
@@ -254,6 +268,8 @@ package
             }
             swapToPlayerInventoryHotkey = Parser.parseHotkey(config.swapToPlayerInventoryHotkey,0);
             swapToContainerInventoryHotkey = Parser.parseHotkey(config.swapToContainerInventoryHotkey,0);
+            testRunHoldHotkey = Parser.parseHotkey(config.testRunHoldHotkey,0);
+            cancelCloseMenuHotkey = Parser.parseHotkey(config.cancelCloseMenuHotkey,0);
          }
       }
       
