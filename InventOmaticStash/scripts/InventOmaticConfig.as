@@ -277,22 +277,16 @@ package
          {
             if(nameOrNames is Array)
             {
-               var names:Array = nameOrNames;
+               var resolvedChoices:Array = [];
+               for each(var n:String in nameOrNames)
+               {
+                  resolvedChoices = resolvedChoices.concat(itemGroups[n] ?? [n]);
+               }
+               itemNames.push(resolvedChoices);
             }
             else
             {
-               names = new Array(nameOrNames);
-            }
-            for each(var name in names)
-            {
-               if(itemGroups[name] != null)
-               {
-                  itemNames = itemNames.concat(itemGroups[name]);
-               }
-               else
-               {
-                  itemNames.push(name);
-               }
+               itemNames = itemNames.concat(itemGroups[nameOrNames] ?? [nameOrNames]);
             }
          }
          return itemNames;
