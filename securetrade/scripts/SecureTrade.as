@@ -561,9 +561,8 @@ package
          return m_IsTransferLockingFeatureEnabled;
       }
       
-      private function loadMod(param1:String) : void
+      private function loadMod(modfile:String) : void
       {
-         var modfile:String = param1;
          try
          {
             modLoader = new Loader();
@@ -577,19 +576,19 @@ package
          }
       }
       
-      private function uncaughtErrorHandler(param1:UncaughtErrorEvent) : void
+      private function uncaughtErrorHandler(event:UncaughtErrorEvent) : void
       {
-         var _loc2_:Error = null;
-         var _loc3_:ErrorEvent = null;
-         if(param1.error is Error)
+         var e:Error = null;
+         var ee:ErrorEvent = null;
+         if(event.error is Error)
          {
-            _loc2_ = param1.error as Error;
-            GlobalFunc.ShowHUDMessage("Error: " + _loc2_);
+            e = event.error as Error;
+            GlobalFunc.ShowHUDMessage("Error: " + e);
          }
-         else if(param1.error is ErrorEvent)
+         else if(event.error is ErrorEvent)
          {
-            _loc3_ = param1.error as ErrorEvent;
-            GlobalFunc.ShowHUDMessage("Error: " + _loc3_);
+            ee = event.error as ErrorEvent;
+            GlobalFunc.ShowHUDMessage("Error: " + ee);
          }
       }
       
@@ -610,21 +609,21 @@ package
          }
       }
       
-      public function set ShowAdditionalColumns(param1:Object) : void
+      public function set ShowAdditionalColumns(data:Object) : void
       {
-         if(param1 && param1.columns)
+         if(data && data.columns)
          {
-            PlayerListEntry.ShowAdditionalColumns = param1.columns;
-            OfferListEntry.ShowAdditionalColumns = param1.columns;
-            if(false && param1.enableHeaderSort)
+            PlayerListEntry.ShowAdditionalColumns = data.columns;
+            OfferListEntry.ShowAdditionalColumns = data.columns;
+            if(false && data.enableHeaderSort)
             {
                PlayerInventory_mc.HeaderSort = true;
                OfferInventory_mc.HeaderSort = true;
             }
-            PlayerInventory_mc.ShowAdditionalColumns = param1.columns;
-            OfferInventory_mc.ShowAdditionalColumns = param1.columns;
-            PlayerInventory_mc.x -= param1.offsetInventories;
-            OfferInventory_mc.x += param1.offsetInventories;
+            PlayerInventory_mc.ShowAdditionalColumns = data.columns;
+            OfferInventory_mc.ShowAdditionalColumns = data.columns;
+            PlayerInventory_mc.x -= data.offsetInventories;
+            OfferInventory_mc.x += data.offsetInventories;
             PlayerInventory_mc.alpha = 1;
             OfferInventory_mc.alpha = 1;
             alpha = 1;

@@ -33,58 +33,11 @@ package Shared.AS3
       
       private static const DYNAMIC_MOVIE_CLIP_BUFFER:* = 3;
       
-      private static const NameToTextMap:Object = {
-         "Xenon_A":"A",
-         "Xenon_B":"B",
-         "Xenon_X":"C",
-         "Xenon_Y":"D",
-         "Xenon_Select":"E",
-         "Xenon_LS":"F",
-         "Xenon_L1":"G",
-         "Xenon_L3":"H",
-         "Xenon_L2":"I",
-         "Xenon_L2R2":"J",
-         "Xenon_RS":"K",
-         "Xenon_R1":"L",
-         "Xenon_R3":"M",
-         "Xenon_R2":"N",
-         "Xenon_Start":"O",
-         "Xenon_L1R1":"Z",
-         "_Positive":"P",
-         "_Negative":"Q",
-         "_Question":"R",
-         "_Neutral":"S",
-         "Left":"T",
-         "Right":"U",
-         "Down":"V",
-         "Up":"W",
-         "Xenon_R2_Alt":"X",
-         "Xenon_L2_Alt":"Y",
-         "PSN_A":"a",
-         "PSN_Y":"b",
-         "PSN_X":"c",
-         "PSN_B":"d",
-         "PSN_Select":"z",
-         "PSN_L3":"f",
-         "PSN_L1":"g",
-         "PSN_L1R1":"h",
-         "PSN_LS":"i",
-         "PSN_L2":"j",
-         "PSN_L2R2":"k",
-         "PSN_R3":"l",
-         "PSN_R1":"m",
-         "PSN_RS":"n",
-         "PSN_R2":"o",
-         "PSN_Start":"p",
-         "_DPad_LR":"q",
-         "_DPad_UD":"r",
-         "_DPad_Left":"t",
-         "_DPad_Right":"u",
-         "_DPad_Down":"v",
-         "_DPad_Up":"w",
-         "PSN_R2_Alt":"x",
-         "PSN_L2_Alt":"y"
-      };
+      private static const LIGHT_YELLOW_COLOR:uint = 16777163;
+      
+      private static const GOLD_COLOR:uint = 16108379;
+      
+      private static const BLACK_COLOR:uint = 0;
       
       private static const FRtoENMap:Object = {
          "A":"Q",
@@ -115,6 +68,8 @@ package Shared.AS3
       
       public var Sizer_mc:MovieClip;
       
+      public var Highlight_mc:MovieClip;
+      
       private var m_CanHold:Boolean = false;
       
       private var m_HoldPercent:Number = 0;
@@ -124,6 +79,12 @@ package Shared.AS3
       private var m_HoldStartFrame:int = 0;
       
       private var m_UseVaultTecColor:Boolean = false;
+      
+      private var m_TextColor:uint;
+      
+      private var m_TextFiltersA:Array;
+      
+      private var m_bHoverStateEnabled:Boolean = false;
       
       private var _hitArea:Sprite;
       
@@ -169,6 +130,7 @@ package Shared.AS3
          addEventListener(MouseEvent.CLICK,this.onTextClick);
          addEventListener(MouseEvent.MOUSE_OVER,this.onMouseOver);
          addEventListener(MouseEvent.MOUSE_OUT,this.onMouseOut);
+         this.m_TextFiltersA = this.textField_tf.filters;
          if(this.HoldMeter_mc != null)
          {
             _loc1_ = this.HoldMeter_mc.currentLabels;
@@ -242,13 +204,13 @@ package Shared.AS3
             case PlatformChangeEvent.PLATFORM_PC_KB_FR:
                if(FRtoENMap.hasOwnProperty(param1))
                {
-                  param1 = String(FRtoENMap[param1]);
+                  param1 = FRtoENMap[param1];
                }
                break;
             case PlatformChangeEvent.PLATFORM_PC_KB_BE:
                if(BEtoENMap.hasOwnProperty(param1))
                {
-                  param1 = String(BEtoENMap[param1]);
+                  param1 = BEtoENMap[param1];
                }
          }
          return param1;
@@ -256,11 +218,12 @@ package Shared.AS3
       
       private function get UsePCKey() : Boolean
       {
-         return uiController == PlatformChangeEvent.PLATFORM_PC_KB_MOUSE && !NameToTextMap.hasOwnProperty(this._buttonHintData.PCKey);
+         return uiController == PlatformChangeEvent.PLATFORM_PC_KB_MOUSE && GlobalFunc.GetButtonFontKey(this._buttonHintData.PCKey) == "";
       }
       
       public function get ControllerButton() : String
       {
+         var _loc2_:String = null;
          var _loc1_:String = "";
          if(uiController != PlatformChangeEvent.PLATFORM_MOBILE && this.UsePCKey)
          {
@@ -284,9 +247,10 @@ package Shared.AS3
                case PlatformChangeEvent.PLATFORM_MOBILE:
                   _loc1_ = "";
             }
-            if(NameToTextMap.hasOwnProperty(_loc1_))
+            _loc2_ = GlobalFunc.GetButtonFontKey(_loc1_,bIsGen9);
+            if(_loc2_ != "")
             {
-               _loc1_ = String(NameToTextMap[_loc1_]);
+               _loc1_ = _loc2_;
             }
          }
          return _loc1_;
@@ -294,6 +258,7 @@ package Shared.AS3
       
       public function get SecondaryControllerButton() : String
       {
+         var _loc2_:String = null;
          var _loc1_:String = "";
          if(this._buttonHintData.hasSecondaryButton)
          {
@@ -319,9 +284,10 @@ package Shared.AS3
                   case PlatformChangeEvent.PLATFORM_MOBILE:
                      _loc1_ = "";
                }
-               if(NameToTextMap.hasOwnProperty(_loc1_))
+               _loc2_ = GlobalFunc.GetButtonFontKey(_loc1_);
+               if(_loc2_ != "")
                {
-                  _loc1_ = String(NameToTextMap[_loc1_]);
+                  _loc1_ = _loc2_;
                }
             }
          }
@@ -382,16 +348,19 @@ package Shared.AS3
             _loc3_ = false;
             if(Boolean(this._buttonHintData.SecondaryPCKey) && (param1 as MouseEvent).localX > this._hitArea.width / 2)
             {
-               _loc2_ = false;
                _loc3_ = !this.SecondaryButtonDisabled;
             }
-            if(_loc2_)
+            if(_loc3_)
+            {
+               this._buttonHintData.onSecondaryButtonClick();
+            }
+            else if(_loc2_)
             {
                this._buttonHintData.onTextClick();
             }
-            else if(_loc3_)
+            else
             {
-               this._buttonHintData.onSecondaryButtonClick();
+               this._buttonHintData.onTextClickDisabled();
             }
          }
       }
@@ -459,18 +428,23 @@ package Shared.AS3
                   colorMatrix = new ColorMatrixFilter(_loc3_);
                }
                this.HoldMeter_mc.filters = [colorMatrix];
-               this.textField_tf.textColor = 16777163;
-               this.IconHolderInstance.IconAnimInstance.Icon_tf.textColor = 16777163;
-               this.SecondaryIconHolderInstance.IconAnimInstance.Icon_tf.textColor = 16777163;
+               this.m_TextColor = LIGHT_YELLOW_COLOR;
             }
             else
             {
                this.HoldMeter_mc.filters = null;
-               this.textField_tf.textColor = 16108379;
-               this.IconHolderInstance.IconAnimInstance.Icon_tf.textColor = 16108379;
-               this.SecondaryIconHolderInstance.IconAnimInstance.Icon_tf.textColor = 16108379;
+               this.m_TextColor = GOLD_COLOR;
             }
+            this.textField_tf.textColor = this.m_TextColor;
+            this.IconHolderInstance.IconAnimInstance.Icon_tf.textColor = this.m_TextColor;
+            this.SecondaryIconHolderInstance.IconAnimInstance.Icon_tf.textColor = this.m_TextColor;
+            SetIsDirty();
          }
+      }
+      
+      public function set enableHoverState(param1:Boolean) : void
+      {
+         this.m_bHoverStateEnabled = param1;
       }
       
       public function set canHold(param1:Boolean) : void
@@ -565,6 +539,15 @@ package Shared.AS3
             this.Sizer_mc.y = _loc3_;
             this.Sizer_mc.width = _loc2_ - _loc1_;
             this.Sizer_mc.height = _loc4_ - _loc3_;
+            if(this.m_bHoverStateEnabled)
+            {
+               this.Highlight_mc.gotoAndStop(this.ButtonDisabled ? "Disabled" : "Enabled");
+               this.Highlight_mc.visible = this.bMouseOver;
+               this.Highlight_mc.x = _loc1_;
+               this.Highlight_mc.y = _loc3_;
+               this.Highlight_mc.width = _loc2_ - _loc1_;
+               this.Highlight_mc.height = _loc4_ - _loc3_;
+            }
          }
       }
       
@@ -623,6 +606,8 @@ package Shared.AS3
       private function redrawTextField() : void
       {
          var _loc1_:* = undefined;
+         var _loc2_:uint = 0;
+         var _loc3_:Array = null;
          this.textField_tf.visible = !this.UseDynamicMovieClip;
          if(this.textField_tf.visible)
          {
@@ -630,6 +615,17 @@ package Shared.AS3
             this.textField_tf.alpha = this.AllButtonsDisabled ? DISABLED_GREY_OUT_ALPHA : 1;
             _loc1_ = this.m_CanHold ? HOLD_TEXT_OFFSET : 0;
             this.textField_tf.x = this.Justification == JUSTIFY_LEFT ? this.IconHolderInstance.width + _loc1_ : this.IconHolderInstance.x - this.textField_tf.width - _loc1_;
+            if(this.m_bHoverStateEnabled)
+            {
+               _loc2_ = this.bMouseOver ? BLACK_COLOR : this.m_TextColor;
+               _loc3_ = this.bMouseOver ? null : this.m_TextFiltersA;
+               this.textField_tf.textColor = _loc2_;
+               this.textField_tf.filters = _loc3_;
+               this.IconHolderInstance.IconAnimInstance.Icon_tf.textColor = _loc2_;
+               this.IconHolderInstance.IconAnimInstance.Icon_tf.filters = _loc3_;
+               this.SecondaryIconHolderInstance.IconAnimInstance.Icon_tf.textColor = _loc2_;
+               this.SecondaryIconHolderInstance.IconAnimInstance.Icon_tf.filters = _loc3_;
+            }
          }
       }
       

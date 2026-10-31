@@ -174,7 +174,6 @@ package Shared.AS3
       
       public function SWFLoad(param1:String) : void
       {
-         var _loc2_:URLRequest;
          try
          {
             this.menuLoader.close();
@@ -186,7 +185,7 @@ package Shared.AS3
          {
             this.SWFUnload(this.SWF);
          }
-         _loc2_ = new URLRequest(param1 + ".swf");
+         var _loc2_:URLRequest = new URLRequest(param1 + ".swf");
          this.menuLoader.contentLoaderInfo.addEventListener(Event.COMPLETE,this.onMenuLoadComplete);
          this.menuLoader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR,this._ioErrorEventHandler,false,0,true);
          this.menuLoader.load(_loc2_);

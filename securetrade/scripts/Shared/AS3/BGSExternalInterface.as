@@ -14,7 +14,7 @@ package Shared.AS3
          var _loc4_:Function = null;
          if(param1 != null)
          {
-            _loc3_ = String(rest.shift());
+            _loc3_ = rest.shift();
             _loc4_ = param1[_loc3_];
             if(_loc4_ != null)
             {

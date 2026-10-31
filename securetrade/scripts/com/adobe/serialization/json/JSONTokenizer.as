@@ -168,7 +168,7 @@ package com.adobe.serialization.json
          var _loc8_:int = 0;
          var _loc9_:int = 0;
          var _loc10_:String = null;
-         if(this.strict && this.controlCharsRegExp.test(param1))
+         if(this.strict && Boolean(this.controlCharsRegExp.test(param1)))
          {
             this.parseError("String contains unescaped control character (0x00-0x1F)");
          }
@@ -380,7 +380,10 @@ package com.adobe.serialization.json
                            break;
                         }
                      }
-                     this.nextChar();
+                     else
+                     {
+                        this.nextChar();
+                     }
                      if(this.ch == "")
                      {
                         this.parseError("Multi-line comment not closed");

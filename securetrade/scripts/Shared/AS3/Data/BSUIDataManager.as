@@ -132,6 +132,19 @@ package Shared.AS3.Data
          return _loc4_.m_Providers[param1];
       }
       
+      public static function RemoveWatchFromDataConnector(param1:String) : Boolean
+      {
+         var _loc2_:Boolean = false;
+         var _loc3_:BSUIDataManager = GetInstance();
+         if(_loc3_.m_Providers[param1] != null)
+         {
+            _loc3_.m_DataShuttleConnector._RemoveWatch(param1);
+            delete _loc3_.m_Providers[param1];
+            _loc2_ = true;
+         }
+         return _loc2_;
+      }
+      
       public static function addEventListener(param1:String, param2:Function, param3:Boolean = false, param4:int = 0, param5:Boolean = false) : void
       {
          GetInstance().addEventListener(param1,param2,param3,param4,param5);

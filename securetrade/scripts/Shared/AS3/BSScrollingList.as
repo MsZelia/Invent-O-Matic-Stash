@@ -5,6 +5,7 @@ package Shared.AS3
    import Mobile.ScrollList.MobileScrollList;
    import Shared.AS3.COMPANIONAPP.BSScrollingListInterface;
    import Shared.AS3.COMPANIONAPP.CompanionAppMode;
+   import Shared.AS3.Events.CustomEvent;
    import Shared.AS3.Events.PlatformChangeEvent;
    import Shared.GlobalFunc;
    import flash.display.MovieClip;
@@ -41,6 +42,10 @@ package Shared.AS3
       public static const LIST_ITEMS_CREATED:String = "BSScrollingList::listItemsCreated";
       
       public static const PLAY_FOCUS_SOUND:String = "BSScrollingList::playFocusSound";
+      
+      public static const TOP_EDGE_BOUNCE:String = "BSScrollingList::TopEdgeBounce";
+      
+      public static const BOTTOM_EDGE_BOUNCE:String = "BSScrollingList::BottomEdgeBounce";
       
       public static const MOBILE_ITEM_PRESS:String = "BSScrollingList::mobileItemPress";
       
@@ -90,6 +95,14 @@ package Shared.AS3
       
       protected var bInitialized:Boolean;
       
+      protected var m_LastNavDirection:int = -1;
+      
+      protected var m_NavChangeFromInput:Boolean = false;
+      
+      protected var m_AnimatedArrows:Boolean = false;
+      
+      protected var m_Active:Boolean = true;
+      
       protected var bSilentSelectionMode:Boolean = false;
       
       protected var strTextOption:String;
@@ -108,9 +121,11 @@ package Shared.AS3
       
       protected var bEnableScrollWrap:Boolean = false;
       
-      private var fBorderHeight:Number = 0;
+      protected var m_AllowMouseOver:Boolean = true;
       
-      private var _DisplayNumListItems:uint = 0;
+      protected var fBorderHeight:Number = 0;
+      
+      protected var _DisplayNumListItems:uint = 0;
       
       public function BSScrollingList()
       {
@@ -139,6 +154,7 @@ package Shared.AS3
          addEventListener(Event.REMOVED_FROM_STAGE,this.onStageDestruct,false,0,true);
          addEventListener(KeyboardEvent.KEY_DOWN,this.onKeyDown,false,0,true);
          addEventListener(KeyboardEvent.KEY_UP,this.onKeyUp,false,0,true);
+         addEventListener(MouseEvent.MOUSE_MOVE,this.onMouseMove);
          if(!this.needMobileScrollList)
          {
             addEventListener(MouseEvent.MOUSE_WHEEL,this.onMouseWheel,false,0,true);
@@ -277,9 +293,8 @@ package Shared.AS3
       public function onEntryRollover(param1:Event) : *
       {
          var _loc2_:* = undefined;
-         if(this.uiPlatform == PlatformChangeEvent.PLATFORM_PC_KB_MOUSE)
+         if(this.m_AllowMouseOver && this.bMouseDrivenNav && this.uiPlatform == PlatformChangeEvent.PLATFORM_PC_KB_MOUSE)
          {
-            this.bMouseDrivenNav = true;
             if(!this.bDisableInput && !this.bDisableSelection)
             {
                _loc2_ = this.iSelectedIndex;
@@ -350,11 +365,13 @@ package Shared.AS3
          {
             if(param1.keyCode == Keyboard.UP)
             {
+               this.m_NavChangeFromInput = true;
                this.moveSelectionUp();
                param1.stopPropagation();
             }
             else if(param1.keyCode == Keyboard.DOWN)
             {
+               this.m_NavChangeFromInput = true;
                this.moveSelectionDown();
                param1.stopPropagation();
             }
@@ -370,6 +387,11 @@ package Shared.AS3
          }
       }
       
+      public function onMouseMove(param1:MouseEvent) : *
+      {
+         this.bMouseDrivenNav = true;
+      }
+      
       public function onMouseWheel(param1:MouseEvent) : *
       {
          var _loc2_:uint = 0;
@@ -377,6 +399,8 @@ package Shared.AS3
          var _loc4_:* = undefined;
          if(!this.bDisableInput && (!this.bDisableSelection || this.bAllowSelectionDisabledListNav) && this.iMaxScrollPosition > 0)
          {
+            this.m_NavChangeFromInput = true;
+            this.bMouseDrivenNav = true;
             _loc2_ = MOUSEWHEEL_SCROLL_DISTANCE_BASE;
             if(param1.ctrlKey && param1.shiftKey)
             {
@@ -410,7 +434,7 @@ package Shared.AS3
          }
       }
       
-      private function SetFocusUnderMouse() : *
+      protected function SetFocusUnderMouse() : *
       {
          var _loc2_:BSScrollingListEntry = null;
          var _loc3_:MovieClip = null;
@@ -427,6 +451,11 @@ package Shared.AS3
             }
             _loc1_++;
          }
+      }
+      
+      public function get lastNavDirection() : int
+      {
+         return this.m_LastNavDirection;
       }
       
       public function get hasBeenUpdated() : Boolean
@@ -623,7 +652,7 @@ package Shared.AS3
                         _loc2_ = this.FindClipForEntry(this.iSelectedIndex);
                         _loc9_++;
                      }
-                     if(_loc9_ == this.uiNumListItems)
+                     if(_loc9_ > this.uiNumListItems)
                      {
                         throw new Error("Force-exited list selection loop before the selected entry could be fully scrolled on-screen.  Shouldn\'t be possible!");
                      }
@@ -632,7 +661,8 @@ package Shared.AS3
             }
             if(_loc3_ != this.iSelectedIndex)
             {
-               dispatchEvent(new Event(SELECTION_CHANGE,true,true));
+               dispatchEvent(new CustomEvent(SELECTION_CHANGE,{"navFromInput":this.m_NavChangeFromInput},true,true));
+               this.m_NavChangeFromInput = false;
             }
             if(this.needMobileScrollList)
             {
@@ -796,6 +826,11 @@ package Shared.AS3
          this.bAllowSelectionDisabledListNav = param1;
       }
       
+      public function set allowMouseOver(param1:Boolean) : void
+      {
+         this.m_AllowMouseOver = param1;
+      }
+      
       public function get reverseOrder() : Boolean
       {
          return this.bReverseOrder;
@@ -804,6 +839,16 @@ package Shared.AS3
       public function set reverseOrder(param1:Boolean) : *
       {
          this.bReverseOrder = param1;
+      }
+      
+      public function set AnimatedArrows(param1:Boolean) : void
+      {
+         this.m_AnimatedArrows = param1;
+      }
+      
+      public function get AnimatedArrows() : Boolean
+      {
+         return this.m_AnimatedArrows;
       }
       
       public function SetNumListItems(param1:uint) : *
@@ -840,6 +885,45 @@ package Shared.AS3
                this.bInitialized = true;
                dispatchEvent(new Event(LIST_ITEMS_CREATED,true,true));
             }
+         }
+      }
+      
+      public function ToggleActiveState(param1:Boolean) : void
+      {
+         this.m_Active = param1;
+         if(Boolean(this.ScrollUp) && Boolean(this.ScrollDown))
+         {
+            if(this.m_AnimatedArrows)
+            {
+               this.animateArrows();
+            }
+            else
+            {
+               this.ScrollUp.visible = this.m_Active;
+               this.ScrollDown.visible = this.m_Active;
+            }
+         }
+      }
+      
+      protected function animateArrows() : void
+      {
+         this.ScrollUp.visible = true;
+         this.ScrollDown.visible = true;
+         if(this.scrollPosition > 0 && this.m_Active)
+         {
+            this.ScrollUp.gotoAndPlay("Active");
+         }
+         else
+         {
+            this.ScrollUp.gotoAndStop("Disabled");
+         }
+         if(this.scrollPosition < this.iMaxScrollPosition && this.m_Active)
+         {
+            this.ScrollDown.gotoAndPlay("Active");
+         }
+         else
+         {
+            this.ScrollDown.gotoAndStop("Disabled");
          }
       }
       
@@ -914,13 +998,17 @@ package Shared.AS3
             this.setMobileScrollingListData(_loc5_);
          }
          this.PositionEntries();
-         if(this.ScrollUp != null)
+         if(Boolean(this.ScrollUp) && Boolean(this.ScrollDown))
          {
-            this.ScrollUp.visible = this.scrollPosition > 0;
-         }
-         if(this.ScrollDown != null)
-         {
-            this.ScrollDown.visible = this.scrollPosition < this.iMaxScrollPosition;
+            if(this.m_AnimatedArrows)
+            {
+               this.animateArrows();
+            }
+            else
+            {
+               this.ScrollUp.visible = this.scrollPosition > 0;
+               this.ScrollDown.visible = this.scrollPosition < this.iMaxScrollPosition;
+            }
          }
          this.bUpdated = true;
       }
@@ -1017,7 +1105,7 @@ package Shared.AS3
          }
          else if(_loc2_)
          {
-            dispatchEvent(new Event(SELECTION_CHANGE,true,true));
+            dispatchEvent(new CustomEvent(SELECTION_CHANGE,{"navFromInput":false},true,true));
          }
       }
       
@@ -1120,7 +1208,7 @@ package Shared.AS3
             }
             else
             {
-               _loc3_ = _loc2_.defaultHeight;
+               _loc3_ = _loc2_.Sizer_mc ? _loc2_.Sizer_mc.height : _loc2_.defaultHeight;
             }
          }
          return _loc3_;
@@ -1144,6 +1232,7 @@ package Shared.AS3
                {
                   this.selectedIndex = _loc1_;
                   this.bMouseDrivenNav = false;
+                  this.m_LastNavDirection = Keyboard.UP;
                   dispatchEvent(new Event(PLAY_FOCUS_SOUND,true,true));
                }
             }
@@ -1154,8 +1243,13 @@ package Shared.AS3
                {
                   this.selectedIndex = _loc1_;
                   this.bMouseDrivenNav = false;
+                  this.m_LastNavDirection = Keyboard.UP;
                   dispatchEvent(new Event(PLAY_FOCUS_SOUND,true,true));
                }
+            }
+            else
+            {
+               dispatchEvent(new Event(TOP_EDGE_BOUNCE,true,true));
             }
          }
          else if(this.bAllowSelectionDisabledListNav)
@@ -1187,6 +1281,7 @@ package Shared.AS3
                {
                   this.selectedIndex = _loc1_;
                   this.bMouseDrivenNav = false;
+                  this.m_LastNavDirection = Keyboard.DOWN;
                   dispatchEvent(new Event(PLAY_FOCUS_SOUND,true,true));
                }
             }
@@ -1197,8 +1292,13 @@ package Shared.AS3
                {
                   this.selectedIndex = _loc1_;
                   this.bMouseDrivenNav = false;
+                  this.m_LastNavDirection = Keyboard.DOWN;
                   dispatchEvent(new Event(PLAY_FOCUS_SOUND,true,true));
                }
+            }
+            else
+            {
+               dispatchEvent(new Event(BOTTOM_EDGE_BOUNCE,true,true));
             }
          }
          else if(this.bAllowSelectionDisabledListNav)
@@ -1319,7 +1419,7 @@ package Shared.AS3
          {
             if(_loc4_ != this.iSelectedIndex)
             {
-               dispatchEvent(new Event(SELECTION_CHANGE,true,true));
+               dispatchEvent(new CustomEvent(SELECTION_CHANGE,{"navFromInput":true},true,true));
                if(this.scrollList.itemRendererLinkageId == BSScrollingListInterface.PIPBOY_MESSAGE_RENDERER_LINKAGE_ID)
                {
                   this.onItemPress();

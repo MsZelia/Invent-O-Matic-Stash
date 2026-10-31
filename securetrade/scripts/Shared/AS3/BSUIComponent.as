@@ -10,7 +10,7 @@ package Shared.AS3
       
       private var _uiPlatform:uint;
       
-      private var _bPS3Switch:Boolean;
+      private var _bIsGen9:Boolean;
       
       private var _uiController:uint;
       
@@ -22,7 +22,7 @@ package Shared.AS3
       {
          super();
          this._uiPlatform = PlatformChangeEvent.PLATFORM_INVALID;
-         this._bPS3Switch = false;
+         this._bIsGen9 = false;
          this._uiController = PlatformChangeEvent.PLATFORM_INVALID;
          this._uiKeyboard = PlatformChangeEvent.PLATFORM_INVALID;
          this._bAcquiredByNativeCode = false;
@@ -34,9 +34,14 @@ package Shared.AS3
          return this._uiPlatform;
       }
       
+      public function get bIsGen9() : Boolean
+      {
+         return this._bIsGen9;
+      }
+      
       public function get bPS3Switch() : Boolean
       {
-         return this._bPS3Switch;
+         return this._bIsGen9;
       }
       
       public function get uiController() : uint
@@ -74,7 +79,7 @@ package Shared.AS3
       final private function onSetPlatformEvent(param1:Event) : *
       {
          var _loc2_:PlatformChangeEvent = param1 as PlatformChangeEvent;
-         this.SetPlatform(_loc2_.uiPlatform,_loc2_.bPS3Switch,_loc2_.uiController,_loc2_.uiKeyboard);
+         this.SetPlatform(_loc2_.uiPlatform,_loc2_.bIsGen9,_loc2_.uiController,_loc2_.uiKeyboard);
       }
       
       override public function onAddedToStage() : void
@@ -100,10 +105,10 @@ package Shared.AS3
       
       public function SetPlatform(param1:uint, param2:Boolean, param3:uint, param4:uint) : void
       {
-         if(this._uiPlatform != param1 || this._bPS3Switch != param2 || this._uiController != param3 || this._uiKeyboard != param4)
+         if(this._uiPlatform != param1 || this._bIsGen9 != param2 || this._uiController != param3 || this._uiKeyboard != param4)
          {
             this._uiPlatform = param1;
-            this._bPS3Switch = param2;
+            this._bIsGen9 = param2;
             this._uiController = param3;
             this._uiKeyboard = param4;
             SetIsDirty();
