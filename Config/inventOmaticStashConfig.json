@@ -26,6 +26,7 @@
 	"cancelCloseMenuHotkey": "ALT",
 	"testRunOverride": {
 		"enabled": true,
+		"overrideMode": "FORCE_ON", // FORCE_ON, FORCE_OFF, INVERT
 		"hotkey": "CTRL",
 		"showText": true,
 		"x": 0,
