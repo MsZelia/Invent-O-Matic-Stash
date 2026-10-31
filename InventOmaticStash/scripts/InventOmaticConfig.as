@@ -478,51 +478,20 @@ package
             config.ignoreItemNames = [];
          }
          config.ignoreItemNames = expandItemGroups(itemGroups,config.ignoreItemNames);
-         for(var c in config.configs)
+         for each(var c in config.configs)
          {
-            setName(config.configs[c],TITLE_SCRAP);
-            setMaxItems(config.configs[c]);
-            if(config.configs[c].hotkey == null)
-            {
-               config.configs[c].hotkey = config.hotkey;
-            }
-            if(config.configs[c].name == null)
-            {
-               config.configs[c].name = config.name;
-            }
-            if(config.configs[c].debug == null)
-            {
-               config.configs[c].debug = config.debug;
-            }
-            if(config.configs[c].testRun == null)
-            {
-               config.configs[c].testRun = config.testRun;
-            }
-            if(config.configs[c].showButton == null)
-            {
-               config.configs[c].showButton = config.showButton;
-            }
-            if(config.configs[c].showMessage == null)
-            {
-               config.configs[c].showMessage = config.showMessage;
-            }
-            if(config.configs[c].repeat == null)
-            {
-               config.configs[c].repeat = config.repeat;
-            }
-            if(config.configs[c].delay == null)
-            {
-               config.configs[c].delay = config.delay;
-            }
-            config.configs[c].excluded = expandItemGroups(itemGroups,config.configs[c].excluded || []);
-            if(config.configs[c].ignoreItemNames == null)
-            {
-               config.configs[c].ignoreItemNames = config.ignoreItemNames;
-            }
-            else
-            {
-               config.configs[c].ignoreItemNames = config.configs[c].ignoreItemNames.concat(config.ignoreItemNames);
-            }
+            setName(c,TITLE_SCRAP);
+            setMaxItems(c);
+            c.hotkey = c.hotkey != null ? c.hotkey : config.hotkey;
+            c.name = c.name != null ? c.name : config.name;
+            c.debug = c.debug != null ? c.debug : config.debug;
+            c.testRun = Parser.parseBoolean(c.testRun != null ? c.testRun : config.testRun,true);
+            c.showButton = c.showButton != null ? c.showButton : config.showButton;
+            c.showMessage = c.showMessage != null ? c.showMessage : config.showMessage;
+            c.repeat = c.repeat != null ? c.repeat : config.repeat;
+            c.delay = c.delay != null ? c.delay : config.delay;
+            c.excluded = expandItemGroups(itemGroups,c.excluded || []);
+            c.ignoreItemNames = c.ignoreItemNames != null ? expandItemGroups(itemGroups,c.ignoreItemNames).concat(config.ignoreItemNames) : config.ignoreItemNames;
          }
          return config;
       }
@@ -623,6 +592,7 @@ package
             config = {};
          }
          config.enabled = Parser.parseBoolean(config.enabled,false);
+         config.overrideMode = config.overrideMode != null ? config.overrideMode.toUpperCase() : TestrunOverrideMode.FORCE_ON;
          config.hotkey = config.hotkey != null ? config.hotkey : "CTRL";
          config.showText = Parser.parseBoolean(config.showText,true);
          config.x = Parser.parseNumber(config.x,0);

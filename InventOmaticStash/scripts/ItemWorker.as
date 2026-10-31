@@ -96,6 +96,26 @@ package
          return overrideTestRun;
       }
       
+      private static function isTestRun(configValue:Boolean) : Boolean
+      {
+         if(overrideTestRun)
+         {
+            var overrideMode:String = _config.testRunOverride.overrideMode;
+            switch(overrideMode)
+            {
+               case TestrunOverrideMode.FORCE_ON:
+                  return true;
+               case TestrunOverrideMode.FORCE_OFF:
+                  return false;
+               case TestrunOverrideMode.INVERT:
+                  return !configValue;
+               default:
+                  Logger.get().error("Invalid testRun overrideMode: " + overrideMode);
+            }
+         }
+         return configValue;
+      }
+      
       private static function toString(data:Object) : String
       {
          return new JSONEncoder(data).getString();
@@ -609,7 +629,7 @@ package
             {
                Logger.get().error("Not transferring selected: Invalid config/No selected item");
             }
-            if(overrideTestRun || Parser.parseBoolean(config.testRun,false))
+            if(isTestRun(config.testRun))
             {
                showTestRun("TRANSFER (" + config.name + ")");
                return 0;
@@ -1153,7 +1173,7 @@ package
                }
             }
             errorCode = "test";
-            if(overrideTestRun || Parser.parseBoolean(config.testRun,false))
+            if(isTestRun(config.testRun))
             {
                showTestRun("TRANSFER (" + config.name + ")");
                return 0;
@@ -1284,7 +1304,7 @@ package
                   }
                   i++;
                }
-               if(overrideTestRun || Parser.parseBoolean(config.testRun,true))
+               if(isTestRun(config.testRun))
                {
                   showTestRun("SCRAP (" + config.name + ")");
                   return MIN_DELAY;
@@ -1472,7 +1492,7 @@ package
                   }
                   i++;
                }
-               if(overrideTestRun || Parser.parseBoolean(config.testRun,false))
+               if(isTestRun(config.testRun))
                {
                   showTestRun("SELL (" + config.name + ")");
                   return;
@@ -1992,7 +2012,7 @@ package
                   }
                   i++;
                }
-               if(overrideTestRun || Parser.parseBoolean(lockConfig.testRun,true))
+               if(isTestRun(Parser.parseBoolean(lockConfig.testRun,true)))
                {
                   showTestRun("LOCK (" + lockConfig.name + ")");
                   return;
@@ -2524,7 +2544,7 @@ package
                      i++;
                   }
                }
-               if(overrideTestRun || Parser.parseBoolean(config.testRun,false))
+               if(isTestRun(config.testRun))
                {
                   showTestRun("BUY (" + config.name + ")");
                   return;
