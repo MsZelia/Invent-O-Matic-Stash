@@ -622,11 +622,6 @@ package
             }
             PlayerInventory_mc.ShowAdditionalColumns = data.columns;
             OfferInventory_mc.ShowAdditionalColumns = data.columns;
-            PlayerInventory_mc.x -= data.offsetInventories;
-            OfferInventory_mc.x += data.offsetInventories;
-            PlayerInventory_mc.alpha = 1;
-            OfferInventory_mc.alpha = 1;
-            alpha = 1;
          }
       }
       

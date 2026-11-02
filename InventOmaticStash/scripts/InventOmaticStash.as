@@ -21,7 +21,7 @@ package
    public class InventOmaticStash extends MovieClip
    {
       
-      public static const FULL_MOD_NAME:String = "IOMS " + Version.VERSION;
+      public static const FULL_MOD_NAME:String = "IOMSv" + Version.VERSION;
       
       private const DEFAULT_SHOW_BUTTON_STATE:Boolean = InventOmaticConfig.DEFAULT_SHOW_BUTTON_STATE;
       
@@ -687,8 +687,9 @@ package
          this.initHidePopups();
          this.initDefaultSelectedTab();
          this.initItemProtection();
-         this.initUIChanges();
+         this.initAddColumns();
          this.initTestRunTextfield();
+         UICustomization.init(this._parent);
          CategoryWeight.init(this._parent);
          LegendaryMods.init();
          this.checkAutoExecute();
@@ -991,27 +992,19 @@ package
          }
       }
       
-      private function initUIChanges() : void
+      private function initAddColumns() : void
       {
          try
          {
-            if(getQualifiedClassName(this._parent.getChildAt(0)) == "flash.display::MovieClip" && Boolean(config.hideVignette))
-            {
-               this._parent.getChildAt(0).visible = false;
-            }
-            if(Boolean(config.hideHeader))
-            {
-               this._parent.Header_mc.visible = false;
-            }
-            if(config.additionalColumnsConfig.enabled)
+            if(config.additionalColumnsConfig && config.additionalColumnsConfig.enabled)
             {
                this._parent.ShowAdditionalColumns = config.additionalColumnsConfig;
             }
          }
          catch(e:Error)
          {
-            Logger.get().error("Error initUIChanges: " + e);
-            ShowHUDMessage("Error initUIChanges: " + e,true);
+            Logger.get().error("Error initAddColumns: " + e);
+            ShowHUDMessage("Error initAddColumns: " + e,true);
          }
       }
       
