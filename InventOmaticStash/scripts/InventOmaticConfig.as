@@ -392,6 +392,13 @@ package
                   expanded.enabled = s.enabled != null ? s.enabled : c.enabled;
                   expanded.debug = s.debug != null ? s.debug : c.debug;
                   expanded.testRun = s.testRun != null ? s.testRun : c.testRun;
+                  expanded.transferEquipped = s.transferEquipped != null ? s.transferEquipped : c.transferEquipped;
+                  expanded.transferFavorite = s.transferFavorite != null ? s.transferFavorite : c.transferFavorite;
+                  expanded.transferAssigned = s.transferAssigned != null ? s.transferAssigned : c.transferAssigned;
+                  expanded.transferLocked = s.transferLocked != null ? s.transferLocked : c.transferLocked;
+                  expanded.transferLegendaries = s.transferLegendaries != null ? s.transferLegendaries : c.transferLegendaries;
+                  expanded.onlyKnownPlans = s.onlyKnownPlans != null ? s.onlyKnownPlans : c.onlyKnownPlans;
+                  expanded.onlyUnknownPlans = s.onlyUnknownPlans != null ? s.onlyUnknownPlans : c.onlyUnknownPlans;
                   expanded.amount = s.amount;
                   expanded.exactAmountInDestination = s.exactAmountInDestination;
                   expanded.types = s.types;
