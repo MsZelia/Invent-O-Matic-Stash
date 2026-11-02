@@ -65,37 +65,39 @@ package utils
          var oInv:*;
          var pInv:*;
          var itemCard:*;
+         var uiConfig:*;
          try
          {
+            uiConfig = config.uiConfig;
             errorCode = "hideVignette";
-            if(Boolean(config.uiConfig.hideVignette) && getQualifiedClassName(_parent.getChildAt(0)) == "flash.display::MovieClip")
+            if(Boolean(uiConfig.hideVignette) && getQualifiedClassName(_parent.getChildAt(0)) == "flash.display::MovieClip")
             {
                _parent.getChildAt(0).visible = false;
             }
             errorCode = "hideHeader";
-            if(config.uiConfig.hideHeader)
+            if(uiConfig.hideHeader)
             {
                _parent.Header_mc.visible = false;
             }
             errorCode = "hideHeader";
-            if(config.uiConfig.playerInventory)
+            if(uiConfig.playerInventory)
             {
-               applyUIChanges(_parent.PlayerInventory_mc,config.uiConfig.playerInventory);
+               applyUIChanges(_parent.PlayerInventory_mc,uiConfig.playerInventory);
             }
             errorCode = "hideHeader";
-            if(config.uiConfig.otherInventory)
+            if(uiConfig.otherInventory)
             {
-               applyUIChanges(_parent.OfferInventory_mc,config.uiConfig.otherInventory);
+               applyUIChanges(_parent.OfferInventory_mc,uiConfig.otherInventory);
             }
             errorCode = "slotInfo";
-            if(config.uiConfig.slotInfo)
+            if(uiConfig.slotInfo)
             {
-               applyUIChanges(_parent.SlotInfo_mc,config.uiConfig.slotInfo);
+               applyUIChanges(_parent.SlotInfo_mc,uiConfig.slotInfo);
             }
             errorCode = "expandItemLists";
-            if(config.uiConfig.expandItemLists && config.uiConfig.expandItemLists.items > 0)
+            if(uiConfig.expandItemLists && uiConfig.expandItemLists.items > 0)
             {
-               cfg = config.uiConfig.expandItemLists;
+               cfg = uiConfig.expandItemLists;
                nItems = Math.min(Parser.parsePositiveNumber(cfg.items,13),40);
                expandHeight = (nItems - 13) * 41.5;
                cfg.x = 0;
@@ -119,19 +121,19 @@ package utils
                applyUIChanges(oInv.OfferWeightIcon,cfg);
             }
             errorCode = "categoryBar";
-            if(config.uiConfig.categoryBar)
+            if(uiConfig.categoryBar)
             {
-               applyUIChanges(_parent.CategoryBar_mc,config.uiConfig.categoryBar);
+               applyUIChanges(_parent.CategoryBar_mc,uiConfig.categoryBar);
             }
             errorCode = "itemCardContainer";
-            if(config.uiConfig.itemCardContainer)
+            if(uiConfig.itemCardContainer)
             {
-               applyUIChanges(_parent.ItemCardContainer_mc,config.uiConfig.itemCardContainer);
+               applyUIChanges(_parent.ItemCardContainer_mc,uiConfig.itemCardContainer);
             }
             errorCode = "itemCard";
-            if(config.uiConfig.itemCard)
+            if(uiConfig.itemCard)
             {
-               cfg = config.uiConfig.itemCard;
+               cfg = uiConfig.itemCard;
                cfg.y = 0;
                cfg.textAlign = "";
                itemCard = _parent.ItemCardContainer_mc;
@@ -141,14 +143,14 @@ package utils
                applyUIChanges(itemCard.Background_mc.itemStatsLabel_tf,cfg);
             }
             errorCode = "itemDescription";
-            if(config.uiConfig.itemDescription)
+            if(uiConfig.itemDescription)
             {
-               applyUIChanges(_parent.ItemCardContainer_mc.Background_mc.Description_mc.Description_tf,config.uiConfig.itemDescription);
+               applyUIChanges(_parent.ItemCardContainer_mc.Background_mc.Description_mc.Description_tf,uiConfig.itemDescription);
             }
             errorCode = "buttonBar";
-            if(config.uiConfig.buttonBar)
+            if(uiConfig.buttonBar)
             {
-               applyUIChanges(_parent.ButtonHintBar_mc,config.uiConfig.buttonBar);
+               applyUIChanges(_parent.ButtonHintBar_mc,uiConfig.buttonBar);
             }
             _parent.alpha = 1;
          }

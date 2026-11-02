@@ -227,6 +227,46 @@ package
                }
             }
          }
+         if(!config.uiConfig)
+         {
+            config.uiConfig = {
+               "enabled":true,
+               "hideHeader":true,
+               "hideVignette":true,
+               "expandItemLists":{"items":19},
+               "categoryBar":{
+                  "x":0,
+                  "y":-65
+               },
+               "playerInventory":{
+                  "x":-132,
+                  "y":-177
+               },
+               "otherInventory":{
+                  "x":132,
+                  "y":-177
+               },
+               "slotInfo":{
+                  "x":-341,
+                  "y":-97
+               },
+               "itemCardContainer":{
+                  "x":0,
+                  "y":120
+               },
+               "itemCard":{"x":0},
+               "itemDescription":{
+                  "x":-170,
+                  "y":0,
+                  "width":300,
+                  "textAlign":"center"
+               },
+               "buttonBar":{
+                  "x":0,
+                  "y":25
+               }
+            };
+         }
          if(!config.localizationConfig)
          {
             config.localizationConfig = {};
