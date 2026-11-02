@@ -8,8 +8,6 @@
 	"showCategoryItemCount": false,
 	"showDurabilityValue": true,
 	"maintainScrollPosition": false,
-	"hideHeader": true,
-	"hideVignette": true,
 	"notifyLegendaryModLearnedOnScrap": true,
 	"swapToPlayerInventoryHotkey": 0,
 	"swapToContainerInventoryHotkey": 0,
@@ -67,7 +65,6 @@
 	},
 	"additionalColumnsConfig": {
 		"enabled": false,
-		"offsetInventories": 132,
 		"columns": {
 			"LEVEL": false,
 			"VALUE": true,
