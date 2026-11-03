@@ -41,12 +41,17 @@ package utils
          }
       }
       
-      private static function applyUIChanges(obj:*, cfg:Object) : void
+      private static function applyUIChanges(obj:*, cfg:Object, rescale:Boolean = false) : void
       {
          if(obj != null)
          {
             obj.x += Parser.parseNumber(cfg.x);
             obj.y += Parser.parseNumber(cfg.y);
+            if(rescale)
+            {
+               obj.scaleX = Parser.parseNumber(cfg.scaleX,1);
+               obj.scaleY = Parser.parseNumber(cfg.scaleY,1);
+            }
             if(obj is TextField)
             {
                obj.width += Parser.parseNumber(cfg.width);
@@ -84,7 +89,7 @@ package utils
             errorCode = "playerInventory";
             if(uiConfig.playerInventory)
             {
-               applyUIChanges(pInv,uiConfig.playerInventory);
+               applyUIChanges(pInv,uiConfig.playerInventory,true);
                if(uiConfig.playerInventory.hideBackground)
                {
                   pInv.getChildAt(0).alpha = 0;
@@ -93,7 +98,7 @@ package utils
             errorCode = "otherInventory";
             if(uiConfig.otherInventory)
             {
-               applyUIChanges(oInv,uiConfig.otherInventory);
+               applyUIChanges(oInv,uiConfig.otherInventory,true);
                if(uiConfig.otherInventory.hideBackground)
                {
                   oInv.getChildAt(0).alpha = 0;
@@ -102,7 +107,7 @@ package utils
             errorCode = "slotInfo";
             if(uiConfig.slotInfo)
             {
-               applyUIChanges(_parent.SlotInfo_mc,uiConfig.slotInfo);
+               applyUIChanges(_parent.SlotInfo_mc,uiConfig.slotInfo,true);
                if(uiConfig.slotInfo.hideBackground)
                {
                   _parent.SlotInfo_mc.getChildAt(0).alpha = 0;
@@ -113,7 +118,7 @@ package utils
             if(uiConfig.expandItemLists && uiConfig.expandItemLists.items > 0)
             {
                cfg = uiConfig.expandItemLists;
-               nItems = Math.min(Parser.parsePositiveNumber(cfg.items,13),40);
+               nItems = Math.min(Parser.parsePositiveNumber(cfg.items,13),20);
                expandHeight = (nItems - 13) * 41.5;
                cfg.x = 0;
                cfg.y = expandHeight;
@@ -136,7 +141,7 @@ package utils
             errorCode = "categoryBar";
             if(uiConfig.categoryBar)
             {
-               applyUIChanges(_parent.CategoryBar_mc,uiConfig.categoryBar);
+               applyUIChanges(_parent.CategoryBar_mc,uiConfig.categoryBar,true);
                if(uiConfig.categoryBar.hideBackground)
                {
                   _parent.CategoryBar_mc.BackerBar_mc.getChildAt(0).alpha = 0;
@@ -145,7 +150,7 @@ package utils
             errorCode = "itemCardContainer";
             if(uiConfig.itemCardContainer)
             {
-               applyUIChanges(_parent.ItemCardContainer_mc,uiConfig.itemCardContainer);
+               applyUIChanges(_parent.ItemCardContainer_mc,uiConfig.itemCardContainer,true);
             }
             errorCode = "itemCard";
             if(uiConfig.itemCard)
@@ -158,21 +163,22 @@ package utils
                applyUIChanges(itemCard.Background_mc.StatsLabelBG_mc,cfg);
                applyUIChanges(itemCard.Background_mc.Box_mc,cfg);
                applyUIChanges(itemCard.Background_mc.itemStatsLabel_tf,cfg);
-               if(uiConfig.itemCard.hideBackground)
-               {
-                  _parent.ItemCardContainer_mc.Background_mc.StatsLabelBG_mc.alpha = 0;
-                  _parent.ItemCardContainer_mc.Background_mc.Box_mc.alpha = 0;
-               }
+            }
+            errorCode = "itemCardContainer.hideBackground";
+            if(uiConfig.itemCardContainer && uiConfig.itemCardContainer.hideBackground)
+            {
+               _parent.ItemCardContainer_mc.Background_mc.StatsLabelBG_mc.alpha = 0;
+               _parent.ItemCardContainer_mc.Background_mc.Box_mc.alpha = 0;
             }
             errorCode = "itemDescription";
             if(uiConfig.itemDescription)
             {
-               applyUIChanges(_parent.ItemCardContainer_mc.Background_mc.Description_mc.Description_tf,uiConfig.itemDescription);
+               applyUIChanges(_parent.ItemCardContainer_mc.Background_mc.Description_mc.Description_tf,uiConfig.itemDescription,true);
             }
             errorCode = "buttonBar";
             if(uiConfig.buttonBar)
             {
-               applyUIChanges(_parent.ButtonHintBar_mc,uiConfig.buttonBar);
+               applyUIChanges(_parent.ButtonHintBar_mc,uiConfig.buttonBar,true);
             }
             _parent.alpha = 1;
          }
