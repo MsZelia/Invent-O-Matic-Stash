@@ -993,7 +993,7 @@ package
                   {
                      Logger.get().info("defaultSelectedTab not set, tab not found: " + tabName);
                   }
-               },500);
+               },1000);
             }
          }
          catch(e:Error)
