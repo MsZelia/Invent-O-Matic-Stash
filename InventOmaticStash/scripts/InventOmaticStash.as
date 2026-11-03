@@ -736,7 +736,7 @@ package
          {
             if(config && config.tabsConfig && config.tabsConfig.enabled)
             {
-               maxTabs = Parser.parsePositiveNumber(config.tabsConfig.maxTabs,this.parentClip.maxTabs);
+               maxTabs = Parser.parsePositiveNumber(config.tabsConfig.maxTabs,9);
                this.parentClip.maxTabs = maxTabs;
                this.parentClip.CategoryBar_mc.maxVisible = maxTabs;
                labelWidthScale = Parser.parsePositiveNumber(config.tabsConfig.labelWidthScale,1.1);
@@ -958,10 +958,14 @@ package
          try
          {
             tabName = config.defaultSelectedTab;
-            if(tabName != null && tabName is String && tabName.length > 0)
+            if(tabName != null && tabName is String && tabName.length > 0 && tabName != "NEW")
             {
                setTimeout(function():void
                {
+                  if(_parent.CategoryBar_mc.maxVisible < 3)
+                  {
+                     return;
+                  }
                   if(ItemTypes.ITEM_TYPES[tabName] != null)
                   {
                      var selectedID:uint = uint(ItemTypes.ITEM_TYPES[tabName][0]);
@@ -979,9 +983,16 @@ package
                      selectedID = 1;
                   }
                   var selectedTab:uint = uint(_parent.CategoryBar_mc.GetLabelIndex(selectedID));
-                  _parent.selectedTab = selectedTab;
-                  _parent.CategoryBar_mc.SelectedID = selectedID;
-                  Logger.get().info("defaultSelectedTab set to " + tabName);
+                  if(selectedTab != -1)
+                  {
+                     _parent.selectedTab = selectedTab;
+                     _parent.CategoryBar_mc.SelectedID = selectedID;
+                     Logger.get().info("defaultSelectedTab set to " + tabName);
+                  }
+                  else
+                  {
+                     Logger.get().info("defaultSelectedTab not set, tab not found: " + tabName);
+                  }
                },500);
             }
          }
