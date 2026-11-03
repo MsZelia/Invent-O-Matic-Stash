@@ -439,6 +439,7 @@ package
                   expanded.transferLegendaries = s.transferLegendaries != null ? s.transferLegendaries : c.transferLegendaries;
                   expanded.onlyKnownPlans = s.onlyKnownPlans != null ? s.onlyKnownPlans : c.onlyKnownPlans;
                   expanded.onlyUnknownPlans = s.onlyUnknownPlans != null ? s.onlyUnknownPlans : c.onlyUnknownPlans;
+                  expanded.delay = s.delay != null ? s.delay : c.delay;
                   expanded.amount = s.amount;
                   expanded.exactAmountInDestination = s.exactAmountInDestination;
                   expanded.types = s.types;
