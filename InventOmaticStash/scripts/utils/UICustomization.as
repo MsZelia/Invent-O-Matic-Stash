@@ -68,6 +68,8 @@ package utils
          var uiConfig:*;
          try
          {
+            oInv = _parent.OfferInventory_mc;
+            pInv = _parent.PlayerInventory_mc;
             uiConfig = config.uiConfig;
             errorCode = "hideVignette";
             if(Boolean(uiConfig.hideVignette) && getQualifiedClassName(_parent.getChildAt(0)) == "flash.display::MovieClip")
@@ -79,20 +81,33 @@ package utils
             {
                _parent.Header_mc.visible = false;
             }
-            errorCode = "hideHeader";
+            errorCode = "playerInventory";
             if(uiConfig.playerInventory)
             {
-               applyUIChanges(_parent.PlayerInventory_mc,uiConfig.playerInventory);
+               applyUIChanges(pInv,uiConfig.playerInventory);
+               if(uiConfig.playerInventory.hideBackground)
+               {
+                  pInv.getChildAt(0).alpha = 0;
+               }
             }
-            errorCode = "hideHeader";
+            errorCode = "otherInventory";
             if(uiConfig.otherInventory)
             {
-               applyUIChanges(_parent.OfferInventory_mc,uiConfig.otherInventory);
+               applyUIChanges(oInv,uiConfig.otherInventory);
+               if(uiConfig.otherInventory.hideBackground)
+               {
+                  oInv.getChildAt(0).alpha = 0;
+               }
             }
             errorCode = "slotInfo";
             if(uiConfig.slotInfo)
             {
                applyUIChanges(_parent.SlotInfo_mc,uiConfig.slotInfo);
+               if(uiConfig.slotInfo.hideBackground)
+               {
+                  _parent.SlotInfo_mc.getChildAt(0).alpha = 0;
+                  _parent.SlotInfo_mc.getChildAt(_parent.SlotInfo_mc.numChildren - 2).alpha = 0;
+               }
             }
             errorCode = "expandItemLists";
             if(uiConfig.expandItemLists && uiConfig.expandItemLists.items > 0)
@@ -102,8 +117,6 @@ package utils
                expandHeight = (nItems - 13) * 41.5;
                cfg.x = 0;
                cfg.y = expandHeight;
-               oInv = _parent.OfferInventory_mc;
-               pInv = _parent.PlayerInventory_mc;
                oInv.ItemList_mc.numItems_Inspectable = nItems;
                pInv.ItemList_mc.numItems_Inspectable = nItems;
                oInv.getChildAt(0).height = oInv.getChildAt(0).height + expandHeight;
@@ -124,6 +137,10 @@ package utils
             if(uiConfig.categoryBar)
             {
                applyUIChanges(_parent.CategoryBar_mc,uiConfig.categoryBar);
+               if(uiConfig.categoryBar.hideBackground)
+               {
+                  _parent.CategoryBar_mc.BackerBar_mc.getChildAt(0).alpha = 0;
+               }
             }
             errorCode = "itemCardContainer";
             if(uiConfig.itemCardContainer)
@@ -141,6 +158,11 @@ package utils
                applyUIChanges(itemCard.Background_mc.StatsLabelBG_mc,cfg);
                applyUIChanges(itemCard.Background_mc.Box_mc,cfg);
                applyUIChanges(itemCard.Background_mc.itemStatsLabel_tf,cfg);
+               if(uiConfig.itemCard.hideBackground)
+               {
+                  _parent.ItemCardContainer_mc.Background_mc.StatsLabelBG_mc.alpha = 0;
+                  _parent.ItemCardContainer_mc.Background_mc.Box_mc.alpha = 0;
+               }
             }
             errorCode = "itemDescription";
             if(uiConfig.itemDescription)
