@@ -1,5 +1,6 @@
 package utils
 {
+   import Shared.GlobalFunc;
    import flash.text.*;
    import flash.utils.getQualifiedClassName;
    
@@ -61,6 +62,15 @@ package utils
          }
       }
       
+      private static function applyBGAlpha(obj:*, cfg:Object) : void
+      {
+         if(obj != null && !isNaN(cfg.alphaBG))
+         {
+            var alpha:Number = GlobalFunc.Clamp(Parser.parseNumber(cfg.alphaBG,100),0,100);
+            obj.alpha = alpha / 100;
+         }
+      }
+      
       private static function initUIConfig() : void
       {
          var expandHeight:Number;
@@ -90,29 +100,20 @@ package utils
             if(uiConfig.playerInventory)
             {
                applyUIChanges(pInv,uiConfig.playerInventory,true);
-               if(uiConfig.playerInventory.hideBackground)
-               {
-                  pInv.getChildAt(0).alpha = 0;
-               }
+               applyBGAlpha(pInv.getChildAt(0),uiConfig.playerInventory);
             }
             errorCode = "otherInventory";
             if(uiConfig.otherInventory)
             {
                applyUIChanges(oInv,uiConfig.otherInventory,true);
-               if(uiConfig.otherInventory.hideBackground)
-               {
-                  oInv.getChildAt(0).alpha = 0;
-               }
+               applyBGAlpha(oInv.getChildAt(0),uiConfig.otherInventory);
             }
             errorCode = "slotInfo";
             if(uiConfig.slotInfo)
             {
                applyUIChanges(_parent.SlotInfo_mc,uiConfig.slotInfo,true);
-               if(uiConfig.slotInfo.hideBackground)
-               {
-                  _parent.SlotInfo_mc.getChildAt(0).alpha = 0;
-                  _parent.SlotInfo_mc.getChildAt(_parent.SlotInfo_mc.numChildren - 2).alpha = 0;
-               }
+               applyBGAlpha(_parent.SlotInfo_mc.getChildAt(0),uiConfig.slotInfo);
+               applyBGAlpha(_parent.SlotInfo_mc.getChildAt(_parent.SlotInfo_mc.numChildren - 2),uiConfig.slotInfo);
             }
             errorCode = "expandItemLists";
             if(uiConfig.expandItemLists && uiConfig.expandItemLists.items > 0)
@@ -142,10 +143,7 @@ package utils
             if(uiConfig.categoryBar)
             {
                applyUIChanges(_parent.CategoryBar_mc,uiConfig.categoryBar,true);
-               if(uiConfig.categoryBar.hideBackground)
-               {
-                  _parent.CategoryBar_mc.BackerBar_mc.getChildAt(0).alpha = 0;
-               }
+               applyBGAlpha(_parent.CategoryBar_mc.BackerBar_mc.getChildAt(0),uiConfig.categoryBar);
             }
             errorCode = "itemCardContainer";
             if(uiConfig.itemCardContainer)
@@ -164,11 +162,11 @@ package utils
                applyUIChanges(itemCard.Background_mc.Box_mc,cfg);
                applyUIChanges(itemCard.Background_mc.itemStatsLabel_tf,cfg);
             }
-            errorCode = "itemCardContainer.hideBackground";
-            if(uiConfig.itemCardContainer && uiConfig.itemCardContainer.hideBackground)
+            errorCode = "itemCardContainer.alphaBG";
+            if(uiConfig.itemCardContainer && uiConfig.itemCardContainer.alphaBG != null)
             {
-               _parent.ItemCardContainer_mc.Background_mc.StatsLabelBG_mc.alpha = 0;
-               _parent.ItemCardContainer_mc.Background_mc.Box_mc.alpha = 0;
+               applyBGAlpha(_parent.ItemCardContainer_mc.Background_mc.StatsLabelBG_mc,uiConfig.itemCardContainer);
+               applyBGAlpha(_parent.ItemCardContainer_mc.Background_mc.Box_mc,uiConfig.itemCardContainer);
             }
             errorCode = "itemDescription";
             if(uiConfig.itemDescription)
