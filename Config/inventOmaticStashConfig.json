@@ -738,6 +738,7 @@
 			// 	debug
 			// 	testRun
 			// 	name
+			// 	delay
 			// 	checkAccountName
 			// 	accountName
 			// 	checkCharacterName
@@ -758,9 +759,10 @@
 			// 	onlyUnknownPlans
 			//
 			// These values are copied from the parent if they're not set:
-			// 	enabled, debug, testRun
+			// 	enabled, debug, testRun, delay
 			// 	transferEquipped, transferFavorite, transferAssigned, transferLocked, transferLegendaries
 			// 	onlyKnownPlans, onlyUnknownPlans
+			// 	checkAccountName, accountName, checkCharacterName, characterName, checkContainerName, containerName
 
 			// Subconfigs do not support: singleItemPerName or repeat.
 			"subconfigs": [
