@@ -445,12 +445,12 @@ package
                   expanded.types = s.types;
                   expanded.weaponTypes = s.weaponTypes;
                   expanded.matchMode = s.matchMode;
-                  expanded.checkAccountName = s.checkAccountName;
-                  expanded.accountName = s.accountName;
-                  expanded.checkCharacterName = s.checkCharacterName;
-                  expanded.characterName = s.characterName;
-                  expanded.checkContainerName = s.checkContainerName;
-                  expanded.containerName = s.containerName;
+                  expanded.checkAccountName = s.checkAccountName != null ? s.checkAccountName : c.checkAccountName;
+                  expanded.accountName = s.accountName != null ? s.accountName : c.accountName;
+                  expanded.checkCharacterName = s.checkCharacterName != null ? s.checkCharacterName : c.checkCharacterName;
+                  expanded.characterName = s.characterName != null ? s.characterName : c.characterName;
+                  expanded.checkContainerName = s.checkContainerName != null ? s.checkContainerName : c.checkContainerName;
+                  expanded.containerName = s.containerName != null ? s.containerName : c.containerName;
                   expanded.itemNames = expandItemGroups(itemGroups,s.itemNames || []);
                   expanded.ignoreItemNames = expandItemGroups(itemGroups,s.ignoreItemNames || []);
                   expanded.direction = s.direction;
