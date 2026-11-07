@@ -204,11 +204,9 @@ package
          var i:uint = 0;
          var lowercaseName:String = itemName.toLowerCase();
          var len:uint = ignoreItemNames.length;
-         i = 0;
          while(i < len)
          {
-            var element:* = ignoreItemNames[i];
-            if(element is String && element.length && lowercaseName.indexOf(element.toLowerCase()) != -1)
+            if(lowercaseName.indexOf(ignoreItemNames[i]) != -1)
             {
                return true;
             }

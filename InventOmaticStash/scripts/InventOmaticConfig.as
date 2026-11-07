@@ -199,7 +199,7 @@ package
          {
             setName(config.buyConfig,TITLE_BUY);
             setMaxItems(config.buyConfig);
-            config.buyConfig.ignoreItemNames = expandItemGroups(itemGroups,config.buyConfig.ignoreItemNames || []);
+            config.buyConfig.ignoreItemNames = filterIgnoreItemNames(expandItemGroups(itemGroups,config.buyConfig.ignoreItemNames || []));
             for each(var c in config.buyConfig.configs)
             {
                c.itemNames = expandItemGroups(itemGroups,c.itemNames || []);
@@ -425,7 +425,7 @@ package
             }
             else if(c.subconfigs == null && c.itemNames != null)
             {
-               c.ignoreItemNames = expandItemGroups(itemGroups,c.ignoreItemNames || []);
+               c.ignoreItemNames = filterIgnoreItemNames(expandItemGroups(itemGroups,c.ignoreItemNames || []));
                c.itemNames = expandItemGroups(itemGroups,c.itemNames);
                c.wasSubconfig = false;
                expandedConfigs.push(c);
@@ -471,7 +471,7 @@ package
                   expanded.checkContainerName = s.checkContainerName != null ? s.checkContainerName : c.checkContainerName;
                   expanded.containerName = s.containerName != null ? s.containerName : c.containerName;
                   expanded.itemNames = expandItemGroups(itemGroups,s.itemNames || []);
-                  expanded.ignoreItemNames = expandItemGroups(itemGroups,s.ignoreItemNames || []);
+                  expanded.ignoreItemNames = filterIgnoreItemNames(expandItemGroups(itemGroups,s.ignoreItemNames || []));
                   expanded.direction = s.direction;
                   expanded.wasSubconfig = true;
                   expandedConfigs.push(expanded);
@@ -518,7 +518,7 @@ package
          {
             config.enabled = false;
          }
-         config.ignoreItemNames = expandItemGroups(itemGroups,config.ignoreItemNames || []);
+         config.ignoreItemNames = filterIgnoreItemNames(expandItemGroups(itemGroups,config.ignoreItemNames || []));
          for each(var c in config.configs)
          {
             c.itemNames = expandItemGroups(itemGroups,c.itemNames || []);
@@ -544,7 +544,7 @@ package
          {
             config.ignoreItemNames = [];
          }
-         config.ignoreItemNames = expandItemGroups(itemGroups,config.ignoreItemNames);
+         config.ignoreItemNames = filterIgnoreItemNames(expandItemGroups(itemGroups,config.ignoreItemNames));
          for each(var c in config.configs)
          {
             setName(c,TITLE_SCRAP);
@@ -558,7 +558,7 @@ package
             c.repeat = c.repeat != null ? c.repeat : config.repeat;
             c.delay = c.delay != null ? c.delay : config.delay;
             c.excluded = expandItemGroups(itemGroups,c.excluded || []);
-            c.ignoreItemNames = c.ignoreItemNames != null ? expandItemGroups(itemGroups,c.ignoreItemNames).concat(config.ignoreItemNames) : config.ignoreItemNames;
+            c.ignoreItemNames = c.ignoreItemNames != null ? filterIgnoreItemNames(expandItemGroups(itemGroups,c.ignoreItemNames)).concat(config.ignoreItemNames) : config.ignoreItemNames;
          }
          return config;
       }
@@ -570,7 +570,7 @@ package
             config.configs = [];
          }
          config.itemNames = expandItemGroups(itemGroups,config.itemNames || []);
-         config.ignoreItemNames = expandItemGroups(itemGroups,config.ignoreItemNames || []);
+         config.ignoreItemNames = filterIgnoreItemNames(expandItemGroups(itemGroups,config.ignoreItemNames || []));
          for each(var c in config.configs)
          {
             c.itemNames = expandItemGroups(itemGroups,c.itemNames || []);
@@ -672,6 +672,17 @@ package
          config.colorDisabled = Parser.parsePositiveNumber(config.colorDisabled,GlobalFunc.COLOR_TEXT_BODY);
          config.colorEnabled = Parser.parsePositiveNumber(config.colorEnabled,GlobalFunc.COLOR_TEXT_HEADER);
          return config;
+      }
+      
+      private static function filterIgnoreItemNames(itemNames:Array) : Array
+      {
+         return itemNames.filter(function(name:*):Boolean
+         {
+            return name is String && Boolean(name.length);
+         }).map(function(name:*):String
+         {
+            return name.toLowerCase();
+         });
       }
    }
 }
